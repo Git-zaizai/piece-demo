@@ -1,0 +1,1 @@
+export { default as ZaiTable } from './src/index.vue'
