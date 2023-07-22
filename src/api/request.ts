@@ -8,9 +8,9 @@ const request = axios.create(config);
 
 request.interceptors.request.use(
     (config: CreateAxiosOptions) => {
-        const userinfo = Storage.get('userinfo')
+        const userinfo = Storage.get('info')
         // 请求拦截器配置处理
-        config.headers['token'] = userinfo ? userinfo.token : ''
+        config.headers['token'] = userinfo ? userinfo : ''
         return config;
     },
     error => {
@@ -41,7 +41,13 @@ request.interceptors.response.use(
     error => {
         console.log(error.response)
         console.log(error.message)
+		
         const status = error?.response?.status ?? '500'
+		
+		if(error.message.includes('code 401')){
+			window.$message.warning('无权限 : 401')
+			return Promise.reject(error);
+		}
 
         if (error?.response?.status === 404) {
             window.$message.error('404')

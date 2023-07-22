@@ -58,7 +58,7 @@ async function bindDbExport(row) {
     const len = res.data.data.length
     res.data.data.forEach((item, index) => {
       texts.push(JSON.stringify(item))
-      if (index < len) {
+      if (index < len - 1) {
         texts.push(',')
       }
     })
@@ -68,6 +68,7 @@ async function bindDbExport(row) {
     const el = document.createElement('a')
     el.href = url
     el.download = row.dbname + '.json'
+    el.target = '_blank'
     el.click()
     window.$message.success('导出成功')
     setTimeout(() => {

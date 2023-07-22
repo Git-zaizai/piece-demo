@@ -80,7 +80,11 @@ function HelpClick() {
 }
 
 function textClick() {
-  router.push({ name: props.routeItem.name })
+	if(/(http|https):\/\/([\w.]+\/?)\S*/.test(props.routeItem.name)){
+		window.open(props.routeItem.name)
+	}else{
+		router.push({ name: props.routeItem.name })
+	}
 }
 </script>
 

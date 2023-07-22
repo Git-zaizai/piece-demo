@@ -2,7 +2,7 @@
   <div>
     <div class="flex-alc">
       <n-card class="suspension" title="需求公告栏">
-        额，需求暂时满足了，唉，动态路由、数据库动态监控后面再做吧，实际需求也没有，也懒了
+        额，目前以满足需求！
       </n-card>
       <img class="hecha suspension" src="../../assets/coffee.svg">
     </div>

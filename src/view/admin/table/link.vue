@@ -280,7 +280,6 @@ const formSubmit = () => {
 }
 
 const delItem = async (row, index) => {
-  console.log(row.isdel)
   await http
     .post("/crud/update/novel", {
       where: { title: row.title },
