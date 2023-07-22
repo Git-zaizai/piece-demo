@@ -1,1 +1,0 @@
-import{bs as o,bg as s,bt as t,aD as e}from"./index-6d977a42.js";const n=o({name:"InputNumber",common:s,peers:{Button:t,Input:e},self:o=>{const{textColorDisabled:s}=o;return{iconColorDisabled:s}}});export{n as i};

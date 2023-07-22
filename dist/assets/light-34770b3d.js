@@ -1,1 +1,0 @@
-import{bs as o,bg as r,cp as a}from"./index-c269230c.js";const e=o({name:"Image",common:r,peers:{Tooltip:a},self:function(){return{toolbarIconColor:"rgba(255, 255, 255, .9)",toolbarColor:"rgba(0, 0, 0, .35)",toolbarBoxShadow:"none",toolbarBorderRadius:"24px"}}});export{e as i};

@@ -1,1 +1,0 @@
-import{Z as s}from"./index-1c63a950.js";import{d as o,a4 as e,ai as r,ak as t}from"./index-29570a71.js";import"./FullscreenOutlined-c08eb37e.js";import"./Dropdown-a455eef8.js";import"./ChevronRight-bd74bdb9.js";import"./use-theme-vars-edad6ce8.js";const a=o({__name:"mongodb",setup:o=>(o,a)=>(e(),r(t(s)))});export{a as default};
