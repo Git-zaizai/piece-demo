@@ -1,0 +1,1 @@
+import{n as e,cx as n,p as o,bl as r}from"./index-bba07fb6.js";function m(){const m=e(n,null);return o((()=>{if(null===m)return r;const{mergedThemeRef:{value:e},mergedThemeOverridesRef:{value:n}}=m,o=(null==e?void 0:e.common)||r;return(null==n?void 0:n.common)?Object.assign({},o,n.common):o}))}export{m as u};
