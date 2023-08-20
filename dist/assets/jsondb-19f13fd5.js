@@ -1,1 +1,0 @@
-import{Z as s}from"./index-dcfb1df0.js";import{d as o,a4 as e,ai as r,ak as t}from"./index-bba07fb6.js";import"./FullscreenOutlined-9f810a90.js";import"./Dropdown-4872ae5c.js";import"./ChevronRight-eb0f27ba.js";import"./use-theme-vars-7c6afddd.js";const a=o({name:"jsondb"}),i=o({...a,setup:o=>(o,a)=>(e(),r(t(s)))});export{i as default};
