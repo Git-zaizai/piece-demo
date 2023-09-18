@@ -3,6 +3,8 @@
     <div class="flex-alc">
       <n-card class="suspension" title="需求公告栏">
         额，目前以满足需求！
+        <br>
+        目前由于服务器到期暂停服务！后续有服务器再说
       </n-card>
       <img class="hecha suspension" src="../../assets/coffee.svg">
     </div>
