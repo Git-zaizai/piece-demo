@@ -1,9 +1,10 @@
-<script setup lang="ts">
+<script setup lang="ts" name="table-link">
 import { ZaiTable } from "@/components/table"
 import { http } from "@/api"
-import { NButton, NTag } from 'naive-ui'
-import { Component } from 'vue'
-import { Eye20Regular, EyeOff20Filled } from '@vicons/fluent'
+import { NTag, NButton } from "naive-ui"
+import { Component } from "vue"
+import { Eye20Regular, EyeOff20Filled } from "@vicons/fluent"
+import ModalForm from "@/components/modal-form.vue"
 
 const columns: ZaiColumns = [
   {
@@ -181,6 +182,22 @@ const formEl = {
   ]
 }
 
+const rules = {
+  title: {
+    trigger: "blur",
+    required: true,
+    validator(_, val: string) {
+      if (val === "") {
+        return new Error("不能为空")
+      }
+      if (isAction && state.data.some(v => v.title === val)) {
+        return new Error("小说名不能相同")
+      }
+      return true
+    }
+  }
+}
+
 const state = reactive({
   data: [],
   form: {
@@ -194,6 +211,7 @@ const state = reactive({
   },
   show: false
 })
+
 const init = async () => {
   try {
     const { data } = await http.get("/api/novel")
@@ -203,14 +221,157 @@ const init = async () => {
   }
 }
 init()
+
+// 判断是add\update
+let isAction = true
+const formRef = ref()
+
+const tableAdd = () => {
+  state.form = {
+    title: "",
+    chapter: "",
+    duwan: 0,
+    recommended: 0,
+    url: "",
+    chapterUrl: "",
+    beizhu: ""
+  }
+  isAction = true
+  state.show = true
+}
+
+const updateItem = row => {
+  isAction = false
+  state.form = row
+  state.show = true
+}
+
+const formSubmit = () => {
+  formRef.value.validate(async (err: any) => {
+    try {
+      if (!err) {
+        let url = isAction ? "/api/novel/add" : "/api/novel/update"
+        const { data } = await http.post(url, state.form)
+        if (isAction) {
+          state.data.unshift(data.data)
+        }
+        state.form = {
+          title: "",
+          chapter: "",
+          duwan: 0,
+          recommended: 0,
+          url: "",
+          chapterUrl: "",
+          beizhu: ""
+        }
+        window.$message.success("操作成功")
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  })
+}
+
+const delItem = async (row, index) => {
+  await http
+      .post("/api/novel/update", state.form)
+      .catch(err => {
+        window.$message.error('删除失败')
+        return Promise.reject(err)
+      })
+  state.data[index].isdel = Number(!row.isdel)
+}
 </script>
 
 <template>
   <div>
-    <zai-table :data="state.data" :columns="columns" checkbox-key="id"/>
+    <zai-table
+        :columns="columns"
+        :data="state.data"
+        checkbox-key="id"
+        @add="tableAdd"
+        @flushed="init"
+        @del-item="delItem"
+        @update-item="updateItem"
+    />
+    <modal-form v-model:show="state.show" @confirm-form="formSubmit">
+      <n-form
+          ref="formRef"
+          label-placement="left"
+          label-width="100"
+          label-align="left"
+          :model="state.form"
+          :rules="rules"
+          @keyup.enter="formSubmit"
+      >
+        <n-form-item label="小说名:" path="title">
+          <n-input
+              placeholder="小说名"
+              clearable
+              v-model:value="state.form.title"
+          />
+        </n-form-item>
+        <n-form-item label="章节数：">
+          <n-input
+              placeholder="章节数"
+              clearable
+              v-model:value="state.form.chapter"
+          />
+        </n-form-item>
+        <n-form-item label="读完：">
+          <n-radio-group v-model:value="state.form.duwan" name="radiogroup">
+            <n-space>
+              <n-radio
+                  v-for="song in formEl.duWan"
+                  :key="song.value"
+                  :value="song.value"
+              >
+                {{ song.label }}
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-form-item>
+        <n-form-item label="推荐/小说：">
+          <n-radio-group
+              v-model:value="state.form.recommended"
+              name="radiogroup"
+          >
+            <n-space>
+              <n-radio
+                  v-for="song in formEl.rec"
+                  :key="song.value"
+                  :value="song.value"
+              >
+                {{ song.label }}
+              </n-radio>
+            </n-space>
+          </n-radio-group>
+        </n-form-item>
+        <n-form-item label="首页链接：">
+          <n-input
+              placeholder="首页链接"
+              clearable
+              v-model:value="state.form.url"
+          />
+        </n-form-item>
+        <n-form-item label="章节链接：">
+          <n-input
+              placeholder="章节链接"
+              clearable
+              v-model:value="state.form.chapterUrl"
+          />
+        </n-form-item>
+        <n-form-item label="备注：">
+          <n-input
+              placeholder="备注"
+              type="textarea"
+              clearable
+              v-model:value="state.form.beizhu"
+          />
+        </n-form-item>
+      </n-form>
+    </modal-form>
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

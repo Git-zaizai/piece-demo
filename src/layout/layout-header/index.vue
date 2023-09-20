@@ -54,9 +54,9 @@
 
 	const { VITE_EVE } = import.meta.env
 	const loginShow = async () => {
-		if (VITE_EVE == '0') {
-			return router.push({ name: 'admin' })
-		}
+    if (VITE_EVE == '0') {
+      return router.push({ name: 'admin' })
+    }
 		try {
 			const data = Storage.get('info')
 			if (data) {

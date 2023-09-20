@@ -8,11 +8,6 @@ import ModalForm from '@/components/modal-form.vue'
 import { InputFile } from '@/components/inputFile'
 import dayjs from 'dayjs'
 
-const emit = defineEmits<{
-  (e: 'update-item', row: any, index: number)
-  (e: 'del-item', row: any, index: number)
-}>()
-
 const columns: ZaiColumns = [
   {
     title: '库名',
