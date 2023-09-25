@@ -61,12 +61,23 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="Admin-Hemo">
 import { DatabasePerson24Regular } from '@vicons/fluent'
 import { ZoomCheck } from '@vicons/tabler'
 import { getMongoDb, getMySql } from '@/api'
 
-const state = reactive({
+interface State {
+  mysql: {
+    values: string,
+    biao: string
+  }
+  mongodb: {
+    values: string,
+    biao: string
+  }
+}
+
+const state = reactive<State>({
   mysql: {
     values: '',
     biao: ''

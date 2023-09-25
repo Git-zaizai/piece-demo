@@ -1,4 +1,4 @@
-<script setup lang="ts" name="table-link">
+<script setup lang="ts">
 import { ZaiTable } from "@/components/table"
 import { http } from "@/api"
 import { NTag, NButton } from "naive-ui"

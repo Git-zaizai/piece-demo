@@ -33,13 +33,13 @@ const actionsColumns: DataTableBaseColumn = {
   width: 200,
   render(row, rowIndex) {
     return h(IndexActionsColumns, {
-      upFn: () => bindDbExport.bind(null, row),
-      delFn: () => bindDbImport.bind(null, row)
+      upFn: bindDbExport.bind(null, row),
+      delFn: bindDbImport.bind(null, row)
     })
   }
 }
 
-async function bindDbExport(row) {
+async function bindDbExport(row: { db: any; dbname: string; }) {
   try {
     const res = await getDbLists({
       db: row.db,
@@ -124,17 +124,17 @@ const init = async () => {
 }
 init()
 
-function bindDbImport(row) {
+function bindDbImport(row: any) {
   state.row = row
   state.formShow = true
 }
 
-const bindFileChange = data => {
+const bindFileChange = (data: any) => {
   state.fileName = data.filesArray[0].file.name
   state.files = data.filesArray
 }
 
-const netPrompt = (type, cont) => {
+const netPrompt = (type: string, cont: string) => {
   let net = window.$notification.create({
     type: type,
     closable: false,

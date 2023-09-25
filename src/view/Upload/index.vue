@@ -165,6 +165,7 @@ const deepUpload = async (filelist: FilesItem[], rootDirectory: string) => {
     const formdata = new FormData()
     formdata.append('file', uploadFileList[i].file)
     formdata.append('path', uploadConfig.value[1]?.modelv ? `${ rootDirectory }/${ uploadFileList[i].path }` : '0')
+    formdata.append('dbInsert', '1')
     request.push(readyUpload(formdata, callbackConfig))
   }
 

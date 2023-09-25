@@ -1,17 +1,32 @@
 <template>
-  <zai-table :columns="columns"
-             :data="state.data"
-             @flushed="init"
-             checkbox-key="name"
-             :actions-columns="actionsColumns"/>
+  <div>
+    <zai-table :columns="columns"
+               :data="state.data"
+               @flushed="init"
+               checkbox-key="name"
+               :actions-columns="actionsColumns"/>
+    <modal-form v-model:show="state.formShow" title="导入-覆盖" @confirm-form="confirm">
+      <input-file title="JSON文件" @file-change="bindFileChange" :multiple="false" accept="application/json"/>
+      <br/>
+      <n-form-item label="文件：" label-placement="left">
+        <n-input v-model:value="state.form.fileName" placeholder="" disabled/>
+      </n-form-item>
+      <n-form-item v-if="state.switchShow" label="是否强行覆盖文件：" label-placement="left">
+        <n-switch v-model:value="state.form.swValue" size="large"></n-switch>
+      </n-form-item>
+    </modal-form>
+  </div>
 </template>
 
-<script setup lang="ts" name="jsondb">
+<script setup lang="ts">
 import { ZaiTable } from '@/components/table'
 import dayjs from 'dayjs'
-import { http } from '@/api'
-import { DataTableBaseColumn } from 'naive-ui'
+import { http, upload } from '@/api'
+import { DataTableBaseColumn, NButton, NotificationType } from 'naive-ui'
 import IndexActionsColumns from '../components/index-actionsColumns'
+import ModalForm from '@/components/modal-form.vue'
+import { InputFile } from '@/components/inputFile'
+import type { DropResult } from '@/components/inputFile'
 
 const columns: ZaiColumns = [
   {
@@ -31,8 +46,15 @@ const columns: ZaiColumns = [
   }
 ]
 
+let files = null
 const state = reactive({
-  data: []
+  data: [],
+  formShow: false,
+  switchShow: false,
+  form: {
+    fileName: '',
+    swValue: false
+  }
 })
 
 const actionsColumns: DataTableBaseColumn = {
@@ -42,8 +64,8 @@ const actionsColumns: DataTableBaseColumn = {
   width: 200,
   render(row, rowIndex) {
     return h(IndexActionsColumns, {
-      upFn: () => bindDbExport.bind(null, row),
-      delFn: () => bindDbImport.bind(null, row)
+      upFn: bindDbExport.bind(null, row),
+      delFn: () => state.formShow = !state.formShow
     })
   }
 }
@@ -71,8 +93,67 @@ async function bindDbExport(row) {
   }
 }
 
-function bindDbImport() {
-  window.$message.warning('后面再说')
+const netPrompt = (type: NotificationType, cont: string) => {
+  let net = window.$notification.create({
+    type: type,
+    closable: false,
+    title: `导入消息`,
+    content: cont,
+    meta: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    action: () =>
+        h(NButton,
+            {
+              text: true,
+              type: 'primary',
+              onClick: () => {
+                net.destroy()
+              }
+            },
+            {
+              default: () => '已读'
+            }
+        )
+  })
+}
+
+function bindFileChange(data: DropResult) {
+  files = data.filesArray[0].file
+  state.form.fileName = files.name + '    ' + (files.size / 1027).toFixed(3) + 'KB'
+}
+
+async function confirm() {
+  try {
+    if (!files) {
+      window.$message.error('请选择JSON数据文件')
+      return
+    }
+
+    const formData = new FormData()
+    formData.set('file', files)
+    formData.set('path', '0')
+    let response = await upload(formData)
+    response = await http.post('/api/jsonimport', {
+      path: response.data.url.replace('/uploads', ''),
+      force: state.form.swValue
+    })
+
+    if (response.data.code === 400) {
+      state.switchShow = !state.switchShow
+      netPrompt('warning', response.data.msg)
+    } else if (response.data.code === 399) {
+      files = null
+      netPrompt('warning', response.data.msg)
+    } else {
+      state.formShow = false
+      state.switchShow = !state.switchShow
+      state.form.swValue = false
+      state.form.fileName = ''
+      netPrompt('success', response.data.msg)
+    }
+  } catch (e) {
+    console.log('提交文件失败', e)
+    netPrompt('error', '文件上传失败！')
+  }
 }
 
 const init = async () => {

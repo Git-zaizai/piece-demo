@@ -4,7 +4,8 @@
         id="file_webky"
         ref="inputFileRef"
         type="file"
-        multiple
+        :multiple="multiple"
+        :accept="accept"
         :webkitdirectory="webkitdirectory"
         @change="inputFileChange"
     />
@@ -39,6 +40,14 @@ export default defineComponent({
     title: {
       type: String,
       default: '请不要上传敏感数据，比如你的银行卡号和密码，信用卡号有效期和安全码'
+    },
+    accept: {
+      type: String,
+      default: ''
+    },
+    multiple: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['FileChange'],

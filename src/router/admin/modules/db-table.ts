@@ -15,8 +15,8 @@ const dbTable: AppRouteRecordRaw = {
     },
     children: [
         {
-            path: 'db-table-link',
-            name: 'db-table-link',
+            path: 'link',
+            name: 'link',
             component: () => import('@/view/admin/table/link.vue'),
             meta: {
                 title: 'link',
@@ -24,8 +24,8 @@ const dbTable: AppRouteRecordRaw = {
             },
         },
         {
-            path: 'db-table-link-json',
-            name: 'db-table-link-json',
+            path: 'link-json',
+            name: 'link-json',
             component: () => import('@/view/admin/table/link-json.vue'),
             meta: {
                 title: 'link-json',

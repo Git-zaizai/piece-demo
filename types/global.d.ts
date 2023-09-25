@@ -1,4 +1,3 @@
-
 declare interface Window {
     $loadingBar: typeof import('naive-ui').LoadingBarApi
     $dialog: typeof import('naive-ui').DialogApi
