@@ -20,34 +20,28 @@ const columns: ZaiColumns = [
     title: "章节数",
     key: "chapter",
     render: (row): string => {
-      return row.chapter ? `${row.chapter}章` : "无"
+      return row.chapter ? `${ row.chapter }章` : "无"
     }
   },
   {
     title: "读完",
     key: "duwan",
     render(row) {
-      if (row.duwan == 0) {
-        return h(
-          NTag,
-          {
-            bordered: false,
-            type: "success"
-          },
-          {
-            default: () => "读完"
-          }
-        )
+      let tagType = 'success',
+          txt = '读完'
+      if (row.duwan == '0') {
+        tagType = 'warning'
+        txt = '读完'
       }
       return h(
-        NTag as Component,
-        {
-          bordered: false,
-          type: "warning"
-        },
-        {
-          default: () => "未读完"
-        }
+          NTag as Component ,
+          {
+            bordered: false,
+            type: tagType
+          },
+          {
+            default: () => txt
+          }
       )
     }
   },
@@ -60,14 +54,14 @@ const columns: ZaiColumns = [
         reco = "推荐"
       }
       return h(
-        NTag as Component,
-        {
-          bordered: false,
-          type: "info"
-        },
-        {
-          default: () => reco
-        }
+          NTag as Component,
+          {
+            bordered: false,
+            type: "info"
+          },
+          {
+            default: () => reco
+          }
       )
     }
   },
@@ -77,27 +71,27 @@ const columns: ZaiColumns = [
     render(row) {
       if (row.isdel === 0) {
         return h(
-          NTag as Component,
-          {
-            bordered: false,
-            type: "error"
-          },
-          {
-            default: () => "删除",
-            icon: () => h(EyeOff20Filled)
-          }
+            NTag as Component,
+            {
+              bordered: false,
+              type: "error"
+            },
+            {
+              default: () => "删除",
+              icon: () => h(EyeOff20Filled)
+            }
         )
       }
       return h(
-        NTag as Component,
-        {
-          bordered: false,
-          type: "success"
-        },
-        {
-          default: () => "存在",
-          icon: () => h(Eye20Regular)
-        }
+          NTag as Component,
+          {
+            bordered: false,
+            type: "success"
+          },
+          {
+            default: () => "存在",
+            icon: () => h(Eye20Regular)
+          }
       )
     }
   },
@@ -106,23 +100,23 @@ const columns: ZaiColumns = [
     key: "url",
     render(row) {
       return h(
-        NButton,
-        {
-          strong: true,
-          tertiary: true,
-          size: "small",
-          onClick: () => {
-            console.log(row.url)
-          }
-        },
-        {
-          default: () => {
-            if (!row.url || row.url === "") {
-              return "无"
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: "small",
+            onClick: () => {
+              console.log(row.url)
             }
-            return "复制"
+          },
+          {
+            default: () => {
+              if (!row.url || row.url === "") {
+                return "无"
+              }
+              return "复制"
+            }
           }
-        }
       )
     }
   },
@@ -131,23 +125,23 @@ const columns: ZaiColumns = [
     key: "chapterUrl",
     render(row) {
       return h(
-        NButton,
-        {
-          strong: true,
-          tertiary: true,
-          size: "small",
-          onClick: () => {
-            console.log(row.chapterUrl)
-          }
-        },
-        {
-          default: () => {
-            if (!row.chapterUrl || row.chapterUrl === "") {
-              return "无"
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: "small",
+            onClick: () => {
+              console.log(row.chapterUrl)
             }
-            return "复制"
+          },
+          {
+            default: () => {
+              if (!row.chapterUrl || row.chapterUrl === "") {
+                return "无"
+              }
+              return "复制"
+            }
           }
-        }
       )
     }
   },
@@ -214,8 +208,8 @@ const state = reactive({
 
 const init = async () => {
   try {
-    const { data } = await http.get("/crud/select/novel")
-    state.data = data.reverse()
+    const { data } = await http.get("/curd-mongo/find/novel", { params: { ops: { many: true } } })
+    state.data = data.data.reverse()
   } catch (e) {
     console.error("init", e)
   }
@@ -250,17 +244,17 @@ const formSubmit = () => {
   formRef.value.validate(async err => {
     try {
       if (!err) {
-        let url = isAction ? "/crud/insert/novel" : "/crud/update/novel"
+        let url = isAction ? "/novel/update" : "/novel/update"
         let body: any = state.form
         if (!isAction) {
           body.where = {
             title: state.form.title
           }
         }
-        await http.post(url, state.form)
+        const res = await http.post(url, state.form)
         if (isAction) {
-          const res = await http.get("/desc-limit/novel")
-          state.data.unshift(...res.data.data)
+          // const res = await http.get("/desc-limit/novel")
+          state.data.unshift(Object.assign(state.form, res.data.data))
           state.form = {
             title: "",
             chapter: "",
@@ -281,11 +275,11 @@ const formSubmit = () => {
 
 const delItem = async (row, index) => {
   await http
-    .post("/crud/update/novel", {
-      where: { title: row.title },
-      isdel: !row.isdel
-    })
-    .catch(err => Promise.reject(err))
+      .post("/crud/update/novel", {
+        where: { title: row.title },
+        isdel: !row.isdel
+      })
+      .catch(err => Promise.reject(err))
   state.data[index].isdel = Number(!row.isdel)
 }
 </script>
@@ -293,45 +287,45 @@ const delItem = async (row, index) => {
 <template>
   <div>
     <zai-table
-      :columns="columns"
-      :data="state.data"
-      checkbox-key="id"
-      @add="tableAdd"
-      @flushed="init"
-      @del-item="delItem"
-      @update-item="updateItem"
+        :columns="columns"
+        :data="state.data"
+        checkbox-key="_id"
+        @add="tableAdd"
+        @flushed="init"
+        @del-item="delItem"
+        @update-item="updateItem"
     />
     <modal-form v-model:show="state.show" @confirm-form="formSubmit">
       <n-form
-        ref="formRef"
-        label-placement="left"
-        label-width="100"
-        label-align="left"
-        :model="state.form"
-        :rules="rules"
-        @keyup.enter="formSubmit"
+          ref="formRef"
+          label-placement="left"
+          label-width="100"
+          label-align="left"
+          :model="state.form"
+          :rules="rules"
+          @keyup.enter="formSubmit"
       >
         <n-form-item label="小说名:" path="title">
           <n-input
-            placeholder="小说名"
-            clearable
-            v-model:value="state.form.title"
+              placeholder="小说名"
+              clearable
+              v-model:value="state.form.title"
           />
         </n-form-item>
         <n-form-item label="章节数：">
           <n-input
-            placeholder="章节数"
-            clearable
-            v-model:value="state.form.chapter"
+              placeholder="章节数"
+              clearable
+              v-model:value="state.form.chapter"
           />
         </n-form-item>
         <n-form-item label="读完：">
           <n-radio-group v-model:value="state.form.duwan" name="radiogroup">
             <n-space>
               <n-radio
-                v-for="song in formEl.duWan"
-                :key="song.value"
-                :value="song.value"
+                  v-for="song in formEl.duWan"
+                  :key="song.value"
+                  :value="song.value"
               >
                 {{ song.label }}
               </n-radio>
@@ -340,14 +334,14 @@ const delItem = async (row, index) => {
         </n-form-item>
         <n-form-item label="推荐/小说：">
           <n-radio-group
-            v-model:value="state.form.recommended"
-            name="radiogroup"
+              v-model:value="state.form.recommended"
+              name="radiogroup"
           >
             <n-space>
               <n-radio
-                v-for="song in formEl.rec"
-                :key="song.value"
-                :value="song.value"
+                  v-for="song in formEl.rec"
+                  :key="song.value"
+                  :value="song.value"
               >
                 {{ song.label }}
               </n-radio>
@@ -356,24 +350,24 @@ const delItem = async (row, index) => {
         </n-form-item>
         <n-form-item label="首页链接：">
           <n-input
-            placeholder="首页链接"
-            clearable
-            v-model:value="state.form.url"
+              placeholder="首页链接"
+              clearable
+              v-model:value="state.form.url"
           />
         </n-form-item>
         <n-form-item label="章节链接：">
           <n-input
-            placeholder="章节链接"
-            clearable
-            v-model:value="state.form.chapterUrl"
+              placeholder="章节链接"
+              clearable
+              v-model:value="state.form.chapterUrl"
           />
         </n-form-item>
         <n-form-item label="备注：">
           <n-input
-            placeholder="备注"
-            type="textarea"
-            clearable
-            v-model:value="state.form.beizhu"
+              placeholder="备注"
+              type="textarea"
+              clearable
+              v-model:value="state.form.beizhu"
           />
         </n-form-item>
       </n-form>

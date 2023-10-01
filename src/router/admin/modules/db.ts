@@ -18,7 +18,7 @@ const db: AppRouteRecordRaw = {
       name: 'db-config',
       component: () => import('@/view/admin/db/index.vue'),
       meta: {
-        title: '数据库导出导入',
+        title: '数据库表导出导入',
         icon: renderIcon(DatabaseExport),
       },
     },
