@@ -1,15 +1,15 @@
 <template>
   <n-layout :native-scrollbar="false" v-once>
     <div class="banner">
-      <left-image v-if="imageis.left" class="left-image"/>
-      <right-image v-if="imageis.right" class="right-image"/>
+      <left-image v-if="imageis.left" class="left-image" />
+      <right-image v-if="imageis.right" class="right-image" />
     </div>
     <n-el class="home-content">
       <div class="hc-title flex-fdc-alc-juc">
         <h2 class="hc-search">Search</h2>
         <n-input round placeholder="站内搜索">
           <template #suffix>
-            <n-icon :component="FlashOutline"/>
+            <n-icon :component="FlashOutline" />
           </template>
         </n-input>
       </div>
@@ -30,7 +30,7 @@ import { FlashOutline } from '@vicons/ionicons5'
 import { routeModuleList } from '@/router/routers'
 
 const imageis = reactive({
-  left: false,
+  left: true,
   right: true
 })
 
@@ -56,14 +56,15 @@ const homeCardRouteArray = computed(() => {
 }
 
 .left-image {
-  right: calc(50% + 270px);
-  width: calc(50% - 270px);
+  left: 0;
+  // right: calc(50% + 270px);
+  // width: calc(50% - 270px);
   min-width: 440px;
 }
 
 .right-image {
   right: 0;
-  width: 41vw;
+  // width: 440px;
   min-width: 440px;
 }
 
@@ -131,7 +132,7 @@ const homeCardRouteArray = computed(() => {
   position: fixed;
   width: calc(100vw - 41vw);
   height: calc(100vh - 64px);
-  left: 0;
+  left: calc(50vw - (100vw - 41vw) / 2);
   top: 64px;
 
   .hc-title {

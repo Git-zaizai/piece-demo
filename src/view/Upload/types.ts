@@ -28,7 +28,7 @@ export interface uploadFileListItem {
     name: string
     downloadUrl: string
     imgUrl: string
-    status: string
+    status: 'success' | 'error'
     percentage: number
 }
 

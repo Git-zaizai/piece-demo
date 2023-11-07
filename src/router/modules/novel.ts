@@ -9,9 +9,8 @@ const novel: AppRouteRecordRaw = {
   },
   children: [
     {
-      path: 'http://175.178.151.160/gadgets/n',
-      name: 'http://175.178.151.160/gadgets/n',
-      component: () => import('@/view/Upload/index.vue'),
+      path: 'http://116.204.106.221/gadgets/n',
+      name: 'http://116.204.106.221/gadgets/n',
       meta: {
         navigationData: {
           headerText: '小说站点--目前主要站点',
@@ -21,8 +20,8 @@ const novel: AppRouteRecordRaw = {
       },
     },
     {
-      path: 'https://gadgets-server.vercel.app/n',
-      name: 'https://gadgets-server.vercel.app/n',
+      path: 'http://175.178.151.160/n',
+      name: 'http://175.178.151.160/n',
       meta: {
         navigationData: {
           headerText: '小说站点--副站点',

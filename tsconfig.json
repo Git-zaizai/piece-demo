@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "esnext",
-    "moduleResolution": "Node",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
     "preserveConstEnums": true,
     "noUnusedParameters": true,
     "noUnusedLocals": false,
@@ -15,14 +15,9 @@
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "types": [
-      "node",
-      "vite/client"
-    ],
+    "types": ["node", "vite/client"],
     "lib": [
       "ES6",
       "dom",
@@ -31,9 +26,7 @@
       "DOM.Iterable",
       "ES2018.RegExp"
     ],
-    "typeRoots": [
-      "./types",
-    ]
+    "typeRoots": ["types"]
   },
   "include": [
     "src/**/*.ts",
@@ -44,9 +37,5 @@
     "types/*.ts",
     "vite.config.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.js"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.js"]
 }

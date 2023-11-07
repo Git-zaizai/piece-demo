@@ -9,5 +9,4 @@ function setup() {
     const app = createApp(App)
     app.use(Pinia).use(router).mount('#app')
 }
-
 setup()
