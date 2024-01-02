@@ -62,7 +62,7 @@ const actionsColumns: DataTableBaseColumn = {
   key: "actions_0",
   fixed: "right",
   width: 200,
-  render(row, rowIndex) {
+  render(row) {
     return h(IndexActionsColumns, {
       upFn: bindDbExport.bind(null, row),
       delFn: () => state.formShow = !state.formShow

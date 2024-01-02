@@ -10,16 +10,16 @@
   <!--    </lay-out>-->
   <!--  </WindowPropoerty>-->
   <n-config-provider
-    :theme="common.bodyConfigColor.theme"
-    :theme-overrides="view.naiveThemeOverrides"
-    :locale="zhCN"
+      :theme="common.bodyConfigColor.theme"
+      :theme-overrides="view.naiveThemeOverrides"
+      :locale="zhCN"
   >
-    <layout-header />
+    <layout-header/>
     <!--    <layout-home v-show="isLayout"/>
         <router-view v-show="!isLayout"/>-->
-    <layout-home v-if="isLayout" />
-    <router-view v-else />
-    <setting-drawer />
+    <layout-home v-if="isLayout"/>
+    <router-view v-else/>
+    <setting-drawer/>
   </n-config-provider>
 </template>
 <script setup lang="ts">
@@ -47,15 +47,15 @@ if (common.constantInverted) {
 }
 
 watch(
-  () => view.naiveThemeOverrides,
-  (value) => {
-    if (value && value.common) {
-      addThemeCssVarsToHtml(value.common, common.inverted)
-    } else {
-      document.documentElement.style.cssText = ""
-    }
-  },
-  { immediate: true }
+    () => view.naiveThemeOverrides,
+    (value) => {
+      if (value && value.common) {
+        addThemeCssVarsToHtml(value.common, common.inverted)
+      } else {
+        document.documentElement.style.cssText = ""
+      }
+    },
+    { immediate: true }
 )
 
 function getRouterName(routes: AppRouteRecordRaw[]): string[] {
