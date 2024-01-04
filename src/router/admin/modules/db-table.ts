@@ -22,16 +22,7 @@ const dbTable: AppRouteRecordRaw = {
                 title: 'link',
                 icon: renderIcon(BookStar20Regular)
             },
-        },
-        {
-            path: 'link-json',
-            name: 'link-json',
-            component: () => import('@/view/admin/table/link-json.vue'),
-            meta: {
-                title: 'link-json',
-                icon: renderIcon(BookStar20Regular)
-            },
-        },
+        }
     ],
 }
 export default dbTable
