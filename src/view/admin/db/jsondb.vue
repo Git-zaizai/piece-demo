@@ -1,19 +1,24 @@
 <template>
   <div>
-    <zai-table :columns="columns"
-               :data="state.data"
-               @flushed="init"
-               checkbox-key="name"
-               :actions-columns="actionsColumns"/>
-    <modal-form v-model:show="state.formShow" title="导入-覆盖" @confirm-form="confirm">
-      <input-file title="JSON文件" @file-change="bindFileChange" :multiple="false" accept="application/json"/>
-      <br/>
-      <n-form-item label="文件：" label-placement="left">
-        <n-input v-model:value="state.form.fileName" placeholder="" disabled/>
-      </n-form-item>
-      <n-form-item v-if="state.switchShow" label="是否强行覆盖文件：" label-placement="left">
-        <n-switch v-model:value="state.form.swValue" size="large"></n-switch>
-      </n-form-item>
+    <zai-table :columns="columns" :data="state" @flushed="init" checkbox-key="name" :actions-columns="actionsColumns" />
+    <modal-form v-model:show="modalShow" title="导入-覆盖" @confirm-form="confirm">
+      <input-file title="JSON文件" @file-change="bindFileChange" :multiple="false" accept="application/json" />
+      <br />
+      文件：
+      <n-tag type="success">
+        {{ fileData.fileName }}
+      </n-tag>
+      <br />
+      <br />
+      文件大小：
+      <n-tag type="warning">
+        {{ fileData.size }}
+      </n-tag>
+      <br />
+      <br />
+      <div v-if="formShow" class="flex-ai-c">
+        是否强行覆盖文件： <n-switch v-model:value="swValue" size="large"></n-switch>
+      </div>
     </modal-form>
   </div>
 </template>
@@ -22,11 +27,19 @@
 import { ZaiTable } from '@/components/table'
 import dayjs from 'dayjs'
 import { http, upload } from '@/api'
-import { DataTableBaseColumn, NButton, NotificationType } from 'naive-ui'
+import { NButton } from 'naive-ui'
+import type { NotificationType, DataTableBaseColumn } from 'naive-ui'
 import IndexActionsColumns from '../components/index-actionsColumns'
 import ModalForm from '@/components/modal-form.vue'
 import { InputFile } from '@/components/inputFile'
 import type { DropResult } from '@/components/inputFile'
+
+interface Jsondb {
+  name: string;
+  size: number;
+  mtime: string;
+  path: string;
+}
 
 const columns: ZaiColumns = [
   {
@@ -35,7 +48,8 @@ const columns: ZaiColumns = [
   },
   {
     title: '文件大小(字节)',
-    key: 'size'
+    key: 'size',
+    render: row => (row.size + ' Byte')
   },
   {
     title: '最新修改时间',
@@ -47,15 +61,15 @@ const columns: ZaiColumns = [
 ]
 
 let files = null
-const state = reactive({
-  data: [],
-  formShow: false,
-  switchShow: false,
-  form: {
-    fileName: '',
-    swValue: false
-  }
+const [modalShow, modalShowToggle] = useToggle()
+const [formShow, formShowToggle] = useToggle()
+const swValue = ref(false)
+const fileData = ref({
+  fileName: '',
+  size: ''
 })
+const state = ref()
+
 
 const actionsColumns: DataTableBaseColumn = {
   title: "操作",
@@ -65,7 +79,7 @@ const actionsColumns: DataTableBaseColumn = {
   render(row) {
     return h(IndexActionsColumns, {
       upFn: bindDbExport.bind(null, row),
-      delFn: () => state.formShow = !state.formShow
+      delFn: modalShowToggle
     })
   }
 }
@@ -101,24 +115,30 @@ const netPrompt = (type: NotificationType, cont: string) => {
     content: cont,
     meta: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     action: () =>
-        h(NButton,
-            {
-              text: true,
-              type: 'primary',
-              onClick: () => {
-                net.destroy()
-              }
-            },
-            {
-              default: () => '已读'
-            }
-        )
+      h(NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => {
+            net.destroy()
+          }
+        },
+        {
+          default: () => '已读'
+        }
+      )
   })
 }
 
-function bindFileChange(data: DropResult) {
-  files = data.filesArray[0].file
-  state.form.fileName = files.name + '    ' + (files.size / 1027).toFixed(3) + 'KB'
+function bindFileChange(filesDrop: DropResult) {
+  files = filesDrop.filesArray[0].file
+  fileData.value = {
+    fileName: files.name,
+    size: (files.size / 1027).toFixed(3) + ' KB'
+  }
+  if (state.value.some(item => item.name === files.name)) {
+    formShowToggle()
+  }
 }
 
 async function confirm() {
@@ -128,28 +148,12 @@ async function confirm() {
       return
     }
 
-    const formData = new FormData()
-    formData.set('file', files)
-    formData.set('path', '0')
-    let response = await upload(formData)
-    response = await http.post('/api/jsonimport', {
-      path: response.data.url.replace('/uploads', ''),
-      force: state.form.swValue
-    })
-
-    if (response.data.code === 400) {
-      state.switchShow = !state.switchShow
-      netPrompt('warning', response.data.msg)
-    } else if (response.data.code === 399) {
-      files = null
-      netPrompt('warning', response.data.msg)
-    } else {
-      state.formShow = false
-      state.switchShow = !state.switchShow
-      state.form.swValue = false
-      state.form.fileName = ''
-      netPrompt('success', response.data.msg)
+    if (formShow.value && !swValue.value) {
+      window.$message.error('是否强制覆盖，请确认')
+      return
     }
+
+
   } catch (e) {
     console.log('提交文件失败', e)
     netPrompt('error', '文件上传失败！')
@@ -157,8 +161,8 @@ async function confirm() {
 }
 
 const init = async () => {
-  const { data } = await http.get('/api/jsonlist')
-  state.data = data.data
+  const { data } = await http.get('/json-list')
+  state.value = data.data
 }
 init()
 </script>
