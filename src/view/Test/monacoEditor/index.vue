@@ -4,7 +4,7 @@
 import { useToggle } from '@vueuse/core'
 import editor from './editor.vue'
 const [show, toggle] = useToggle()
-const [editorshow, editorshowToggle] = useToggle(false)
+const [editorshow, editorshowToggle] = useToggle(true)
 
 /* watchEffect(() => {
     console.log(editorshow.value);
