@@ -11,6 +11,7 @@
   "dependencies": {
     "@better-scroll/core": "^2.5.1",
     "@better-scroll/mouse-wheel": "^2.5.1",
+    "@monaco-editor/loader": "^1.4.0",
     "@soybeanjs/vue-materials": "^0.1.9",
     "@vicons/antd": "^0.12.0",
     "@vicons/carbon": "^0.12.0",
@@ -22,6 +23,7 @@
     "axios": "^0.26.0",
     "colord": "^2.9.3",
     "dayjs": "^1.11.8",
+    "monaco-editor": "^0.45.0",
     "naive-ui": "^2.34.3",
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^3.1.0",

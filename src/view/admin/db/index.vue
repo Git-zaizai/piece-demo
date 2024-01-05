@@ -7,7 +7,6 @@ import { NButton } from 'naive-ui'
 import ModalForm from '@/components/modal-form.vue'
 import { InputFile } from '@/components/inputFile'
 import dayjs from 'dayjs'
-import useBoolean from '@/hooks/use-boolean'
 
 const columns: ZaiColumns = [
   {

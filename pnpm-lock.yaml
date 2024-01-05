@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@better-scroll/core':
     specifier: ^2.5.1
@@ -7,6 +11,9 @@ dependencies:
   '@better-scroll/mouse-wheel':
     specifier: ^2.5.1
     version: 2.5.1
+  '@monaco-editor/loader':
+    specifier: ^1.4.0
+    version: 1.4.0(monaco-editor@0.45.0)
   '@soybeanjs/vue-materials':
     specifier: ^0.1.9
     version: 0.1.9(vue@3.2.45)
@@ -40,6 +47,9 @@ dependencies:
   dayjs:
     specifier: ^1.11.8
     version: 1.11.8
+  monaco-editor:
+    specifier: ^0.45.0
+    version: 0.45.0
   naive-ui:
     specifier: ^2.34.3
     version: 2.34.3(vue@3.2.45)
@@ -700,6 +710,15 @@ packages:
 
   /@juggle/resize-observer@3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+    dev: false
+
+  /@monaco-editor/loader@1.4.0(monaco-editor@0.45.0):
+    resolution: {integrity: sha512-00ioBig0x642hytVspPl7DbQyaSWRaolYie/UFNjoTdvoKPzo6xrXLhTk9ixgIKcLH5b5vDOjVNiGyY+uDCUlg==}
+    peerDependencies:
+      monaco-editor: '>= 0.21.0 < 1'
+    dependencies:
+      monaco-editor: 0.45.0
+      state-local: 1.0.7
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
@@ -1414,8 +1433,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /highlight.js@11.7.0:
-    resolution: {integrity: sha512-1rRqesRFhMO/PRF+G86evnyJkCgaZFOI+Z6kdj15TA18funfoqJXvgPCLSf0SWq3SRfg1j3HlDs8o4s3EGq1oQ==}
+  /highlight.js@11.9.0:
+    resolution: {integrity: sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==}
     engines: {node: '>=12.0.0'}
     dev: false
 
@@ -1595,6 +1614,10 @@ packages:
       ufo: 1.1.1
     dev: true
 
+  /monaco-editor@0.45.0:
+    resolution: {integrity: sha512-mjv1G1ZzfEE3k9HZN0dQ2olMdwIfaeAAjFiwNprLfYNRSz7ctv9XuCT7gPtBGrMUeV1/iZzYKj17Khu1hxoHOA==}
+    dev: false
+
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
@@ -1614,7 +1637,7 @@ packages:
       date-fns: 2.29.3
       date-fns-tz: 1.3.7(date-fns@2.29.3)
       evtd: 0.2.4
-      highlight.js: 11.7.0
+      highlight.js: 11.9.0
       lodash: 4.17.21
       lodash-es: 4.17.21
       seemly: 0.3.6
@@ -1891,6 +1914,10 @@ packages:
   /sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
     deprecated: Please use @jridgewell/sourcemap-codec instead
+
+  /state-local@1.0.7:
+    resolution: {integrity: sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==}
+    dev: false
 
   /strip-literal@1.0.1:
     resolution: {integrity: sha512-QZTsipNpa2Ppr6v1AmJHESqJ3Uz247MUS0OjrnnZjFAvEoWqxuyFuXn2xLgMtRnijJShAa1HL0gtJyUs7u7n3Q==}

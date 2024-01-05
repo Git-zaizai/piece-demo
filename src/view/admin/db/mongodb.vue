@@ -4,7 +4,7 @@ import { getMongoDb, createTable, delTable } from '@/api'
 import type { DataTableBaseColumn } from 'naive-ui'
 import { NButton } from 'naive-ui'
 import ModalForm from '@/components/modal-form.vue'
-import useBoolean from '@/hooks/use-boolean'
+import { useToggle } from '@vueuse/core'
 import dayjs from 'dayjs'
 
 const columns: ZaiColumns = [
@@ -32,15 +32,15 @@ const actionsColumns: DataTableBaseColumn = {
   width: 100,
   render(row) {
     return h(
-        NButton,
-        {
-          type: 'error',
-          ghost: true,
-          onClick: delButClick.bind(null, row)
-        },
-        {
-          default: () => '删除'
-        }
+      NButton,
+      {
+        type: 'error',
+        ghost: true,
+        onClick: delButClick.bind(null, row)
+      },
+      {
+        default: () => '删除'
+      }
     )
   }
 }
@@ -53,19 +53,19 @@ const netPrompt = (type: string, cont: string) => {
     content: cont,
     meta: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     action: () =>
-        h(
-            NButton,
-            {
-              text: true,
-              type: 'primary',
-              onClick: () => {
-                net.destroy()
-              }
-            },
-            {
-              default: () => '已读'
-            }
-        )
+      h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => {
+            net.destroy()
+          }
+        },
+        {
+          default: () => '已读'
+        }
+      )
   })
   return net
 }
@@ -104,7 +104,7 @@ const init = async () => {
 init()
 
 
-const { bool: addFormShow, toggle } = useBoolean()
+const [addFormShow, toggle] = useToggle()
 
 interface Mongo {
   status: "error" | "success" | "warning"
@@ -148,7 +148,7 @@ const createTableConfirm = async () => {
   }, 2000)
 }
 
-const { bool: delShow, toggle: delToggle } = useBoolean()
+const [delShow, delToggle] = useToggle()
 const text = ref()
 
 function delButClick(row: any) {
@@ -174,20 +174,20 @@ async function delTableConfirm() {
 <template>
   <div>
     <zai-table :data="state.data" :columns="columns" checkbox-key="dbname" :actions-columns="actionsColumns"
-               @flushed="init" :checkbox="false" @add="toggle"/>
+      @flushed="init" :checkbox="false" @add="toggle" />
     <modal-form v-model:show="addFormShow" title="新建表" @confirm-form="createTableConfirm">
       <n-card>
         <n-tabs default-value="oasis" justify-content="space-between" type="line" animated>
           <n-tab-pane name="oasis" tab="mongoDB">
             <n-form-item label="表名：" :validation-status="mongo.status" :feedback="mongo.feedback">
-              <n-input v-model:value="mongo.value" placeholder="请输入表名"/>
+              <n-input v-model:value="mongo.value" placeholder="请输入表名" />
             </n-form-item>
           </n-tab-pane>
         </n-tabs>
       </n-card>
     </modal-form>
     <modal-form v-model:show="delShow" title="确定要删除吗？" @confirm-form="delTableConfirm">
-      <br/>
+      <br />
       <h1>表：&ensp;{{ text }}</h1>
     </modal-form>
   </div>

@@ -44,8 +44,7 @@ export default defineConfig((configEnv) => {
               'useNotification',
               'useLoadingBar'
             ]
-          },
-          '@vueuse/core'
+          }
         ],
         include: [
           /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
@@ -78,6 +77,7 @@ export default defineConfig((configEnv) => {
         }
       }
     },
+
     build: {
       target: ['es2022', 'edge88', 'firefox78', 'chrome87', 'safari14'],
       chunkSizeWarningLimit: 2000,
@@ -88,6 +88,15 @@ export default defineConfig((configEnv) => {
           drop_console: true,
           drop_debugger: true
         }
+      },
+      optimizeDeps: {
+        include: [
+          `monaco-editor/esm/vs/language/json/json.worker`,
+          `monaco-editor/esm/vs/language/css/css.worker`,
+          `monaco-editor/esm/vs/language/html/html.worker`,
+          `monaco-editor/esm/vs/language/typescript/ts.worker`,
+          `monaco-editor/esm/vs/editor/editor.worker`
+        ]
       }
     }
   }

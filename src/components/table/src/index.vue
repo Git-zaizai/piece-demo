@@ -13,7 +13,7 @@ import {
 } from "@vicons/antd"
 
 import useIsClass from "@/hooks/use-is-class"
-import useBoolean from "@/hooks/use-boolean"
+import { useToggle } from '@vueuse/core'
 import Actions from "./components/actions.vue"
 import { getScrollX } from "./utils"
 import { ZaiTableProps } from "./props"
@@ -27,10 +27,10 @@ const emit = defineEmits<{
   (e: "update-item", row: any, rowIndex: number)
   (e: "del-item", row: any, rowIndex: number)
   (
-      e: "checkbox-change",
-      keys: Array<string | number>,
-      rows: [],
-      meta: { action: string; row: any }
+    e: "checkbox-change",
+    keys: Array<string | number>,
+    rows: [],
+    meta: { action: string; row: any }
   )
   (e: "add")
   (e: "flushed")
@@ -43,7 +43,7 @@ const getColumns = (): DataTableBaseColumn[] => {
   let res = null
   if (props.checkbox) {
     res = ([{ type: "selection", fixed: "left" }] as any[]).concat(
-        props.columns
+      props.columns
     )
   } else {
     res = props.columns
@@ -79,9 +79,9 @@ const cssVars = computed(() => ({
 
 // 表格内容的横向宽度，如果列被水平固定了，则需要设定它
 const scroll_x: number = getScrollX(
-    props.columns,
-    props.scrollX,
-    props.actionsColumns
+  props.columns,
+  props.scrollX,
+  props.actionsColumns
 )
 
 // 斑马纹
@@ -111,7 +111,7 @@ const densitySelect = (key: "small" | "medium" | "large") => {
 }
 
 // 全屏
-const { bool, toggle: toggleFu } = useBoolean()
+const [bool, toggleFu] = useToggle()
 
 // 列设置
 const lieFn = () => {
@@ -120,26 +120,26 @@ const lieFn = () => {
 
 // 分页设置
 const paginationReactive = reactive<any>(
-    Object.assign(
-        {
-          page: 1,
-          pageSize: 10,
-          showSizePicker: true,
-          pageSizes: [10, 20, 30, 50, 100],
-          showQuickJumper: true,
-          onChange: (page: number) => {
-            paginationReactive.page = page
-          },
-          onUpdatePageSize: (pageSize: number) => {
-            paginationReactive.pageSize = pageSize
-            paginationReactive.page = 1
-          },
-          prefix: ({ itemCount }) => {
-            return `共 ${ itemCount } 项`
-          }
-        },
-        props.pagination
-    )
+  Object.assign(
+    {
+      page: 1,
+      pageSize: 10,
+      showSizePicker: true,
+      pageSizes: [10, 20, 30, 50, 100],
+      showQuickJumper: true,
+      onChange: (page: number) => {
+        paginationReactive.page = page
+      },
+      onUpdatePageSize: (pageSize: number) => {
+        paginationReactive.pageSize = pageSize
+        paginationReactive.page = 1
+      },
+      prefix: ({ itemCount }) => {
+        return `共 ${itemCount} 项`
+      }
+    },
+    props.pagination
+  )
 )
 
 // row-key 这个的作用是 如果表格使用了多选框 要么设置这个  要么在data里面有 key 这个字段
@@ -149,9 +149,9 @@ const getRowKey = (row): string | number => {
 
 // 选择 多选按钮 回调
 const checkboxChange = (
-    keys: Array<string | number>,
-    rows: [],
-    meta: { row: any; action: "check" | "uncheck" | "checkAll" | "uncheckAll" }
+  keys: Array<string | number>,
+  rows: [],
+  meta: { row: any; action: "check" | "uncheck" | "checkAll" | "uncheckAll" }
 ) => {
   emit("checkbox-change", keys, rows, meta)
 }
@@ -174,24 +174,24 @@ if (props.loading) {
   tableLoading = ref(true)
   // 设置 watch 监听 props.data的变化
   stop = watch(
-      () => props.data,
-      () => {
-        // 这里的主要目的处理初始化时的 loading
-        // 初始化时 props.data 是 [] 为空 ,请求完成后就是 [...] 有值了
-        // 就需要关闭 loading
-        // 第一次搞完就停止掉这个watch
-        if (tableLoading.value) {
-          nextTick(() => {
-            setTimeout(() => {
-              tableLoading.value = false
-              stop()
-            }, 1000)
-          })
-        }
-      },
-      {
-        immediate: true
+    () => props.data,
+    () => {
+      // 这里的主要目的处理初始化时的 loading
+      // 初始化时 props.data 是 [] 为空 ,请求完成后就是 [...] 有值了
+      // 就需要关闭 loading
+      // 第一次搞完就停止掉这个watch
+      if (tableLoading.value) {
+        nextTick(() => {
+          setTimeout(() => {
+            tableLoading.value = false
+            stop()
+          }, 1000)
+        })
       }
+    },
+    {
+      immediate: true
+    }
   )
 }
 
@@ -214,7 +214,7 @@ const refreshTable = () => {
       <n-button strong secondary type="success" @click="emit('add')">
         <template #icon>
           <n-icon>
-            <add/>
+            <add />
           </n-icon>
         </template>
       </n-button>
@@ -222,23 +222,19 @@ const refreshTable = () => {
         <n-tooltip trigger="hover">
           <template #trigger>
             <n-icon size="18" class="view-curspointer" @click="refreshTable">
-              <Refresh/>
+              <Refresh />
             </n-icon>
           </template>
           刷新
         </n-tooltip>
 
-        <n-divider vertical style="margin: 0 16px"/>
+        <n-divider vertical style="margin: 0 16px" />
 
         <n-tooltip trigger="hover">
           <template #trigger>
-            <div
-                class="flex-alc zt-header-icon_right view-curspointer"
-                :class="name"
-                @click="toggle"
-            >
+            <div class="flex-alc zt-header-icon_right view-curspointer" :class="name" @click="toggle">
               <n-icon size="18">
-                <ReorderTwoOutline/>
+                <ReorderTwoOutline />
               </n-icon>
             </div>
           </template>
@@ -248,14 +244,9 @@ const refreshTable = () => {
         <n-tooltip trigger="hover">
           <template #trigger>
             <div class="flex-alc zt-header-icon_right view-curspointer">
-              <n-dropdown
-                  trigger="click"
-                  :options="densityOptions"
-                  @select="densitySelect"
-                  :value="tableSize"
-              >
+              <n-dropdown trigger="click" :options="densityOptions" @select="densitySelect" :value="tableSize">
                 <n-icon size="18">
-                  <ColumnHeightOutlined/>
+                  <ColumnHeightOutlined />
                 </n-icon>
               </n-dropdown>
             </div>
@@ -267,7 +258,7 @@ const refreshTable = () => {
           <template #trigger>
             <div class="flex-alc zt-header-icon_right view-curspointer">
               <n-icon size="18" @click="lieFn">
-                <SettingOutlined/>
+                <SettingOutlined />
               </n-icon>
             </div>
           </template>
@@ -278,8 +269,8 @@ const refreshTable = () => {
           <template #trigger>
             <div class="flex-alc zt-header-icon_right view-curspointer">
               <n-icon size="18" @click="toggleFu">
-                <FullscreenExitOutlined v-if="bool"/>
-                <FullscreenOutlined v-else/>
+                <FullscreenExitOutlined v-if="bool" />
+                <FullscreenOutlined v-else />
               </n-icon>
             </div>
           </template>
@@ -287,20 +278,9 @@ const refreshTable = () => {
         </n-tooltip>
       </div>
     </header>
-    <n-data-table
-        class="zai-table"
-        ref="dataTableRef"
-        flex-height
-        :columns="defaultColumns"
-        :data="props.data"
-        :striped="striped"
-        :size="tableSize"
-        :scroll-x="scroll_x"
-        :pagination="paginationReactive"
-        :row-key="getRowKey"
-        :loading="tableLoading"
-        @update:checked-row-keys="checkboxChange"
-    >
+    <n-data-table class="zai-table" ref="dataTableRef" flex-height :columns="defaultColumns" :data="props.data"
+      :striped="striped" :size="tableSize" :scroll-x="scroll_x" :pagination="paginationReactive" :row-key="getRowKey"
+      :loading="tableLoading" @update:checked-row-keys="checkboxChange">
     </n-data-table>
   </div>
 </template>
