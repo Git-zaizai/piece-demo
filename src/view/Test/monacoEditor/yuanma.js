@@ -1,4 +1,4 @@
-<script setup lang="ts" name="editor">
+const yuanma = `<script setup lang="ts" name="editor">
 import { CloseOutlined, FullscreenExitOutlined, FullscreenOutlined, MinusOutlined } from "@vicons/antd"
 import { SaveMultiple20Regular, DocumentSave20Regular } from '@vicons/fluent'
 import { useCommonStore } from '@/store'
@@ -25,10 +25,6 @@ const viewBack = computed(() => {
 /** 弹窗el */
 const editorViewRef = ref()
 
-/** 全屏 */
-const [isFull, FullToggle] = useToggle()
-
-const { isFullscreen, toggle, enter, exit } = useFullscreen(editorViewRef);
 
 const [spinShow, spinShowToggle] = useToggle(true)
 const modalShow = computed({
@@ -103,6 +99,7 @@ async function createMonacoEditor() {
 	}
 }
 
+/** 保存 */
 const getEditorValue = useDebounceFn(() => {
 	const text = monacoEditor.editor.getModels().at(0).getValue()
 	emit('onChange', text)
@@ -123,14 +120,30 @@ function saveKeyCtrl(e: KeyboardEvent) {
 	}
 }
 
+/**  另存为 */
 const fileName = ref('')
-
 function saveAsFile() {
 	if (!fileName.value) return
 	emit('onSaveAsFile', fileName.value)
 }
-
 const [modalFormShow, modalFormShowToggle] = useToggle()
+
+
+/** 全屏 */
+const isFullscreen = ref(90)
+
+function fullscreen() {
+	if (isFullscreen.value === 90) {
+		isFullscreen.value = 100
+	} else {
+		isFullscreen.value = 90
+	}
+
+	/** 方法找不到，看不到在哪  不黑找了 */
+	// @ts-ignore
+	// monacoEditor.editor.layout()
+}
+
 
 onMounted(() => {
 	nextTick(() => {
@@ -152,32 +165,32 @@ onUnmounted(() => {
 			<n-form-item>
 				<n-input-group>
 					<n-input-group-label>原文件：</n-input-group-label>
-					<n-input placeholder="原文件:"/>
+					<n-input placeholder="原文件:" />
 				</n-input-group>
 			</n-form-item>
 			<n-input-group>
 				<n-input-group-label>新文件：</n-input-group-label>
-				<n-input v-model:value="fileName" placeholder="文件名:"/>
+				<n-input v-model:value="fileName" placeholder="文件名:" />
 			</n-input-group>
 		</n-form>
 	</modal-form>
 	<n-modal v-model:show="modalShow" :show-icon="false" display-directive="show" class="modal-editor-vscode"
-	         :style="[viewBack]">
+		:style="[viewBack, { '--w': isFullscreen + 'vw', '--h': isFullscreen + 'vh' }]">
 		<div class="editor-vscode">
 			<header class="editor-vscode-header w-100">
 
 				<n-button-group>
-					<n-button quaternary type="success" @click="() => FullToggle()">
+					<n-button quaternary type="success" @click="() => getEditorValue()">
 						<template #icon>
 							<n-icon>
-								<SaveMultiple20Regular/>
+								<SaveMultiple20Regular />
 							</n-icon>
 						</template>
 					</n-button>
 					<n-button quaternary type="success" @click="() => modalFormShowToggle()">
 						<template #icon>
 							<n-icon>
-								<DocumentSave20Regular/>
+								<DocumentSave20Regular />
 							</n-icon>
 						</template>
 					</n-button>
@@ -185,25 +198,25 @@ onUnmounted(() => {
 
 				<n-button-group>
 					<n-button quaternary type="success" :native-focus-behavior="false" @focus="() => false"
-					          @click="() => emit('update:show', false)">
+						@click="() => emit('update:show', false)">
 						<template #icon>
 							<n-icon>
-								<MinusOutlined/>
+								<MinusOutlined />
 							</n-icon>
 						</template>
 					</n-button>
-					<n-button quaternary type="success" @click="() => FullToggle()">
+					<n-button quaternary type="success" @click="() => fullscreen()">
 						<template #icon>
 							<n-icon>
-								<FullscreenExitOutlined v-if="isFullscreen" @click="()=> toggle()"/>
-								<FullscreenOutlined v-else @click="()=> toggle()"/>
+								<FullscreenExitOutlined v-if="isFullscreen === 90" />
+								<FullscreenOutlined v-else />
 							</n-icon>
 						</template>
 					</n-button>
 					<n-button quaternary type="success" @click="() => emit('update:show', false)">
 						<template #icon>
 							<n-icon>
-								<CloseOutlined/>
+								<CloseOutlined />
 							</n-icon>
 						</template>
 					</n-button>
@@ -219,8 +232,8 @@ onUnmounted(() => {
 </template>
 <style lang="scss" scoped>
 .editor-vscode {
-	width: 90vw;
-	height: 90vh;
+	width: var(--w);
+	height: var(--h);
 	background-color: var(--modal-editror);
 	border-radius: 3px 3px 7px 7px;
 
@@ -235,4 +248,6 @@ onUnmounted(() => {
 		padding: 10px;
 	}
 }
-</style>
+</style>`
+
+export default yuanma
