@@ -22,19 +22,24 @@
   justify-content: center;
 }
 
-.filx-fdc-jusb{
+.filx-fdc-jusb {
   @include fiex-alc;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.flex-fdc-alc-juc{
+.flex-fdc-alc-juc {
   @include fiex-alc;
   flex-direction: column;
   justify-content: center;
 }
 
-.flex-juc{
+.flex-juc {
   display: flex;
   justify-content: center;
+}
+
+.flex-juc-alc {
+  display: flex;
+  flex-direction: column;
 }

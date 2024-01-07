@@ -11,15 +11,16 @@ const Root: AppRouteRecordRaw = {
     component: RootView,
     meta: {
         keepAlive: 'Home',
-        title: '( *￣▽￣)'
+        title: 'root'
     },
 }
 
 /**
  * @function 自动注册路由
  */
-const routeModules = import.meta.glob('./modules/*.ts', { eager: true })
+const routeModules = import.meta.glob('./home/*.ts', { eager: true })
 const routeModuleList: AppRouteRecordRaw[] = [];
+
 for (const key in routeModules) {
     const mod = routeModules[key] as { default: AppRouteRecordRaw }
     if (Array.isArray(mod.default)) {

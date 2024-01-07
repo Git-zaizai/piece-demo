@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="console">
     <div class="flex-alc">
       <n-card class="suspension" title="需求公告栏">
         额，目前以满足需求！
@@ -106,6 +106,9 @@ const init = async () => {
 init()
 </script>
 <style scoped lang="scss">
+.console{
+	padding: 10px 10px 10px 20px;
+}
 .hecha {
   width: 24vw;
   height: 20vh;
