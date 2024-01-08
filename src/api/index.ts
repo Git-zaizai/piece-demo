@@ -4,7 +4,7 @@ export { request as http }
 export const createfolder = data => request.post('/web/createfolder', data)
 export const createDirectory = (data) => request.post('/web/createDirectory', data)
 export const login = data => request.post('/secretkey', data)
-export const verify = data => request.post('/verifyUser', data)
+export const verify = () => request.get('/verifyUser')
 
 // 获取所有的表
 export const getMongoDb = () => request.get('/show-dbs')

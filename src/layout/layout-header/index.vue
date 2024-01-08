@@ -51,7 +51,7 @@ const loginShow = async () => {
 	try {
 		const data = Storage.get('info')
 		if (data) {
-			await verify({ info: data })
+			await verify()
 			router.push({ name: 'admin' })
 		} else {
 			loginModalRef.value.show = true

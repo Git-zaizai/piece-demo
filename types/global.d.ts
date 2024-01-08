@@ -20,4 +20,4 @@ interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
 
-type ZaiColumns = import('naive-ui').DataTableColumns
+type ZaiColumns<T = any> = import('naive-ui').DataTableColumns<T>
