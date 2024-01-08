@@ -60,6 +60,11 @@
 
       </n-space>
 
+      <n-button class="save-mt-auto" type="primary" block dashed @click="view.$reset()">
+        <h3>
+          保存设置
+        </h3>
+      </n-button>
       <n-button class="mt-auto" type="primary" block dashed @click="view.$reset()">
         <h3>
           重置主题
@@ -87,6 +92,12 @@ const [bool, closeModal] = useToggle()
 <style lang="scss" scoped>
 .mt-px {
   margin-top: 15px;
+}
+
+.save-mt-auto {
+  position: absolute;
+  width: 87%;
+  bottom: 70px;
 }
 
 .mt-auto {

@@ -18,7 +18,7 @@ watch(active, val => {
 
 const loginClk = async () => {
 	try {
-		const res = await login({ pad: pad.value })
+		const res = await login({ pwd: pad.value })
 		show.value = false
 		local.set('info', res.data.data)
 		router.push({ name: 'admin' })
@@ -31,18 +31,16 @@ const loginClk = async () => {
 <template>
 	<n-modal v-model:show="show" preset="card" style="width: 300px" title="输入正确有惊喜：">
 		<n-form-item>
-			<n-input v-model:value="pad" placeholder="什么东西呢！" @keyup.enter.native="loginClk"/>
+			<n-input v-model:value="pad" placeholder="什么东西呢！" @keyup.enter.native="loginClk" />
 		</n-form-item>
 		<n-form-item label="游客模式" label-placement="left">
-			<n-switch v-model:value="active"/>
+			<n-switch v-model:value="active" />
 		</n-form-item>
-		
+
 		<n-button type="primary" block secondary strong @click="loginClk">
 			确定
 		</n-button>
 	</n-modal>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

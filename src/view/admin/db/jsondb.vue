@@ -1,34 +1,42 @@
 <template>
 	<div>
-		<zai-table :columns="columns" :data="state" @flushed="init" checkbox-key="name" :actions-columns="actionsColumns"/>
+		<zai-table :columns="columns" :data="state" @flushed="init" checkbox-key="name" :actions-columns="actionsColumns"
+			@add="modalShowToggle" />
 		<modal-form v-model:show="modalShow" title="导入-覆盖" @confirm-form="confirm">
-			<input-file title="JSON文件" @file-change="bindFileChange" :multiple="false" accept="application/json"/>
-			<br/>
+			<input-file title="JSON文件" @file-change="bindFileChange" :multiple="false" accept="application/json" />
+			<br />
 			文件：
 			<n-tag type="success" v-if="fileData.fileName">
 				{{ fileData.fileName }}
 			</n-tag>
-			<br/>
-			<br/>
+			<br />
+			<br />
 			文件大小：
 			<n-tag type="warning" v-if="fileData.size">
 				{{ fileData.size ?? '' }}
 			</n-tag>
-			<br/>
-			<br/>
-			<div v-if="formShow" class="flex-ai-c">
-				是否强行覆盖文件：
-				<n-switch v-model:value="swValue" size="large"></n-switch>
+			<br />
+			<br />
+			<div v-if="formShow" class="sw-view">
+				<n-popover trigger="manual" :show="popoverShow" placement="right">
+					<template #trigger>
+						<div>
+							是否强行覆盖文件：
+							<n-switch v-model:value="swValue" size="large"></n-switch>
+						</div>
+					</template>
+					<span>请确认强制覆盖文件</span>
+				</n-popover>
 			</div>
 		</modal-form>
-		<monaco-editor-modal v-model:show="editorShow" language="json" :value="editorValue"/>
+		<monaco-editor-modal v-model:show="editorShow" language="json" :value="editorValue" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ZaiTable } from '@/components/table'
 import dayjs from 'dayjs'
-import { http, upload } from '@/api'
+import { http } from '@/api'
 import { NButton } from 'naive-ui'
 import type { NotificationType, DataTableBaseColumn } from 'naive-ui'
 import JsonActions from '../components/json-actionsColumns'
@@ -65,16 +73,10 @@ const columns: ZaiColumns = [
 	}
 ]
 
-let files = null
+
 const [modalShow, modalShowToggle] = useToggle()
-const [formShow, formShowToggle] = useToggle()
 const [editorShow, editorShowToggle] = useToggle()
-const swValue = ref(false)
-const fileData = ref({
-	fileName: '',
-	size: ''
-})
-const state = ref()
+const state = ref<Jsondb[]>([])
 
 
 const actionsColumns: DataTableBaseColumn = {
@@ -85,7 +87,7 @@ const actionsColumns: DataTableBaseColumn = {
 	render(row) {
 		return h(JsonActions, {
 			onEditor: getJsonValue.bind(null, row),
-			onExport: () => {},
+			onExport: onExport.bind(null, row),
 			onImport: modalShowToggle
 		})
 	}
@@ -103,21 +105,22 @@ async function getJsonValue(item: Jsondb) {
 		})
 		editorValue.value = JSON.stringify(response.data.data)
 	} catch (e) {
-		window.$message.error(`获取 ${ item.name } 数据失败！`)
+		window.$message.error(`获取 ${item.name} 数据失败！`)
 	}
 }
 
-async function bindDbExport(row) {
+async function onExport(row: Jsondb) {
 	try {
-		const res = await http.get('/api/jsonstream', {
+		const res = await http.get('/download-json', {
 			params: {
-				name: row.name
-			}
+				ph: row.name
+			},
+			responseType: 'blob'
 		})
-		let fileName = res.headers['content-disposition'].split(';')[1].split('filename=')[1]
-		const blob = new Blob([res.data.data])
+		const contentDisposition = res.headers['content-disposition']
+		const blob = new Blob([res.data])
 		const elink = document.createElement('a')
-		elink.download = fileName
+		elink.download = contentDisposition.substring(contentDisposition.indexOf('filename=') + 'filename='.length)
 		elink.style.display = 'none'
 		elink.href = window.URL.createObjectURL(blob)
 		document.body.appendChild(elink)
@@ -138,21 +141,29 @@ const netPrompt = (type: NotificationType, cont: string) => {
 		content: cont,
 		meta: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 		action: () =>
-				h(NButton,
-						{
-							text: true,
-							type: 'primary',
-							onClick: () => {
-								net.destroy()
-							}
-						},
-						{
-							default: () => '已读'
-						}
-				)
+			h(NButton,
+				{
+					text: true,
+					type: 'primary',
+					onClick: () => {
+						net.destroy()
+					}
+				},
+				{
+					default: () => '已读'
+				}
+			)
 	})
 }
 
+const [formShow, formShowToggle] = useToggle()
+const [popoverShow, popoverShowToggle] = useToggle()
+const swValue = ref(false)
+const fileData = ref({
+	fileName: '',
+	size: ''
+})
+let files = null
 function bindFileChange(filesDrop: DropResult) {
 	files = filesDrop.filesArray[0].file
 	fileData.value = {
@@ -160,7 +171,9 @@ function bindFileChange(filesDrop: DropResult) {
 		size: (files.size / 1027).toFixed(3) + ' KB'
 	}
 	if (state.value.some(item => item.name === files.name)) {
-		formShowToggle()
+		formShowToggle(true)
+	} else {
+		formShowToggle(false)
 	}
 }
 
@@ -170,24 +183,46 @@ async function confirm() {
 			window.$message.error('请选择JSON数据文件')
 			return
 		}
-		
+
 		if (formShow.value && !swValue.value) {
-			window.$message.error('是否强制覆盖，请确认')
+			popoverShowToggle(true)
 			return
 		}
-		
-		
+		const formdata = new FormData()
+		formdata.append('file', files.name)
+		formdata.append('file', files)
+		let response = await http.post('/upload', formdata)
+		response = await http.post('/rename-json', {
+			ph: response.data.data.url,
+			name: files.name
+		})
+
+		files = null
+		fileData.value = {
+			fileName: '',
+			size: ''
+		}
+		formShowToggle(false)
+		swValue.value = false
+		popoverShowToggle(false)
+
+		init().then(() => netPrompt('success', '导入成功'))
 	} catch (e) {
 		console.log('提交文件失败', e)
-		netPrompt('error', '文件上传失败！')
+		netPrompt('error', '导入失败！')
 	}
 }
 
 const init = async () => {
 	const { data } = await http.get('/json-list')
-	state.value = data.data
+	state.value = data.data as Jsondb[]
 }
 init()
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped>
+.sw-view {
+	display: inline-flex;
+	align-items: center;
+}
+</style>

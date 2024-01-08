@@ -4,12 +4,7 @@
 			<n-gradient-text :size="26" type="success"> ( *￣▽￣)(っ´Ι`)っ</n-gradient-text>
 		</n-text>
 		<div class="nav-end flex-alc">
-			<n-button
-					size="small"
-					quaternary
-					class="nav-picker"
-					@click="commonstore.getinverted(!commonstore.inverted)"
-			>
+			<n-button size="small" quaternary class="nav-picker" @click="commonstore.getinverted(!commonstore.inverted)">
 				{{ commonstore.inverted ? '白昼' : '黑夜' }}
 			</n-button>
 			<n-button size="small" tag="a" quaternary class="nav-picker" @click="loginShow"> 控制台(っ´Ι`)っ</n-button>
@@ -17,12 +12,12 @@
 			<n-text class="nav-picker padded"> 1.5.0</n-text>
 			<n-button size="small" quaternary class="nav-picker" @click="view.setDrawerShow">
 				<n-icon size="22">
-					<CodeSandboxOutlined/>
+					<CodeSandboxOutlined />
 				</n-icon>
 			</n-button>
 		</div>
 	</n-layout-header>
-	<login-modal ref="loginModalRef"/>
+	<login-modal ref="loginModalRef" />
 </template>
 
 <script name="header-index" lang="ts" setup>

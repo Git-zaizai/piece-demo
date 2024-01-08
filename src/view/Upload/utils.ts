@@ -13,7 +13,7 @@ export const isImage = (name: string): boolean => {
  * */
 export function readyUpload(formdata: FormData, callbackConfig: CallbackConfig) {
     return new Promise((resolve, reject) => {
-        request.post('/web/upload-home', formdata, {
+        request.post('/upload', formdata, {
             onUploadProgress: callbackConfig.onUploadProgress
         }).then(res => {
             resolve(callbackConfig.resolve(res))

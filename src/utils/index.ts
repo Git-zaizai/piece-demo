@@ -55,3 +55,13 @@ export function copyStr(value: string): void {
     execCommand()
   }
 }
+
+/**
+ * @function 范围随机数
+ * @param m 
+ * @param n 
+ * @returns 
+ */
+export function rand(m: number, n: number) {
+  return Math.ceil(Math.random() * (n - m + 1) + m - 1)
+}

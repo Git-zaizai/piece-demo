@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ZaiTable } from '@/components/table'
 import { http } from '@/api'
-import { NTag, NButton, NSpace, DataTableBaseColumn } from 'naive-ui'
+import { NTag, NButton, NTime } from 'naive-ui'
 import { Eye20Regular, EyeOff20Filled } from '@vicons/fluent'
 import ModalForm from '@/components/modal-form.vue'
 import { copyStr, rand } from '@/utils/index'
@@ -10,30 +10,6 @@ import dayjs from 'dayjs'
 function randTagType() {
 	const list = ["default", "success", "error", "warning", "primary", "info"]
 	return list[rand(0, list.length)]
-}
-
-export interface Link {
-	linkName: string;
-	urli: string;
-}
-
-export interface Row {
-	beizhu: string;
-	start: number;
-	finish: number;
-	duwan: number;
-	wanjie: number;
-	id: number;
-	isdel: number;
-	title: string;
-	link: string;
-	linkback: string;
-	links: Link[];
-	tabs: string[];
-	addDate: string;
-	update: string;
-	finishtime: string;
-	rate: any[];
 }
 
 const columns: ZaiColumns = [
@@ -47,7 +23,7 @@ const columns: ZaiColumns = [
 		title: '读到那章',
 		key: 'start-finish',
 		render: (row) => `${row.start} - ${row.finish}`,
-		width: 90
+		width: 150
 	},
 	{
 		title: '读完',
@@ -62,49 +38,7 @@ const columns: ZaiColumns = [
 			// @ts-ignore
 			return <NTag bordered={false} type={tagType}>{txt}</NTag>
 		},
-		width: 90
-	},
-	{
-		title: '标签',
-		key: 'tabs',
-		render(row) {
-			return <NSpace>
-				{row.tabs.map(item => (
-					// @ts-ignore
-					<NTag bordered={false} type={randTagType()}>{item}</NTag>
-				))}
-			</NSpace>
-		},
-		minWidth: 200,
-		filterOptions: [
-			{
-				"label": "小说",
-				"value": "小说"
-			},
-			{
-				"label": "推荐",
-				"value": "推荐"
-			},
-			{
-				"label": "漫画",
-				"value": "漫画"
-			},
-			{
-				"label": "动漫",
-				"value": "动漫"
-			},
-			{
-				"label": "有声小说",
-				"value": "有声小说"
-			},
-			{
-				"label": "一口气看完",
-				"value": "一口气看完"
-			}
-		],
-		filter(value: string, { tabs }: { tabs: string[] }) {
-			return tabs.includes(value)
-		}
+		width: 150
 	},
 	{
 		title: '完结/连载',
@@ -116,7 +50,7 @@ const columns: ZaiColumns = [
 			}
 			return <NTag bordered={false} type='info'>{row.wanjie == 1 ? '完结' : '连载'}</NTag>
 		},
-		width: 90
+		width: 150
 	},
 	{
 		title: '删除状态',
@@ -126,7 +60,7 @@ const columns: ZaiColumns = [
 				row.isdel ? '显示' : '隐藏'
 			}</NTag>
 		},
-		width: 90
+		width: 150
 	},
 	{
 		title: '首页链接',
@@ -136,7 +70,7 @@ const columns: ZaiColumns = [
 				{row.link ? '复制' : '无'}
 			</NButton>
 		},
-		width: 90
+		width: 150
 	},
 	{
 		title: '后续链接',
@@ -146,7 +80,7 @@ const columns: ZaiColumns = [
 				{row.linkback ? '复制' : '无'}
 			</NButton>
 		},
-		width: 90
+		width: 150
 	},
 	{
 		title: '其他链接',
@@ -161,45 +95,47 @@ const columns: ZaiColumns = [
 				</NButton>
 			))
 		},
-		width: 90
+		width: 150
 	},
-
+	{
+		title: '标签',
+		key: 'tabs',
+		render(row) {
+			return row.tabs.map(item => (
+				// @ts-ignore
+				<NTag bordered={false} type={randTagType()}>{item}</NTag>
+			))
+		},
+		width: 150
+	},
 	{
 		title: '添加时间',
 		key: 'addDate',
-		render: (row) => dayjs(row.addDate).format('YYYY-MM-DD HH:mm:ss'),
-		width: 160
+		render: (row) => dayjs(row.addDate).format('YYYY-MM-DDTHH:mm:ss'), width: 150
 	},
 	{
 		title: '修改时间',
 		key: 'update',
-		render: (row) => dayjs(row.update).format('YYYY-MM-DD HH:mm:ss'),
-		width: 160
+		render: (row) => dayjs(row.update).format('YYYY-MM-DDTHH:mm:ss'), width: 150
 	},
 	{
 		title: '看完时间',
 		key: 'finishtime',
-		render: (row) => dayjs(row.finishtime).format('YYYY-MM-DD HH:mm:ss'),
-		width: 160
+		render: (row) => dayjs(row.finishtime).format('YYYY-MM-DDTHH:mm:ss'), width: 150
 	},
 	{
 		title: '评分',
 		key: 'rate',
-		render: (row) => <NTag bordered={false} type={'default'}>{row.rate}</NTag>,
-		width: 90
+		render: (row) => <NTag bordered={false} type={'default'}>{row.rate}</NTag>, width: 150
 	},
 	{
 		title: '备注',
 		key: 'beizhu',
 		ellipsis: {
 			tooltip: true
-		},
-		width: 90
+		}, width: 150
 	}
 ]
-
-
-
 const formEl = {
 	duWan: [
 		{
@@ -343,7 +279,7 @@ const delItem = async (row, index) => {
 <template>
 	<div>
 		<zai-table :columns="columns" :data="state.data" checkbox-key="_id" @add="tableAdd" @flushed="init"
-			@del-item="delItem" @update-item="updateItem" scroll-x />
+			@del-item="delItem" @update-item="updateItem" />
 		<modal-form v-model:show="state.show" @confirm-form="formSubmit">
 			<n-form ref="formRef" label-placement="left" label-width="100" label-align="left" :model="state.form"
 				:rules="rules" @keyup.enter="formSubmit">

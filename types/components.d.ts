@@ -10,13 +10,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Actions: typeof import('./../src/components/table/src/components/actions.vue')['default']
-    CardItem: typeof import('./../src/components/HomeNavigation/CardItem.vue')['default']
-    HomeNavigation: typeof import('./../src/components/HomeNavigation/index.vue')['default']
     HoverButton: typeof import('./../src/components/hover-button.vue')['default']
     InputFile: typeof import('./../src/components/inputFile/src/inputFile.vue')['default']
     ModalForm: typeof import('./../src/components/modal-form.vue')['default']
     MonacoEditorModal: typeof import('./../src/components/monaco-editor-modal.vue')['default']
-    MonacoEditorModal1: typeof import('./../src/components/monaco-editor-modal-1.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NButtonGroup: typeof import('naive-ui')['NButtonGroup']
     NCard: typeof import('naive-ui')['NCard']
@@ -39,7 +36,6 @@ declare module '@vue/runtime-core' {
     NInput: typeof import('naive-ui')['NInput']
     NInputGroup: typeof import('naive-ui')['NInputGroup']
     NInputGroupLabel: typeof import('naive-ui')['NInputGroupLabel']
-    NInputNumber: typeof import('naive-ui')['NInputNumber']
     NLayout: typeof import('naive-ui')['NLayout']
     NLayoutContent: typeof import('naive-ui')['NLayoutContent']
     NLayoutHeader: typeof import('naive-ui')['NLayoutHeader']
