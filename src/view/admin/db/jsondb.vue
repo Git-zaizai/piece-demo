@@ -29,7 +29,8 @@
 				</n-popover>
 			</div>
 		</modal-form>
-		<monaco-editor-modal v-model:show="editorShow" language="json" :value="editorValue" />
+		<monaco-editor-modal v-model:show="editorShow" language="json" :value="editorValue" :file-name="editorFileName"
+			@on-change="saveFile" @on-save-as-file="saveAsFile" />
 	</div>
 </template>
 
@@ -75,7 +76,9 @@ const columns: ZaiColumns = [
 
 
 const [modalShow, modalShowToggle] = useToggle()
+
 const [editorShow, editorShowToggle] = useToggle()
+const editorFileName = ref('')
 const state = ref<Jsondb[]>([])
 
 
@@ -97,6 +100,7 @@ const editorValue = ref('')
 
 async function getJsonValue(item: Jsondb) {
 	editorShowToggle()
+	editorFileName.value = item.name
 	try {
 		const response = await http.get('/json-get', {
 			params: {
@@ -210,6 +214,35 @@ async function confirm() {
 	} catch (e) {
 		console.log('提交文件失败', e)
 		netPrompt('error', '导入失败！')
+	}
+}
+
+async function saveFile(value: string) {
+	if (!editorFileName.value) {
+		window.$message.error('无法确定要保存的文件')
+		return
+	}
+	await http.post('/json-set', {
+		ph: editorFileName.value,
+		data: JSON.parse(value)
+	})
+	window.$message.success('已保存')
+}
+
+async function saveAsFile(body) {
+	if (!editorFileName.value) {
+		window.$message.error('无法确定要保存的文件')
+		return
+	}
+	try {
+		await http.post('/json-set', {
+			ph: body.fileName,
+			data: JSON.parse(body.value)
+		})
+		netPrompt('success', `另存为${body.fileName}成功`)
+	} catch (error) {
+		console.log(error)
+		netPrompt('error', `另存为${body.fileName}失败`)
 	}
 }
 

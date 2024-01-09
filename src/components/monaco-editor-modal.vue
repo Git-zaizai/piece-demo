@@ -11,6 +11,8 @@ const props = withDefaults(defineProps<{
 	show: boolean
 	value: string | string[]
 	language?: string
+	fileName?: string
+	validator?: (fileName: string) => Error
 }>(), {
 	value: '',
 	language: 'json'
@@ -100,10 +102,30 @@ function saveKeyCtrl(e: KeyboardEvent) {
 
 /**  另存为 */
 const fileName = ref('')
-
+const ruleValidator = () => {
+	if (!fileName.value) {
+		throw Error('请填写文件名')
+	}
+}
+const rule = {
+	required: true,
+	trigger: 'blur',
+	validator: () => {
+		if (props.validator) {
+			props.validator(fileName.value)
+		} else {
+			ruleValidator()
+		}
+	}
+}
+const formRef = ref(null)
 function saveAsFile() {
-	if (!fileName.value) return
-	emit('onSaveAsFile', fileName.value)
+	formRef.value.validate((err: any) => {
+		if (!err) {
+			const text = monacoEditor.editor.getModels().at(0).getValue()
+			emit('onSaveAsFile', { value: text, fileName: fileName.value })
+		}
+	})
 }
 
 const [modalFormShow, modalFormShowToggle] = useToggle()
@@ -130,67 +152,63 @@ onBeforeUnmount(() => {
 })
 </script>
 <template>
-	<modal-form v-model:show="modalFormShow" title="另存为">
-		<n-form @keyup.enter="saveAsFile">
+	<modal-form v-model:show="modalFormShow" title="另存为" @confirm-form="saveAsFile">
+		<n-form @keyup.enter="saveAsFile" ref="formRef">
 			<n-form-item>
 				<n-input-group>
 					<n-input-group-label>原文件：</n-input-group-label>
-					<n-input placeholder="原文件:"/>
+					<n-input placeholder="原文件:" v-model:value="props.fileName" />
 				</n-input-group>
 			</n-form-item>
-			<n-input-group>
+			<n-input-group :rule="rule">
 				<n-input-group-label>新文件：</n-input-group-label>
-				<n-input v-model:value="fileName" placeholder="文件名:"/>
+				<n-input v-model:value="fileName" placeholder="文件名:" />
 			</n-input-group>
 		</n-form>
 	</modal-form>
-	<n-modal
-			v-model:show="modalShow" :show-icon="false" display-directive="show" class="modal-editor-vscode"
-			:style="[viewBack, { '--w': isFullscreen + 'vw', '--h': isFullscreen + 'vh' }]"
-	>
+	<n-modal v-model:show="modalShow" :show-icon="false" display-directive="show" class="modal-editor-vscode"
+		:style="[viewBack, { '--w': isFullscreen + 'vw', '--h': isFullscreen + 'vh' }]">
 		<div class="editor-vscode">
 			<header class="editor-vscode-header w-100">
-				
+
 				<n-button-group>
 					<n-button quaternary type="success" @click="() => getEditorValue()">
 						<template #icon>
 							<n-icon>
-								<SaveMultiple20Regular/>
+								<SaveMultiple20Regular />
 							</n-icon>
 						</template>
 					</n-button>
 					<n-button quaternary type="success" @click="() => modalFormShowToggle()">
 						<template #icon>
 							<n-icon>
-								<DocumentSave20Regular/>
+								<DocumentSave20Regular />
 							</n-icon>
 						</template>
 					</n-button>
 				</n-button-group>
-				
+
 				<n-button-group>
-					<n-button
-							quaternary type="success" :native-focus-behavior="false" @focus="() => false"
-							@click="() => emit('update:show', false)"
-					>
+					<n-button quaternary type="success" :native-focus-behavior="false" @focus="() => false"
+						@click="() => emit('update:show', false)">
 						<template #icon>
 							<n-icon>
-								<MinusOutlined/>
+								<MinusOutlined />
 							</n-icon>
 						</template>
 					</n-button>
 					<n-button quaternary type="success" @click="() => fullscreen()">
 						<template #icon>
 							<n-icon>
-								<FullscreenExitOutlined v-if="isFullscreen === 100"/>
-								<FullscreenOutlined v-else/>
+								<FullscreenExitOutlined v-if="isFullscreen === 100" />
+								<FullscreenOutlined v-else />
 							</n-icon>
 						</template>
 					</n-button>
 					<n-button quaternary type="success" @click="() => emit('update:show', false)">
 						<template #icon>
 							<n-icon>
-								<CloseOutlined/>
+								<CloseOutlined />
 							</n-icon>
 						</template>
 					</n-button>
@@ -210,13 +228,13 @@ onBeforeUnmount(() => {
 	height: var(--h);
 	background-color: var(--modal-editror);
 	border-radius: 3px 3px 7px 7px;
-	
+
 	&-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
-	
+
 	&-content {
 		height: calc(var(--h) - 34px - 3px);
 	}

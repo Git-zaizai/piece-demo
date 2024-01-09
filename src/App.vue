@@ -1,13 +1,8 @@
 <template>
-	<n-config-provider
-			:theme="common.bodyConfigColor.theme"
-			:theme-overrides="view.naiveThemeOverrides"
-			:locale="zhCN"
-	>
-		<layout-header/>
-		<layout-home v-if="isLayout"/>
-		<router-view v-else/>
-		<setting-drawer/>
+	<n-config-provider :theme="common.bodyConfigColor.theme" :theme-overrides="view.naiveThemeOverrides" :locale="zhCN">
+		<layout-header />
+		<component :is="isLayout ? LayoutHome : RouterView" />
+		<setting-drawer />
 	</n-config-provider>
 </template>
 <script setup lang="ts">
@@ -20,6 +15,7 @@ import LayoutHeader from "@/layout/layout-header/index.vue"
 import LayoutHome from "@/layout/layout-hemo.vue"
 import { routeModuleList } from "@/router/routers"
 import type { AppRouteRecordRaw } from "@/router/types"
+import { RouterView } from 'vue-router'
 
 const view = useViewStore()
 const common = useCommonStore()
@@ -35,15 +31,15 @@ if (common.constantInverted) {
 }
 
 watch(
-		() => view.naiveThemeOverrides,
-		(value) => {
-			if (value && value.common) {
-				addThemeCssVarsToHtml(value.common, common.inverted)
-			} else {
-				document.documentElement.style.cssText = ""
-			}
-		},
-		{ immediate: true }
+	() => view.naiveThemeOverrides,
+	(value) => {
+		if (value && value.common) {
+			addThemeCssVarsToHtml(value.common, common.inverted)
+		} else {
+			document.documentElement.style.cssText = ""
+		}
+	},
+	{ immediate: true }
 )
 
 function getRouterName(routes: AppRouteRecordRaw[]): string[] {
@@ -59,7 +55,6 @@ function getRouterName(routes: AppRouteRecordRaw[]): string[] {
 
 const routerPaths = ["Root", ...getRouterName(routeModuleList)]
 const route = useRoute()
-const router = useRouter()
 const isLayout = ref(true)
 watch(route, (value) => {
 	isLayout.value = routerPaths.includes(value.name as string)
