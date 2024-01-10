@@ -1,106 +1,85 @@
 <template>
-	<n-space vertical :size="12">
-		<n-space>
-			<n-button @click="sortName">Sort By Name (Ascend)</n-button>
-			<n-button @click="filterAddress">Filter Address (London)</n-button>
-			<n-button @click="clearFilters">Clear Filters</n-button>
-			<n-button @click="clearSorter">Clear Sorter</n-button>
-		</n-space>
-		<n-data-table
-				ref="table"
-				:columns="columns"
-				:data="data"
-				:pagination="pagination"
-		/>
-	</n-space>
+  <n-form ref="formRef" :model="dynamicForm" :style="{ maxWidth: '640px' }">
+    <n-form-item
+      label="姓名"
+      path="name"
+      :rule="{
+        required: true,
+        message: '请输入姓名',
+        trigger: ['input', 'blur']
+      }"
+    >
+      <n-input v-model:value="dynamicForm.name" clearable />
+    </n-form-item>
+
+    <n-form-item
+      v-for="(item, index) in dynamicForm.hobbies"
+      :key="index"
+      :label="`爱好${index + 1}`"
+      :path="`hobbies[${index}].hobby`"
+      :rule="{
+        required: true,
+        message: `请输入爱好${index + 1}`,
+        trigger: ['input', 'blur']
+      }"
+    >
+      <n-input v-model:value="item.hobby" clearable />
+      <n-button style="margin-left: 12px" @click="removeItem(index)">
+        删除
+      </n-button>
+    </n-form-item>
+
+    <n-form-item>
+      <n-space>
+        <n-button attr-type="button" @click="handleValidateClick">
+          验证
+        </n-button>
+        <n-button attr-type="button" @click="addItem">
+          增加
+        </n-button>
+      </n-space>
+    </n-form-item>
+  </n-form>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-
-const columns = [
-	{
-		title: 'Name',
-		key: 'name',
-		defaultSortOrder: 'ascend',
-		sorter: 'default'
-	},
-	{
-		title: 'Age',
-		key: 'age',
-		sorter: (row1, row2) => row1.age - row2.age
-	},
-	{
-		title: 'Address',
-		key: 'address',
-		defaultFilterOptionValues: ['London', 'New York'],
-		filterOptions: [
-			{
-				label: 'London',
-				value: 'London'
-			},
-			{
-				label: 'New York',
-				value: 'New York'
-			}
-		],
-		filter (value, row) {
-			return ~row.address.indexOf(value)
-		}
-	}
-]
-
-const data = [
-	{
-		key: 0,
-		name: 'John Brown',
-		age: 32,
-		address: 'New York No. 1 Lake Park'
-	},
-	{
-		key: 1,
-		name: 'Jim Green',
-		age: 42,
-		address: 'London No. 1 Lake Park'
-	},
-	{
-		key: 2,
-		name: 'Joe Black',
-		age: 32,
-		address: 'Sidney No. 1 Lake Park'
-	},
-	{
-		key: 3,
-		name: 'Jim Red',
-		age: 32,
-		address: 'London No. 2 Lake Park'
-	}
-]
+<script lang="ts">
+import { FormInst } from 'naive-ui'
+import { defineComponent, reactive, ref } from 'vue'
 
 export default defineComponent({
-	setup () {
-		const tableRef = ref(null)
-		
-		return {
-			table: tableRef,
-			data,
-			columns,
-			pagination: { pageSize: 5 },
-			filterAddress () {
-				tableRef.value.filter({
-					address: ['London']
-				})
-			},
-			sortName () {
-				tableRef.value.sort('name', 'ascend')
-			},
-			clearFilters () {
-				tableRef.value.filter(null)
-			},
-			clearSorter () {
-				tableRef.value.sort(null)
-			}
-		}
-	}
+  setup () {
+    const formRef = ref<FormInst | null>(null)
+
+    const dynamicForm = reactive({
+      name: '',
+      hobbies: [{ hobby: '' }]
+    })
+
+    const removeItem = (index: number) => {
+      dynamicForm.hobbies.splice(index, 1)
+    }
+
+    const addItem = () => {
+      dynamicForm.hobbies.push({ hobby: '' })
+    }
+
+    const handleValidateClick = () => {
+      formRef.value?.validate((errors) => {
+        if (!errors) {
+          console.log('验证通过')
+        } else {
+          console.log(errors)
+        }
+      })
+    }
+
+    return {
+      formRef,
+      dynamicForm,
+      addItem,
+      removeItem,
+      handleValidateClick
+    }
+  }
 })
 </script>
