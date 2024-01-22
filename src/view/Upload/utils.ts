@@ -23,3 +23,34 @@ export function fileBlob(file: File): Blob[] {
   }
   return blobArr
 }
+
+
+export async function mergeUpload(foamDataList: FormData[], callback: () => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let index = 0
+    const errMap = []
+    const upload = async (i?: number) => {
+      const at = i ?? index
+      if (at >= foamDataList.length) {
+        return resolve()
+      }
+      foamDataList[at].append('id', at.toString())
+      index++
+      try {
+        await http.post('/upload-plus', foamDataList[at])
+        callback()
+        return upload()
+      } catch {
+        if (errMap.length >= 3) {
+          reject()
+        }
+        errMap.push(foamDataList[at])
+        return upload(at)
+      }
+    }
+
+    for (let r = 0; r < 6; r++) {
+      upload()
+    }
+  })
+}
