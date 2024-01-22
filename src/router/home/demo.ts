@@ -72,6 +72,17 @@ const Demo: AppRouteRecordRaw = {
           contentText: 'NaiveUI 组件的试验地'
         }
       }
+    },
+    {
+      path: 'imgzhezhao',
+      name: 'imgzhezhao',
+      component: () => import('@/view/Test/imgzezhaho/imgzezhao.vue'),
+      meta: {
+        title: '图片遮罩',
+        navigation: {
+          contentText: '图片遮罩'
+        }
+      }
     }
   ]
 }

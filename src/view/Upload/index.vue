@@ -4,14 +4,8 @@
 			<input-file @file-change="fileChange"></input-file>
 		</div>
 
-		<n-button
-				class="ui-but"
-				type="primary"
-				strong
-				:disabled="upDisabled"
-				@click="uploadClick"
-				@contextmenu="onContextmenu"
-		>
+		<n-button class="ui-but" type="primary" strong :disabled="upDisabled" @click="uploadClick"
+			@contextmenu="onContextmenu">
 			<template #icon>
 				<n-icon>
 					<AirplaneTakeOff16Regular />
@@ -24,18 +18,15 @@
 				{{ popoverXY.name }}
 			</n-popover>
 			<n-space :size="[16, 16]">
-				<FileItem v-for="(item, index) in state.files" :key="index" v-bind="item" @on-popover="onPopover" />
+				<transition name="fade-scale" mode="out-in" appear v-for="( item, index ) in  state.files " :key="index">
+					<FileItem :isImageOpen="cities" :index="index" v-bind="item" @on-popover="onPopover"
+						@removeFile="removeFile" />
+				</transition>
 			</n-space>
 		</div>
 
-		<n-popover
-				:show="dropdown.show"
-				:x="dropdown.x"
-				:y="dropdown.y"
-				trigger="manual"
-				placement="bottom"
-				id="contextmenuPopover"
-		>
+		<n-popover :show="dropdown.show" :x="dropdown.x" :y="dropdown.y" trigger="manual" placement="bottom"
+			id="contextmenuPopover">
 			<n-checkbox-group v-model:value="cities">
 				<n-space vertical>
 					<n-checkbox :value="0" label="目录上传" />
@@ -49,19 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { deleteFIleTreeItem, DropResult, fileTree, InputFile } from '@/components/inputFile'
+import { DropResult, InputFile } from '@/components/inputFile'
 import FileItem from './FileItem.vue'
-import UploadConfig from './UploadConfig.vue'
-import UploadList from './UploadList.vue'
-import UploadHistoricRecord from './UploadHistoricRecord.vue'
 import { AirplaneTakeOff16Regular } from '@vicons/fluent'
-import { useFileIndexStore } from '@/store/modules/useFileIndexStore'
-import type { FilesItem, fileTreeItem, localUploadConfigItem, LocalUploadListItem, uploadFileListItem } from './types'
-import { initUploadConfig } from './init'
-import { insertLocal, isImage, readyUpload } from './utils'
-import { createDirectory } from '@/api'
-import apiConfig from '@/api/config'
 import { useToggle, useLocalStorage } from '@vueuse/core'
+import { fileBlob } from './utils'
+import { createDirectory, http } from '@/api'
+import apiConfig from '@/api/config'
 
 /**  */
 const [showPopover, showPopoverToggle] = useToggle(false)
@@ -71,7 +56,8 @@ const popoverXY = ref({
 	name: ''
 })
 
-function onPopover(x: number, y: number, name) {
+
+function onPopover(x: number, y: number, name: string) {
 	if (x === -1 && y === -1) {
 		showPopoverToggle(false)
 	} else {
@@ -80,7 +66,7 @@ function onPopover(x: number, y: number, name) {
 	}
 }
 
-const cities = useLocalStorage('uploadConfig', [])
+const cities = useLocalStorage('uploadConfig', [2])
 let fileDrop = null
 const state = reactive({
 	files: [],
@@ -92,20 +78,72 @@ function fileChange(files: DropResult) {
 		fileDrop = files.DirectoryTree
 	}
 	for (const file of files.filesArray) {
-		state.files.push({
-			iconType: true,
-			imgShow: false,
-			displayReUpload: false,
-			uploadCompleted: true,
-			percentage: 0,
-			fileName: file.file.name
-		})
+		const index = state.files.findIndex(fv => fv.file.name === file.file.name)
+		if (index === -1) {
+			state.files.push({
+				displayReUpload: false,
+				uploadCompleted: true,
+				percentage: 0,
+				file: file.file,
+				link: '',
+				progressStuts: 'success'
+			})
+		} else {
+			window.$message.warning(`${file.file.name} 已有这个文件`)
+		}
 	}
 }
 
 const [upDisabled, upDisabledToggle] = useToggle()
 
-function uploadClick() {}
+async function uploadClick() {
+	upDisabledToggle()
+
+	const request = async (i: number) => {
+		return new Promise((resolve, reject) => {
+			const name = state.files[i].file.name
+			const blobList = fileBlob(state.files[i].file)
+
+			let index = 0
+			const upload = async () => {
+				if (index >= blobList.length) {
+					resolve(name)
+					return
+				}
+				const formdata = new FormData()
+				formdata.append('name', name)
+				formdata.append('file', blobList[index])
+				try {
+					const response = await http.post('/upload-plus', formdata)
+					if (response.data.data === 'ok') {
+						state.files[i].percentage = index / blobList.length * 100
+						index++
+						upload()
+					} else {
+						upload()
+					}
+				} catch (error) {
+					reject(error)
+				}
+			}
+			for (let r = 0; r < 6; r++) {
+				upload()
+			}
+		})
+	}
+
+	for (let fi = 0; fi < state.files.length; fi++) {
+		try {
+			await request(fi)
+			await http.post('/upload-merge', { name: state.files[fi].file.name })
+		} catch (error) {
+			state.files[fi].percentage = 99
+			state.files[fi].progressStuts = 'error'
+			state.files[fi].displayReUpload = true
+		}
+	}
+	upDisabledToggle()
+}
 
 
 const dropdown = reactive({
@@ -130,27 +168,33 @@ function onContextmenu(e: PointerEvent) {
 	dropdown.x = e.x
 	dropdown.y = e.y
 }
+
+
+function removeFile(index: number) {
+	state.files.splice(index, 1)
+	showPopoverToggle(false)
+}
 </script>
 
 <style lang="scss" scoped>
 .upload-index {
-  padding: 20px 10px 10px 10px;
+	padding: 20px 10px 10px 10px;
 
-  .upload-input-file {
-    height: 30vh;
-  }
+	.upload-input-file {
+		height: 30vh;
+	}
 
-  .ui-but {
-    width: 100%;
-    padding: 25px;
-    margin-top: 2vh;
-  }
+	.ui-but {
+		width: 100%;
+		padding: 25px;
+		margin-top: 2vh;
+	}
 }
 
 .file-from-view {
-  padding: 5px 10px;
-  margin-top: 10px;
-  border-radius: var(--border-radius);
-  border: 1px dashed rgb(224, 224, 230);
+	padding: 5px 10px;
+	margin-top: 10px;
+	border-radius: var(--border-radius);
+	border: 1px dashed rgb(224, 224, 230);
 }
 </style>
