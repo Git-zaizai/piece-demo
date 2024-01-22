@@ -107,6 +107,10 @@
   margin-left: 10px;
 }
 
+.ml-15 {
+  margin-left: 15px;
+}
+
 .ml-20 {
   margin-left: 20px;
 }
@@ -157,10 +161,14 @@
 
 
 /********************/
-.el-transition {
+.el-transition-200 {
   transition: all 0.2s linear;
 }
 
-.el-transition-color {
+.el-transition-all-200 {
+  transition: all 0.2s linear;
+}
+
+.el-transition-color-300 {
   transition: color 0.3s ease-in-out;
 }

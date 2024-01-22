@@ -13,19 +13,13 @@
     "skipLibCheck": true,
     "jsx": "preserve",
     "jsxFactory": "h",
+    "jsxImportSource": "vue",
     "jsxFragmentFactory": "Fragment",
     "paths": {
       "@/*": ["src/*"]
     },
     "types": ["node", "vite/client"],
-    "lib": [
-      "ES6",
-      "dom",
-      "esnext",
-      "ScriptHost",
-      "DOM.Iterable",
-      "ES2018.RegExp"
-    ],
+    "lib": ["ES6", "dom", "esnext", "ScriptHost", "DOM.Iterable", "ES2018.RegExp"],
     "typeRoots": ["types"]
   },
   "include": [

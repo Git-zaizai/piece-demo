@@ -43,7 +43,6 @@
     <div style="width: 1px;height: 5vh;background: #001a10"></div>
   </div>
   <TabDropdown ref="tabDropdownRef" v-model:show="showDropdown" :x="xRef" :y="yRef" @down-click="downclick"/>
-
 </template>
 
 <script name="tab-index" setup lang="ts">
