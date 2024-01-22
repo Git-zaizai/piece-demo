@@ -1,4 +1,5 @@
 import type {
+  DataTableBaseColumn,
   DataTableColumns,
   DataTableColumn
 } from 'naive-ui'
@@ -25,7 +26,9 @@ export function getScrollX(
 ): ComputedRef<number | undefined> {
   let res
   if (scrollX && columns.length > 0) {
-    res = columns.map(item => getWidth(item)).reduce((sum, iv) => sum += iv, 0)
+    columns.forEach((value) => {
+      res += getWidth(value)
+    })
     // 最后加上操作栏
     if (actionsColumns) {
       res += actionsColumns?.width ?? 200
