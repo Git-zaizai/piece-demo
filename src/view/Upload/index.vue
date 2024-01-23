@@ -62,8 +62,8 @@ import { DropResult, InputFile } from '@/components/inputFile'
 import FileItem from './FileItem.vue'
 import { AirplaneTakeOff16Regular } from '@vicons/fluent'
 import { useToggle, useLocalStorage } from '@vueuse/core'
-import { fileBlob } from './utils'
-import { createDirectory, http } from '@/api'
+import { mergeUpload, getFormData, processingPath } from './utils'
+import { http } from '@/api'
 import apiConfig from '@/api/config'
 
 /**  */
@@ -85,9 +85,9 @@ function onPopover(x: number, y: number, name: string) {
 
 const cities = useLocalStorage('uploadConfig', [2])
 let fileDrop = null
+let rootPath: string = ''
 const state = reactive({
-  files: [],
-  upFiles: []
+  files: []
 })
 
 function fileChange(files: DropResult) {
@@ -95,83 +95,64 @@ function fileChange(files: DropResult) {
     fileDrop = files.DirectoryTree
   }
   for (const file of files.filesArray) {
-    const index = state.files.findIndex(fv => fv.file.name === file.file.name)
-    if (index === -1) {
-      state.files.push({
-        displayReUpload: false,
-        uploadCompleted: true,
-        percentage: 0,
-        file: file.file,
-        link: '',
-        progressStuts: 'success'
-      })
-    } else {
-      window.$message.warning(`${file.file.name} 已有这个文件`)
-    }
+    state.files.push({
+      displayReUpload: false,
+      uploadCompleted: true,
+      percentage: 0,
+      file: file.file,
+      link: '',
+      progressStuts: 'success',
+      path: file.path
+    })
   }
 }
 
 const [upDisabled, upDisabledToggle] = useToggle()
 
-const request = async (i: number) => {
-  return new Promise((resolve, reject) => {
-    const name = state.files[i].file.name
-    console.log(state.files[i].file, state.files[i].file.size / 1024 / 1024)
-
-    const blobList = fileBlob(state.files[i].file)
-    console.log(blobList)
-
-    let index = 0
-    const upload = async () => {
-      index++
-      if (index >= blobList.length) {
-        resolve(name)
-        return
-      }
-      const formdata = new FormData()
-      formdata.append('name', name)
-      const path = cities.value.includes(0) ? state.files[i].path : 0
-      formdata.append('path', path)
-      formdata.append('file', blobList[index])
-      try {
-        await http.post('/upload-plus', formdata)
-        state.files[i].percentage = (index / blobList.length) * 100
-        upload()
-      } catch (error) {
-        reject(error)
-      }
-    }
-    for (let r = 0; r < 6; r++) {
-      upload()
-    }
-  })
-}
 async function uploadClick() {
   upDisabledToggle()
+  let citiesPath = cities.value.includes(1)
+  const files = state.files.filter(item => item.percentage === 0 && !item.link)
+  let response
+  if (citiesPath) {
+    let pathList = processingPath(files, fileDrop.name)
+    response = await http.post('/createDirectory', {
+      rootName: fileDrop.name,
+      pathList
+    })
+    rootPath = response.data.data
+  }
 
-  for (let fi = 0; fi < state.files.length; fi++) {
+  for (const iterator of files) {
+    const foamDataList = getFormData(iterator)
     try {
-      await request(fi)
-      await http.post('/upload-merge', { name: state.files[fi].file.name })
-    } catch (error) {
-      state.files[fi].percentage = 99
-      state.files[fi].progressStuts = 'error'
-      state.files[fi].displayReUpload = true
+      await mergeUpload(foamDataList, (index: number) => {
+        iterator.percentage = (index / foamDataList.length) * 100
+      })
+      await http.post('/upload-merge', {
+        name: iterator.file.name,
+        path: citiesPath ? rootPath + iterator.path : '0'
+      })
+    } catch {
+      iterator.percentage = 99
+      iterator.progressStuts = 'error'
+      iterator.displayReUpload = true
     }
   }
+
   upDisabledToggle()
 }
 
 async function displayReFile(index: number) {
-  state.files[index].percentage = 0
-  state.files[index].progressStuts = 'success'
+  const fileItem = state.files[index]
+  fileItem.percentage = 0
+  fileItem.progressStuts = 'success'
   try {
-    await request(index)
     await http.post('/upload-merge', { name: state.files[index].file.name })
   } catch (error) {
-    state.files[index].percentage = 99
-    state.files[index].progressStuts = 'error'
-    state.files[index].displayReUpload = true
+    fileItem.percentage = 99
+    fileItem.progressStuts = 'error'
+    fileItem.displayReUpload = true
   }
 }
 

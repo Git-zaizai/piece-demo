@@ -24,21 +24,31 @@ export function fileBlob(file: File): Blob[] {
   return blobArr
 }
 
+export function getFormData(file): FormData[] {
+  const blobList = fileBlob(file.file)
+  return blobList.map(item => {
+    const formdata = new FormData()
+    formdata.append('name', file.file.name)
+    formdata.append('file', item)
+    return formdata
+  })
+}
 
-export async function mergeUpload(foamDataList: FormData[], callback: () => void): Promise<void> {
+export async function mergeUpload(foamDataList: FormData[], callback: (i: number) => void): Promise<void> {
   return new Promise((resolve, reject) => {
     let index = 0
     const errMap = []
     const upload = async (i?: number) => {
       const at = i ?? index
-      if (at >= foamDataList.length) {
-        return resolve()
-      }
+      if (at >= foamDataList.length) return
       foamDataList[at].append('id', at.toString())
-      index++
       try {
         await http.post('/upload-plus', foamDataList[at])
-        callback()
+        callback(index)
+        if (at >= foamDataList.length) {
+          return resolve()
+        }
+        index++
         return upload()
       } catch {
         if (errMap.length >= 3) {
@@ -53,4 +63,17 @@ export async function mergeUpload(foamDataList: FormData[], callback: () => void
       upload()
     }
   })
+}
+
+export function processingPath(files, rootPath: string): string[] {
+  const phs = []
+  for (const { path } of files) {
+    let ph = path.split('/')
+    ph.pop()
+    ph = ph.join('/')
+    if (ph.length !== rootPath.length) {
+      phs.push(ph)
+    }
+  }
+  return phs
 }
