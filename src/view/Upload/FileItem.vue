@@ -17,7 +17,7 @@
         v-if="link"
       >
         <template #icon>
-          <n-icon size="23" color="var(--text-color)">
+          <n-icon size="23" color="var(--text-color)" @click="codeDownloadUrl(link)">
             <LinkSquare16Regular />
           </n-icon>
         </template>
@@ -153,6 +153,7 @@ const eyeOutline = ref<HTMLButtonElement | null>()
 const arrowClockwise = ref<HTMLButtonElement | null>()
 const deleteDismiss = ref<HTMLButtonElement | null>()
 
+/** 鼠标移动到展示 popover */
 function mouseenter(el: any, name: string) {
   if (el) {
     const { width, top, left } = el.$el.getBoundingClientRect()
@@ -160,9 +161,43 @@ function mouseenter(el: any, name: string) {
     emit('onPopover', y, top, name)
   }
 }
-
+/** 鼠标移出隐藏 popover */
 function mouseleave() {
   emit('onPopover', -1, -1)
+}
+
+/**
+ * @function codeDownloadUrl 复制链接
+ * */
+function codeDownloadUrl(downloadUrl: string) {
+  const clipboard = navigator.clipboard
+  if (clipboard) {
+    clipboard.writeText(downloadUrl).then(
+      () => {
+        window.$message.success('复制成功')
+      },
+      e => {
+        window.$message.error('复制失败')
+        console.log('复制链接失败 错误：', e)
+      }
+    )
+  } else {
+    const textarea = document.createElement('textarea')
+    textarea.setAttribute('readonly', 'readonly')
+    textarea.value = downloadUrl
+    document.body.appendChild(textarea)
+    textarea.select()
+    const exec = document.execCommand('copy')
+    console.log('exec', exec)
+
+    if (exec) {
+      document.execCommand('copy')
+      window.$message.success('复制成功')
+    } else {
+      window.$message.error('复制失败')
+    }
+    document.body.removeChild(textarea)
+  }
 }
 </script>
 

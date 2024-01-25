@@ -53,6 +53,7 @@
           <n-checkbox :value="3" label="保存设置在本地" />
         </n-space>
       </n-checkbox-group>
+      <n-button strong secondary type="error" size="tiny" class="w-100 mt-5" @click="removemerge"> 删除所有分片 </n-button>
     </n-popover>
   </div>
 </template>
@@ -122,25 +123,36 @@ async function uploadClick() {
     })
     rootPath = response.data.data
   }
-
   for (const iterator of files) {
-    const foamDataList = getFormData(iterator)
     try {
-      await mergeUpload(foamDataList, (index: number) => {
-        iterator.percentage = (index / foamDataList.length) * 100
+      const foamDataList = getFormData(iterator)
+
+      response = await mergeUpload(foamDataList, (index: number) => {
+        iterator.percentage = Math.round((index / foamDataList.length) * 100)
       })
-      await http.post('/upload-merge', {
-        name: iterator.file.name,
-        path: citiesPath ? rootPath + iterator.path : '0'
-      })
+      if (response === foamDataList.length - 1) {
+        response = await http.post('/upload-merge', {
+          name: iterator.file.name,
+          path: citiesPath ? rootPath + iterator.path : '0',
+          leng: foamDataList.length
+        })
+        // 判断文件小于 < 1mb 延时隐藏进度条 给人看起来像上传过了
+        if (foamDataList.length === 1) {
+          setTimeout(() => {
+            iterator.link = apiConfig.baseURL + response.data.data.url
+          }, 1000)
+        } else {
+          iterator.link = apiConfig.baseURL + response.data.data.url
+        }
+      }
     } catch {
       iterator.percentage = 99
       iterator.progressStuts = 'error'
       iterator.displayReUpload = true
     }
   }
-
   upDisabledToggle()
+  removemerge()
 }
 
 async function displayReFile(index: number) {
@@ -148,7 +160,27 @@ async function displayReFile(index: number) {
   fileItem.percentage = 0
   fileItem.progressStuts = 'success'
   try {
+    const foamDataList = getFormData(fileItem)
+    let response = await mergeUpload(foamDataList, (index: number) => {
+      fileItem.percentage = Math.round((index / foamDataList.length) * 100)
+    })
     await http.post('/upload-merge', { name: state.files[index].file.name })
+    if (response === foamDataList.length - 1) {
+      response = await http.post('/upload-merge', {
+        name: fileItem.file.name,
+        path: cities.value.includes(1) ? rootPath + fileItem.path : '0',
+        leng: foamDataList.length
+      })
+      // 判断文件小于 < 1mb 延时隐藏进度条 给人看起来像上传过了
+      if (foamDataList.length === 1) {
+        setTimeout(() => {
+          fileItem.link = apiConfig.baseURL + (response as any).data.data.url
+        }, 1000)
+      } else {
+        fileItem.link = apiConfig.baseURL + (response as any).data.data.url
+      }
+    }
+    removemerge()
   } catch (error) {
     fileItem.percentage = 99
     fileItem.progressStuts = 'error'
@@ -182,6 +214,18 @@ function onContextmenu(e: PointerEvent) {
 function removeFile(index: number) {
   state.files.splice(index, 1)
   showPopoverToggle(false)
+}
+
+async function removemerge(errRemove = 1) {
+  if (errRemove >= 3) {
+    window.$message.error('删除分片失败')
+    return
+  }
+  try {
+    await http.get('/remove-uploads')
+  } catch {
+    removemerge(errRemove + 1)
+  }
 }
 </script>
 

@@ -34,32 +34,35 @@ export function getFormData(file): FormData[] {
   })
 }
 
-export async function mergeUpload(foamDataList: FormData[], callback: (i: number) => void): Promise<void> {
+export async function mergeUpload(foamDataList: FormData[], callback: (i: number) => void): Promise<number> {
   return new Promise((resolve, reject) => {
     let index = 0
+    const success = []
     const errMap = []
     const upload = async (i?: number) => {
       const at = i ?? index
-      if (at >= foamDataList.length) return
-      foamDataList[at].append('id', at.toString())
+      index++
+      if (at > foamDataList.length - 1) return
       try {
+        foamDataList[at].append('id', at.toString())
         await http.post('/upload-plus', foamDataList[at])
         callback(index)
-        if (at >= foamDataList.length) {
-          return resolve()
+        /** 在这里判断保证全部完成后才能退出 */
+        if (success.length === foamDataList.length - 1) {
+          return resolve(success.length)
         }
-        index++
+        success.push(at)
         return upload()
       } catch {
         if (errMap.length >= 3) {
-          reject()
+          return reject(-1)
         }
-        errMap.push(foamDataList[at])
+        errMap.push(at)
         return upload(at)
       }
     }
 
-    for (let r = 0; r < 6; r++) {
+    for (let r = 0, leng = Math.min(foamDataList.length, 6); r < leng; r++) {
       upload()
     }
   })
