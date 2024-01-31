@@ -23,9 +23,9 @@ export const createVNodeFn = () => {
 }
 
 import messageTag1Vue from './message-tag-1.vue'
-
 import messageTag2Vue from './message-tag-2.vue'
 import messageTag3Vue from './message-tag-3.vue'
+
 export const createAppFn1 = () => {
   console.time()
   createApp(messageTag1Vue).mount(document.querySelector('#vue-render-1'))
