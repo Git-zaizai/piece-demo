@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "preserveConstEnums": true,
     "noUnusedParameters": true,
     "noUnusedLocals": false,
@@ -18,7 +18,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["node", "vite/client"],
+    "types": ["vite/client"],
     "lib": ["ES6", "dom", "esnext", "ScriptHost", "DOM.Iterable", "ES2018.RegExp"],
     "typeRoots": ["types"]
   },
@@ -31,5 +31,5 @@
     "types/*.ts",
     "vite.config.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.js"]
+  "exclude": ["node_modules", "dist"]
 }

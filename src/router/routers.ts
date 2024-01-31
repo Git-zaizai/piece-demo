@@ -20,18 +20,21 @@ const Root: AppRouteRecordRaw = {
  */
 const routeModules = import.meta.glob('./home/*.ts', { eager: true })
 const routeModuleList: AppRouteRecordRaw[] = [];
+const hemoRoutes = ['Root']
 
 for (const key in routeModules) {
     const mod = routeModules[key] as { default: AppRouteRecordRaw }
     if (Array.isArray(mod.default)) {
         routeModuleList.push(...mod.default)
+        mod.default.forEach(modv=> hemoRoutes.push(modv.name))
     } else {
         routeModuleList.push(mod.default)
+        hemoRoutes.push(mod.default.name)
     }
 }
 
 const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
-export { routeModuleList }
+export { routeModuleList,hemoRoutes }
 
 export default routers

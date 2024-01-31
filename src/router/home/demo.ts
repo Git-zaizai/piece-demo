@@ -74,13 +74,13 @@ const Demo: AppRouteRecordRaw = {
       }
     },
     {
-      path: 'imgzhezhao',
-      name: 'imgzhezhao',
-      component: () => import('@/view/Test/imgzezhaho/imgzezhao.vue'),
+      path: 'vue-render',
+      name: 'vue-render',
+      component: () => import('@/view/Test/vue-render/index.vue'),
       meta: {
-        title: '图片遮罩',
+        title: 'vue render',
         navigation: {
-          contentText: '图片遮罩'
+          contentText: 'vue3 函数式创建组件渲染组件'
         }
       }
     }
