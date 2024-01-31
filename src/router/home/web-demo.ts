@@ -77,22 +77,11 @@ const Demo: AppRouteRecordRaw = {
     {
       path: 'vue-render',
       name: 'vue-render',
-      component: () => import('@/view/demo/web/vue-render/index.vue'),
+      component: () => import('@/view/Test/vue-render/index.vue'),
       meta: {
         title: 'vue render',
         navigation: {
           contentText: 'vue3 函数式创建组件渲染组件'
-        }
-      }
-    },
-    {
-      path: 'md-to-vue',
-      name: 'md-to-vue',
-      component: () => import('@/view/demo/web/mdtovue.md'),
-      meta: {
-        title: 'md-to-vue',
-        navigation: {
-          contentText: '在vite中解析md文件转换vue组件'
         }
       }
     }
