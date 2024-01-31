@@ -34,14 +34,14 @@ const routeModuleList: AppRouteRecordRaw[] = [];
 const hemoRoutes = ['Root']
 
 for (const key in routeModules) {
-	const mod = routeModules[key] as { default: AppRouteRecordRaw }
-	if (Array.isArray(mod.default)) {
-		routeModuleList.push(...mod.default)
-		mod.default.forEach(modv => hemoRoutes.push(modv.name))
-	} else {
-		routeModuleList.push(mod.default)
-		hemoRoutes.push(mod.default.name)
-	}
+    const mod = routeModules[key] as { default: AppRouteRecordRaw }
+    if (Array.isArray(mod.default)) {
+        routeModuleList.push(...mod.default)
+        mod.default.forEach(modv=> hemoRoutes.push(modv.name))
+    } else {
+        routeModuleList.push(mod.default)
+        hemoRoutes.push(mod.default.name)
+    }
 }
 
 routeModuleList.sort((a, b)=> {
@@ -53,6 +53,6 @@ routeModuleList.sort((a, b)=> {
 
 const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
-export { routeModuleList, hemoRoutes }
+export { routeModuleList,hemoRoutes }
 
 export default routers
