@@ -89,7 +89,7 @@ export default defineConfig((configEnv) => {
 					drop_debugger: true
 				}
 			},
-			rollupOptions: {
+			/* rollupOptions: {
 				output: {
 					manualChunks: {
 						jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
@@ -99,7 +99,7 @@ export default defineConfig((configEnv) => {
 						editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
 					},
 				},
-			},
+			}, */
 		}
 	}
 })
