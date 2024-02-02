@@ -14,7 +14,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import shikiMdVue from './build/vite-shiki-md-vue'
 
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
-export default defineConfig(async configEnv => {
+export default defineConfig(configEnv => {
   const viteEnv = loadEnv(configEnv.mode, process.cwd()) as unknown as ImportMetaEnv
 
   for (const viteEnvKey in viteEnv) {
@@ -27,10 +27,7 @@ export default defineConfig(async configEnv => {
 
   return {
     plugins: [
-      shikiMdVue(),
-      vue({
-        include: [/\.vue$/, /\.md$/]
-      }),
+      vue(),
       vueJsxPlugin(),
       VueSetupExtend(),
       AutoImport({
@@ -75,28 +72,29 @@ export default defineConfig(async configEnv => {
       }
     },
 
-		build: {
-			target: ['es2022', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-			chunkSizeWarningLimit: 2000,
-			minify: 'terser',
-			terserOptions: {
-				compress: {
-					//生产环境时移除console
-					drop_console: true,
-					drop_debugger: true
-				}
-			},
-			/* rollupOptions: {
-				output: {
-					manualChunks: {
-						jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
-						cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
-						htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
-						tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
-						editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
-					},
-				},
-			}, */
-		}
-	}
+    build: {
+      sourcemap: true,
+      target: ['es2022', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      chunkSizeWarningLimit: 2000,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          //生产环境时移除console
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
+      /* rollupOptions: {
+        output: {
+          manualChunks: {
+            jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
+            cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
+            htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
+            tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
+            editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`]
+          }
+        }
+      } */
+    }
+  }
 })
