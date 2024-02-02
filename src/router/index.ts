@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import type { RouterOptions } from 'vue-router'
 import { useTitle } from '@vueuse/core'
 import routers from './routers'
@@ -12,18 +12,18 @@ const router = createRouter(<RouterOptions> {
 });
 
 router.beforeEach((to, _from: any) => {
-    window.$loadingBar && window.$loadingBar.start();
-    useTitle((to.meta?.title as string) ?? '(っ´Ι`)っ')
-});
+  window.$loadingBar && window.$loadingBar.start()
+  useTitle((to.meta?.title as string) ?? '(っ´Ι`)っ')
+})
 
 router.afterEach((_: any, _from: any, _failure: any) => {
-    window.$loadingBar && window.$loadingBar.finish();
-});
+  window.$loadingBar && window.$loadingBar.finish()
+})
 
-router.onError((error) => {
-    window.$loadingBar && window.$loadingBar.finish();
-    window.$message.error('路由错误！')
-    console.log(error)
-});
+router.onError(error => {
+  window.$loadingBar && window.$loadingBar.finish()
+  window.$message.error('路由错误！')
+  console.log(error)
+})
 
-export default router;
+export default router
