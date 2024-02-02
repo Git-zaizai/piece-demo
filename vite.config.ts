@@ -75,18 +75,18 @@ export default defineConfig(async configEnv => {
       }
     },
 
-    build: {
-      target: ['es2022', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-      chunkSizeWarningLimit: 2000,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          //生产环境时移除console
-          drop_console: true,
-          drop_debugger: true
-        }
-      }
-      /* rollupOptions: {
+		build: {
+			target: ['es2022', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+			chunkSizeWarningLimit: 2000,
+			minify: 'terser',
+			terserOptions: {
+				compress: {
+					//生产环境时移除console
+					drop_console: true,
+					drop_debugger: true
+				}
+			},
+			/* rollupOptions: {
 				output: {
 					manualChunks: {
 						jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
@@ -97,6 +97,6 @@ export default defineConfig(async configEnv => {
 					},
 				},
 			}, */
-    }
-  }
+		}
+	}
 })
