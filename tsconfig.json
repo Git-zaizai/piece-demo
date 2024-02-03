@@ -6,12 +6,9 @@
     "preserveConstEnums": true,
     "noUnusedParameters": true,
     "noUnusedLocals": false,
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true, // 如果需要支持默认导入CommonJS模块
-    "resolveJsonModule": true, // 如果需要导入JSON文件
-    "esModuleInterop": true, // 为了更好地与CommonJS模块交互
-    "allowImportingTsExtensions": true, // 允许导入.ts和.tsx扩展名结尾的文件（TypeScript 4.5+）
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "skipLibCheck": true,
     "jsx": "preserve",
