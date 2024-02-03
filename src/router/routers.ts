@@ -7,47 +7,35 @@ import LayoutHome from '@/layout/layout-hemo.vue'
  * @param 主路由
  */
 const Root: AppRouteRecordRaw = {
-  path: '/',
-  name: 'Root',
-  component: RootView,
-  meta: {
-    keepAlive: 'Home',
-    title: 'root'
-  }
-}
-
-/**
- * @param 主路由
- */
-const Test: AppRouteRecordRaw = {
-  path: '/test',
-  name: 'test',
-  component: () => import('@/view/Test/test.vue'),
-  meta: {
-    title: 'Test'
-  }
+    path: '/',
+    name: 'Root',
+    component: RootView,
+    meta: {
+        keepAlive: 'Home',
+        title: 'root'
+    },
 }
 
 /**
  * @function 自动注册路由
  */
 const routeModules = import.meta.glob('./home/*.ts', { eager: true })
-const routeModuleList: AppRouteRecordRaw[] = []
+const routeModuleList: AppRouteRecordRaw[] = [];
 const hemoRoutes = ['Root']
 
 for (const key in routeModules) {
-  const mod = routeModules[key] as { default: AppRouteRecordRaw }
-  if (Array.isArray(mod.default)) {
-    routeModuleList.push(...mod.default)
-    mod.default.forEach(modv => hemoRoutes.push(modv.name))
-  } else {
-    routeModuleList.push(mod.default)
-    hemoRoutes.push(mod.default.name)
-  }
+    const mod = routeModules[key] as { default: AppRouteRecordRaw }
+    if (Array.isArray(mod.default)) {
+        routeModuleList.push(...mod.default)
+        mod.default.forEach(modv=> hemoRoutes.push(modv.name))
+    } else {
+        routeModuleList.push(mod.default)
+        hemoRoutes.push(mod.default.name)
+    }
 }
 
-const routers = [Root, Test, ...routeModuleList, admin, ...adminRouters]
+const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
-export { routeModuleList, hemoRoutes }
+export { routeModuleList,hemoRoutes }
 
 export default routers
