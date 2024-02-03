@@ -1,5 +1,4 @@
 <script lang="tsx">
-
 export interface Link {
   linkName: string
   url: string
@@ -54,13 +53,15 @@ import ModalForm from '@/components/modal-form.vue'
 import { copyStr, rand } from '@/utils/index'
 import dayjs from 'dayjs'
 import { useToggle } from '@vueuse/core'
+import { CloseCircleTwotone } from '@vicons/antd'
+import { Add } from '@vicons/ionicons5'
 
 const actionsColumns: DataTableColumn = {
   title: '操作',
   key: 'link_actions',
   fixed: 'right',
   width: 110,
-  render: linkAction(tableAdd)
+  render: linkAction(updateItem)
 }
 
 function randTagType(): any {
@@ -358,8 +359,6 @@ function updateItem(row) {
   showFormToggle()
 }
 
-
-
 const formSubmit = () => {
   formRef.value.validate(async (err: any) => {
     try {
@@ -408,11 +407,25 @@ function bindRemoveLink(index) {
 
 <template>
   <div>
-    <zai-table :columns="columns" :data="state" checkbox-key="_id" @add="tableAdd" @flushed="getData"
-      @update-item="updateItem" scroll-x :actions-columns="actionsColumns" />
-    <modal-form v-model:show="showForm" @confirm-form="formSubmit" style="width: 60vw">
-      <n-form ref="formRef" label-placement="left" label-width="100" label-align="right" :model="formData"
-        @keyup.enter="formSubmit">
+    <zai-table
+      :columns="columns"
+      :data="state"
+      checkbox-key="_id"
+      @add="tableAdd"
+      @flushed="getData"
+      @update-item="updateItem"
+      scroll-x
+      :actions-columns="actionsColumns"
+    />
+    <modal-form v-model:show="showForm" displaydirective="show" @confirm-form="formSubmit" style="width: 60vw">
+      <n-form
+        ref="formRef"
+        label-placement="left"
+        label-width="100"
+        label-align="right"
+        :model="formData"
+        @keyup.enter="formSubmit"
+      >
         <n-form-item label="小说名:" path="title" :rule="rule">
           <n-input placeholder="小说名" clearable v-model:value="formData.title" />
         </n-form-item>
@@ -487,20 +500,20 @@ function bindRemoveLink(index) {
                   <n-input placeholder="URL" clearable v-model:value="linkItem.url" />
                 </n-form-item>
               </div>
-              <n-button class="ml-20" strong secondary type="tertiary" @click="bindRemoveLink(linki)">
-                <n-icon size="22">
-                  <Close />
-                </n-icon>
+              <n-button class="ml-20 mb-20" text @click="bindRemoveLink(linki)">
+                <template #icon>
+                  <n-icon><CloseCircleTwotone /></n-icon>
+                </template>
               </n-button>
             </div>
           </transition>
         </div>
 
         <div class="w-100 flex-fdc-alc-juc">
-          <n-button strong secondary type="tertiary" @click="addLinks">
-            <n-icon size="26">
-              <Add />
-            </n-icon>
+          <n-button text @click="addLinks">
+            <template #icon>
+              <n-icon><Add /></n-icon>
+            </template>
           </n-button>
         </div>
       </n-form>
