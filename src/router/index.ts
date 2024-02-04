@@ -6,7 +6,7 @@ import routers from './routers'
 const { VITE_GLOB_ROUTER_PREFIX } = import.meta.env
 
 const router = createRouter(<RouterOptions> {
-    history: createWebHashHistory(VITE_GLOB_ROUTER_PREFIX),
+    history: createWebHistory(VITE_GLOB_ROUTER_PREFIX),
     routes: routers,
     strict: true,
 });

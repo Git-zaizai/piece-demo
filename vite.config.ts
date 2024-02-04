@@ -11,8 +11,15 @@ import Components from 'unplugin-vue-components/vite'
 // @ts-ignore
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
+import createDemoPlugin from './build/index.js'
+import Markdown from 'unplugin-vue-markdown/vite'
+import Shiki from '@shikijs/markdown-it'
+import {
+	transformerTwoslash,
+} from '@shikijs/twoslash'
+
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
-export default defineConfig((configEnv) => {
+export default defineConfig(async (configEnv) => {
 	const viteEnv = loadEnv(
 		configEnv.mode,
 		process.cwd()
@@ -26,9 +33,36 @@ export default defineConfig((configEnv) => {
 		}
 	}
 
+	const shiki = await Shiki({
+		themes: {
+			light: 'one-dark-pro',
+			dark: 'one-dark-pro',
+		},
+		transformers: [
+			transformerTwoslash()
+		]
+	})
+
 	return {
 		plugins: [
-			vue(),
+			vue({
+				include: [/\.vue$/, /\.md$/],
+			}),
+			Markdown({
+				// default options passed to markdown-it
+				// see: https://markdown-it.github.io/markdown-it/
+				/* markdownItOptions: {
+					html: true,
+					linkify: true,
+					typographer: true,
+				}, */
+				// A function providing the Markdown It instance gets the ability to apply custom settings/plugins
+				markdownItSetup(md) {
+					md.use(shiki)
+				},
+				// Class names for the wrapper div
+				// wrapperClasses: 'markdown-body'
+			}),
 			vueJsxPlugin(),
 			VueSetupExtend(),
 			AutoImport({
