@@ -5,11 +5,11 @@ import routers from './routers'
 
 const { VITE_GLOB_ROUTER_PREFIX } = import.meta.env
 
-const router = createRouter(<RouterOptions>{
-  history: createWebHistory(VITE_GLOB_ROUTER_PREFIX),
-  routes: routers,
-  strict: true
-})
+const router = createRouter(<RouterOptions> {
+    history: createWebHistory(VITE_GLOB_ROUTER_PREFIX),
+    routes: routers,
+    strict: true,
+});
 
 router.beforeEach((to, _from: any) => {
     window.$loadingBar && window.$loadingBar.start();
