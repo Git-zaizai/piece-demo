@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     Actions: typeof import('./../src/components/table/src/components/actions.vue')['default']
     HoverButton: typeof import('./../src/components/hover-button.vue')['default']
     InputFile: typeof import('./../src/components/inputFile/src/inputFile.vue')['default']
+    MdTest: typeof import('./../src/components/md-test.vue')['default']
     ModalForm: typeof import('./../src/components/modal-form.vue')['default']
     MonacoEditorModal: typeof import('./../src/components/monaco-editor-modal.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
