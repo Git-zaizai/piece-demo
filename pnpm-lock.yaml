@@ -70,9 +70,6 @@ devDependencies:
   '@shikijs/markdown-it':
     specifier: 1.0.0-beta.5
     version: 1.0.0-beta.5
-  '@shikijs/twoslash':
-    specifier: 1.0.0-beta.5
-    version: 1.0.0-beta.5(typescript@4.9.4)
   '@types/node':
     specifier: ^18.15.11
     version: 18.15.11
@@ -816,16 +813,6 @@ packages:
       shiki: 1.0.0-beta.5
     dev: true
 
-  /@shikijs/twoslash@1.0.0-beta.5(typescript@4.9.4):
-    resolution: {integrity: sha512-BPn2PFgy6Bon/hWU52ELWeGrdO1lsuR6ZIhTTDw4q+GrOZQsVDkdNlhIjoanGv1UY95dlbTEuPqXtzmk+4O73Q==}
-    dependencies:
-      '@shikijs/core': 1.0.0-beta.5
-      twoslash: 0.1.0(typescript@4.9.4)
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@soybeanjs/vue-materials@0.1.9(vue@3.2.45):
     resolution: {integrity: sha512-VX7175QVph1yy3kgrPMKvs2kwSRP3ikY3tARxYeZleyAhSx8IMoBBdKvb+z7HwSQEINCLIDE17zLU53wg1NRkA==}
     peerDependencies:
@@ -879,14 +866,6 @@ packages:
 
   /@types/web-bluetooth@0.0.16:
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
-
-  /@typescript/vfs@1.5.0:
-    resolution: {integrity: sha512-AJS307bPgbsZZ9ggCT3wwpg3VbTKMFNHfaY/uF0ahSkYYrPF2dSSKDNIDIQAHm9qJqbLvCsSJH7yN4Vs/CsMMg==}
-    dependencies:
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /@vicons/antd@0.12.0:
     resolution: {integrity: sha512-C0p6aO1EmGG1QHrqgUWQS1No20934OdWSRQshM5NIDK5H1On6tC26U0hT6Rmp40KfUsvhvX5YW8BoWJdNFifPg==}
@@ -2291,17 +2270,6 @@ packages:
   /treemate@0.3.11:
     resolution: {integrity: sha512-M8RGFoKtZ8dF+iwJfAJTOH/SM4KluKOKRJpjCMhI8bG3qB74zrFoArKZ62ll0Fr3mqkMJiQOmWYkdYgDeITYQg==}
     dev: false
-
-  /twoslash@0.1.0(typescript@4.9.4):
-    resolution: {integrity: sha512-zvDn23/FwNdi/i2xMTTDcn7xnX4iKlp6tJt68aD86zRqesQrb/HOnMBtaUu6+vme4gtlX9ScEfKYog1+7IPKSw==}
-    peerDependencies:
-      typescript: '*'
-    dependencies:
-      '@typescript/vfs': 1.5.0
-      typescript: 4.9.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /typescript@4.9.4:
     resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}

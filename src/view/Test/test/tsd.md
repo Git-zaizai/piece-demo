@@ -5,7 +5,7 @@ let a = 1
 
 # 啊撒大声地
 
-```vue
+```vue code
 <template>
   <n-space vertical :size="12">
     <n-space>
@@ -107,4 +107,5 @@ export default defineComponent({
   }
 })
 </script>
+
 ```
