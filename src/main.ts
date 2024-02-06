@@ -10,4 +10,3 @@ function setup() {
   app.use(Pinia).use(router).mount('#app')
 }
 setup()
-

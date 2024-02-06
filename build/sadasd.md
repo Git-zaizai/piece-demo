@@ -2,9 +2,9 @@
 let a = 1
 ```
 
-# 啊撒大声地 啊撒大声地 阿萨德阿打算打打四大四大四大四大四大啊
+# 啊撒大声地
 
-啊上课的哈喽上课的换了卡 阿萨德 asd   阿萨德  阿萨德阿萨德 阿萨德
+asdasdasdas 啊实打实阿萨德阿萨德
 
 ```vue
 <template>
@@ -17,7 +17,7 @@ const list = ref(['1', '2'])
 </script>
 ```
 
-## asdas asd asd 阿萨德 阿萨德 asd 啊实打实asd 
+
 
 # ASkdjhalkjsdh
 
@@ -26,7 +26,7 @@ const list = ref(['1', '2'])
 
 
 
-```vue
+```vue code
 <template>
   <n-space vertical :size="12">
     <n-space>

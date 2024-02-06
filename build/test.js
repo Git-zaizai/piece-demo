@@ -1,8 +1,53 @@
-let str = `<template><div class="markdown-body"><pre class="shiki shiki-themes one-dark-pro one-dark-pro" style="background-color:#282c34;--shiki-dark-bg:#282c34;color:#abb2bf;--shiki-dark:#abb2bf" tabindex="0"><code class="language-js" v-pre><span class="line"><span style="color:#C678DD;--shiki-dark:#C678DD">let</span><span style="color:#E06C75;--shiki-dark:#E06C75"> a</span><span style="color:#56B6C2;--shiki-dark:#56B6C2"> =</span><span style="color:#D19A66;--shiki-dark:#D19A66"> 1</span></span>
-<span class="line"></span></code></pre>
-<h1>啊撒大声地</h1>
-</div></template>`
+import markdown from 'markdown-it'
+import Shiki from '@shikijs/markdown-it'
+import fs from 'node:fs'
+import path from 'node:path'
+
+let item = fs.readFileSync(path.join(process.cwd(), './sadasd.md')).toString()
 
 const regex = /<template>([\s\S]*?)<\/template>/
 
-console.log(str.match(regex)[1]);
+const asdastoken = JSON.parse(fs.readFileSync(path.join(process.cwd(), './lkajshd.json')).toString())
+;(async () => {
+  const shiki = await Shiki({
+    themes: {
+      light: 'one-dark-pro',
+      dark: 'one-dark-pro'
+    }
+  })
+
+  const md = markdown()
+  md.use(shiki)
+
+  let tokens = md.parse(item)
+  console.log("🚀 ~ ; ~ tokens:", tokens)
+ /*  const strs = []
+
+  const getCodeDemo = (leng, code) => {
+    return `
+    <div class="zai-code" :style="cssVars">
+    <button class="zai-but-copy" @click="butCody"></button>
+    <span class="lang">
+      ${leng}
+    </span>
+    ${code}
+    </div>
+    `
+  }
+
+  let i = 0
+  for (const item of tokens) {
+    i++
+    if (item.tag !== 'code') {
+      strs.push(md.renderer.render([item]))
+    } else {
+      // strs.push(getCodeDemo(item.info, md.renderer.render(item)))
+      // strs.push(getCodeDemo(item.info, md.renderer.render([item])))
+      // console.log(md.renderer.render([item]))
+      const content = getCodeDemo(item.info, md.render('```' + item.info + '\n' + item.content + '```'))
+      strs.push(content)
+    }
+  }
+  // const html = md.render(item)
+  fs.writeFileSync(path.join(process.cwd(), './asdasdasd.html'),strs.join('')) */
+})()
