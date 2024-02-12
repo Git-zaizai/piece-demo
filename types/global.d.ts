@@ -1,6 +1,12 @@
 /// <reference types="vite/client" />
 /// <reference types="@vue/runtime-dom" />
 
+declare module '*.md' {
+    import { DefineComponent } from "vue"
+    const component: DefineComponent<{}, {}, any>
+    export default component
+}
+
 declare interface Window {
     $loadingBar: typeof import('naive-ui').LoadingBarApi
     $dialog: typeof import('naive-ui').DialogApi

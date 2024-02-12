@@ -3,9 +3,13 @@ import { CloseOutlined, FullscreenExitOutlined, FullscreenOutlined, MinusOutline
 import { SaveMultiple20Regular, DocumentSave20Regular } from '@vicons/fluent'
 import { useCommonStore } from '@/store'
 import { useToggle, useDebounceFn } from '@vueuse/core'
+import ModalForm from '@/components/modal-form.vue'
+
 import type { Monaco } from '@monaco-editor/loader'
 import loader from '@monaco-editor/loader'
-import ModalForm from '@/components/modal-form.vue'
+
+import { getHighlighter } from 'shiki'
+import { shikiToMonaco } from '@shikijs/monaco'
 
 const props = withDefaults(defineProps<{
 	show: boolean
@@ -15,7 +19,7 @@ const props = withDefaults(defineProps<{
 	validator?: (fileName: string) => Error
 }>(), {
 	value: '',
-	language: 'json'
+	language: 'vue'
 })
 const emit = defineEmits(['update:show', 'onChange', 'onSaveAsFile'])
 const commStore = useCommonStore()
@@ -48,14 +52,38 @@ const modalShow = computed({
 })
 
 let monacoEditor: Monaco | null = null
+// @ts-ignore
+// let editorModel: Monaco["editor"].ITextModel | null = null
+let editorModel
+let highlighter = null
 
 async function createMonacoEditor() {
 	if (editorViewRef.value && !monacoEditor) {
+		// 创建一个可复用的语法高亮器
+		highlighter = await getHighlighter({
+			themes: [
+				'one-dark-pro',
+			],
+			langs: [
+				'javascript',
+				'typescript',
+				'vue'
+			],
+		})
 		monacoEditor = await loader.init()
-		const editorModel = monacoEditor.editor.createModel(Array.isArray(props.value) ? props.value.join('') : props.value, props.language);
+
+		// editorModel = monacoEditor.editor.createModel(Array.isArray(props.value) ? props.value.join('') : props.value, props.language);
+		// 首先注册你需要的语言的 IDs
+		monacoEditor.languages.register({ id: 'vue' })
+		monacoEditor.languages.register({ id: 'typescript' })
+		monacoEditor.languages.register({ id: 'javascript' })
+		// 注册 Shiki 主题，并为 Monaco 提供语法高亮
+		shikiToMonaco(highlighter, monacoEditor)
 		monacoEditor.editor.create(editorViewRef.value, {
-			model: editorModel,
-			theme: 'vs-dark', //官方自带三种主题vs, hc-black, or vs-dark
+			// model: editorModel,
+			value: Array.isArray(props.value) ? props.value.join('') : props.value,
+			language: props.language,
+			theme: 'one-dark-pro', //官方自带三种主题vs, hc-black, or vs-dark
 			folding: true, // 是否启用代码折叠
 			links: true, // 是否点击链接
 			contextmenu: false, // 启用上下文菜单
@@ -119,6 +147,7 @@ const rule = {
 	}
 }
 const formRef = ref(null)
+
 function saveAsFile() {
 	formRef.value.validate((err: any) => {
 		if (!err) {
@@ -139,9 +168,6 @@ function fullscreen() {
 	} else {
 		isFullscreen.value = 90
 	}
-	/** 方法找不到，看不到在哪  不黑找了 */
-	// @ts-ignore
-	// monacoEditor.editor.layout()
 }
 
 onBeforeUnmount(() => {
@@ -166,8 +192,10 @@ onBeforeUnmount(() => {
 			</n-input-group>
 		</n-form>
 	</modal-form>
-	<n-modal v-model:show="modalShow" :show-icon="false" display-directive="show" class="modal-editor-vscode"
-		:style="[viewBack, { '--w': isFullscreen + 'vw', '--h': isFullscreen + 'vh' }]">
+	<n-modal
+			v-model:show="modalShow" :show-icon="false" display-directive="show" class="modal-editor-vscode"
+			:style="[viewBack, { '--w': isFullscreen + 'vw', '--h': isFullscreen + 'vh' }]"
+	>
 		<div class="editor-vscode">
 			<header class="editor-vscode-header w-100">
 
@@ -189,8 +217,10 @@ onBeforeUnmount(() => {
 				</n-button-group>
 
 				<n-button-group>
-					<n-button quaternary type="success" :native-focus-behavior="false" @focus="() => false"
-						@click="() => emit('update:show', false)">
+					<n-button
+							quaternary type="success" :native-focus-behavior="false" @focus="() => false"
+							@click="() => emit('update:show', false)"
+					>
 						<template #icon>
 							<n-icon>
 								<MinusOutlined />
@@ -224,19 +254,19 @@ onBeforeUnmount(() => {
 </template>
 <style lang="scss" scoped>
 .editor-vscode {
-	width: var(--w);
-	height: var(--h);
-	background-color: var(--modal-editror);
-	border-radius: 3px 3px 7px 7px;
+  width: var(--w);
+  height: var(--h);
+  background-color: var(--modal-editror);
+  border-radius: 3px 3px 7px 7px;
 
-	&-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-	&-content {
-		height: calc(var(--h) - 34px - 3px);
-	}
+  &-content {
+    height: calc(var(--h) - 34px - 3px);
+  }
 }
 </style>

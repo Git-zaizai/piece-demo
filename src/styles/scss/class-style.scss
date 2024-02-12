@@ -177,3 +177,49 @@
 .demo-view{
   padding: 20px;
 }
+
+@mixin fiex-alc {
+  display: flex;
+  align-items: center;
+}
+
+.flex-alc {
+  @include fiex-alc;
+}
+
+.flex-juspb-alc {
+  @include fiex-alc;
+  justify-content: space-between;
+}
+
+.flex-fd-re {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.flex-alc-juc {
+  @include fiex-alc;
+  justify-content: center;
+}
+
+.filx-fdc-jusb {
+  @include fiex-alc;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flex-fdc-alc-juc {
+  @include fiex-alc;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flex-juc {
+  display: flex;
+  justify-content: center;
+}
+
+.flex-juc-alc {
+  display: flex;
+  flex-direction: column;
+}
