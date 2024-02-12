@@ -11,9 +11,7 @@ import Components from 'unplugin-vue-components/vite'
 // @ts-ignore
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
-import Markdown from 'unplugin-vue-markdown/vite'
-import Shiki from '@shikijs/markdown-it'
-import createViteDeom from './build'
+import shikiMdVue from './build/vite-shiki-md-vue'
 
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
 export default defineConfig(async configEnv => {
@@ -27,16 +25,9 @@ export default defineConfig(async configEnv => {
     }
   }
 
-  const shiki = await Shiki({
-    themes: {
-      light: 'one-dark-pro',
-      dark: 'one-dark-pro'
-    }
-  })
-
   return {
     plugins: [
-      createViteDeom(),
+      shikiMdVue(),
       /*  Markdown({
         markdownItSetup(md) {
           md.use(shiki)

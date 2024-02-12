@@ -10,7 +10,6 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Actions: typeof import('./../src/components/table/src/components/actions.vue')['default']
-    CodeDemo: typeof import('./../src/components/codeDemo.vue')['default']
     HoverButton: typeof import('./../src/components/hover-button.vue')['default']
     InputFile: typeof import('./../src/components/inputFile/src/inputFile.vue')['default']
     MdTest: typeof import('./../src/components/md-test.vue')['default']
