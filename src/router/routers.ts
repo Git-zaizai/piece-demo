@@ -7,25 +7,39 @@ import LayoutHome from '@/layout/layout-hemo.vue'
  * @param 主路由
  */
 const Root: AppRouteRecordRaw = {
-    path: '/',
-    name: 'Root',
-    component: RootView,
-    meta: {
-        keepAlive: 'Home',
-        title: 'root'
-    },
+	path: '/',
+	name: 'Root',
+	component: RootView,
+	meta: {
+		keepAlive: 'Home',
+		title: 'root'
+	},
+	children: [
+		{
+			path: 'test-r',
+			name: 'test-r',
+			component: () => import('@/view/Test/test/test.vue'),
+			meta: {
+				title: 'test'
+			},
+		}
+	]
 }
 
 /**
  * @param 主路由
  */
 const test: AppRouteRecordRaw = {
-    path: '/test',
-    name: 'test',
-    component: () => import('@/view/Test/test/test.vue'),
-    meta: {
-        title: 'test'
-    },
+	path: '/test',
+	name: 'test',
+	component: LayoutHome,
+	children: [
+		{
+			path: 'test1',
+			name: 'test1',
+			component: () => import('@/view/Test/test/test.vue'),
+		}
+	]
 }
 
 /**
@@ -36,14 +50,14 @@ const routeModuleList: AppRouteRecordRaw[] = [];
 const hemoRoutes = ['Root']
 
 for (const key in routeModules) {
-    const mod = routeModules[key] as { default: AppRouteRecordRaw }
-    if (Array.isArray(mod.default)) {
-        routeModuleList.push(...mod.default)
-        mod.default.forEach(modv => hemoRoutes.push(modv.name))
-    } else {
-        routeModuleList.push(mod.default)
-        hemoRoutes.push(mod.default.name)
-    }
+	const mod = routeModules[key] as { default: AppRouteRecordRaw }
+	if (Array.isArray(mod.default)) {
+		routeModuleList.push(...mod.default)
+		mod.default.forEach(modv => hemoRoutes.push(modv.name))
+	} else {
+		routeModuleList.push(mod.default)
+		hemoRoutes.push(mod.default.name)
+	}
 }
 
 const routers = [Root, test, ...routeModuleList, admin, ...adminRouters]
