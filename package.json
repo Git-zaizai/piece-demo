@@ -1,7 +1,7 @@
 {
   "name": "piece-demo",
   "private": true,
-  "version": "0.2.8",
+  "version": "0.2.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -29,14 +29,18 @@
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^3.1.0",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     "shiki": "^1.1.1",
 >>>>>>> a41271d (完成使用vite解析md完成)
+=======
+>>>>>>> 9a62177 (vite解析md最终版)
     "vue": "^3.3.13",
     "vue-router": "4"
   },
   "devDependencies": {
     "@shikijs/markdown-it": "1.0.0-beta.5",
+    "@shikijs/transformers": "^1.1.2",
     "@types/node": "^18.15.11",
     "@vitejs/plugin-vue": "^2.2.0",
     "@vitejs/plugin-vue-jsx": "^3.0.1",
