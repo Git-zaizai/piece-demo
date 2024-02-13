@@ -10,9 +10,14 @@ export default async () => {
 		// @ts-ignore
 		langs: Object.keys(bundledLanguages)
 	})
-	const md = markdown()
+	let transformers = null
+	const md = markdown({}, {
+		linkify: true,
+		breaks: true,
+		xhtmlOut: true,
+	})
 
-	// 保存原有的规矩函数 暂时用不上
+	// 保存原有的规矩函数
 	const code_block = md.renderer.rules.code_block
 	const fence = md.renderer.rules.fence
 
@@ -20,18 +25,34 @@ export default async () => {
 	// @ts-ignore
 	function codeRules(tokens: any, idx: number, options: any, env: any, slf: any): string {
 		const lang = tokens[idx].info
+<<<<<<< HEAD
+=======
+		console.log('lang',lang)
+		if (!transformers) {
+			transformers = {
+				name: "@shikijs/markdown-it:block-class",
+				code(node) {
+					node.properties.class = `language-${ options.lang }`;
+				}
+			}
+		}
+>>>>>>> 9a62177 (vite解析md最终版)
 
 		const code_html = highlighter.codeToHtml(tokens[idx].content,
 			{
 				lang,
 				theme: 'one-dark-pro',
 				transformers: [
+<<<<<<< HEAD
 					{
 						name: "@shikijs/markdown-it:block-class",
 						code(node) {
 							node.properties.class = `language-${ lang }`;
 						}
 					}
+=======
+					transformers
+>>>>>>> 9a62177 (vite解析md最终版)
 				]
 			})
 

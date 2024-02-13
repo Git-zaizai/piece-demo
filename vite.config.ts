@@ -28,16 +28,9 @@ export default defineConfig(async configEnv => {
   return {
     plugins: [
       shikiMdVue(),
-      /*  Markdown({
-        markdownItSetup(md) {
-          md.use(shiki)
-        }
-      }), */
-
       vue({
         include: [/\.vue$/, /\.md$/]
       }),
-
       vueJsxPlugin(),
       VueSetupExtend(),
       AutoImport({

@@ -169,6 +169,12 @@
   }
 }
 
+.zai-code [class^="language-"] {
+  font-family: v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace;
+  font-size: 14px;
+}
+
+
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
