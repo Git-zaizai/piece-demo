@@ -67,12 +67,6 @@ dependencies:
     version: 4.1.6(vue@3.3.13)
 
 devDependencies:
-  '@shikijs/markdown-it':
-    specifier: 1.0.0-beta.5
-    version: 1.0.0-beta.5
-  '@shikijs/transformers':
-    specifier: ^1.1.2
-    version: 1.1.2
   '@types/node':
     specifier: ^18.15.11
     version: 18.15.11
@@ -761,10 +755,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@shikijs/core@1.0.0-beta.5:
-    resolution: {integrity: sha512-C/MxtvK3FFCQZSsDq6OfjDHHOmyP1Jc9wO66cnE8VLEyWXzWch7Zpoc2MWuVJTSC0Pz9QxyUlsBCnroplFqoSg==}
-    dev: true
-
   /@shikijs/core@1.1.1:
     resolution: {integrity: sha512-WSHuW0i4W04+UZgim378oxHBAp4S5X3hVI2zXh+t5v2fx2u/7QXz9VNisoOD/CA4O9Lc6Zs97TrKiDbWyZua6Q==}
     dev: false
@@ -773,31 +763,11 @@ packages:
     resolution: {integrity: sha512-ERVzNQz88ZkDqUpWeC57Kp+Kmx5RjqeDBR1M8AGWGom4yrkITiTfXCGmjchlDSw12MhDTuPYR4HVFW8uT61RaQ==}
     dev: true
 
-  /@shikijs/markdown-it@1.0.0-beta.5:
-    resolution: {integrity: sha512-7JVuImT+BfjxuZ9i6ASMTmtelEPNnmjlLWe2IxPlT26tgu2aSvM4NNKiT3Dd7eIHmab24fkzvR6vI59g9MtfUA==}
-    dependencies:
-      '@shikijs/transformers': 1.0.0-beta.5
-      markdown-it: 14.0.0
-      shiki: 1.0.0-beta.5
-    dev: true
-
   /@shikijs/monaco@1.1.1:
     resolution: {integrity: sha512-HdQnDhj/I3Yf/G14ls1YrmAUUYsDFLqqzaf7oMjpGiDTI48W65dbwPH5X+m3Ol2K4hxkR0QcCQKSAWxxLbEV6w==}
     dependencies:
       '@shikijs/core': 1.1.1
     dev: false
-
-  /@shikijs/transformers@1.0.0-beta.5:
-    resolution: {integrity: sha512-Kd3312yH6sh8Jw0xjBFfGpXTU3Qts1bwuB19wDDoKRvJqjrkffftdSuKzhHPa+DP/L0ZFhq96xMPngzQ15rQmQ==}
-    dependencies:
-      shiki: 1.0.0-beta.5
-    dev: true
-
-  /@shikijs/transformers@1.1.2:
-    resolution: {integrity: sha512-tldkUMW7RBkU2F6eXbiRMw3ja+hQer1EjwhD2NGOv6K0pgZdVp3JKjU8uisRtg65tyBqrVHq7zlLHVk7EKmUZA==}
-    dependencies:
-      shiki: 1.1.2
-    dev: true
 
   /@soybeanjs/vue-materials@0.1.9(vue@3.3.13):
     resolution: {integrity: sha512-VX7175QVph1yy3kgrPMKvs2kwSRP3ikY3tARxYeZleyAhSx8IMoBBdKvb+z7HwSQEINCLIDE17zLU53wg1NRkA==}
@@ -2093,12 +2063,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
-
-  /shiki@1.0.0-beta.5:
-    resolution: {integrity: sha512-S5FV55ZH8zLicVyqlJZj8LYqh/VuUICDDNG/L9eDM9I4d69EX+FbgSnKRIuJIwLrmJfTiPoGVnH1HsHX5whP/g==}
-    dependencies:
-      '@shikijs/core': 1.0.0-beta.5
     dev: true
 
   /shiki@1.1.2:
