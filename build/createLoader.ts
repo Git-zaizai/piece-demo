@@ -38,7 +38,7 @@ export default async () => {
 					{
 						name: "@shikijs/markdown-it:block-class",
 						code(node) {
-							node.properties.class = `language-${lang}`;
+							node.properties.class = `language-${ lang }`;
 						}
 					}
 				]
