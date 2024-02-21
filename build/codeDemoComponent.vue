@@ -3,19 +3,19 @@
 		<div class="aside-zanwei"></div>
 		<div class="zai-aside">
 			<div class="content">
-				<div class="outline-marker" :style="{top:outlineMarkerTop + 'px'}"></div>
+				<div class="outline-marker" :style="{ top: outlineMarkerTop + 'px' }"></div>
 				<div class="outline-title" role="heading" aria-level="2" data-v-1588c7a1="">本页目录</div>
 				<nav>
 					<ul>
 						<li
-								v-for="(item,index) in asides"
+								v-for="(item, index) in asides"
 								:key="item.top"
-								:style="{paddingLeft: item.type > 1 ? 1 * 15 + 'px' : '0' }"
+								:style="{ paddingLeft: item.type > 1 ? 1 * 15 + 'px' : '0' }"
 						>
 							<a
 									class="outline-link"
 									:class="active === index ? 'active' : ''"
-									@click="outlineClick(item,index,$event)"
+									@click="outlineClick(item, index, $event)"
 							> {{ item.txt }} </a>
 						</li>
 					</ul>
@@ -49,17 +49,20 @@ const outlineClick = (item, index, e) => {
 }
 
 function getScrollableParent(element) {
-	let parent = element.parentNode;
+	let parent = element.parentNode
 	while (parent != null && parent !== document.body && parent !== document.documentElement) {
 		// 检查元素是否可垂直滚动
-		if (parent.scrollHeight > parent.clientHeight || // 自然高度大于客户区高度
-			(parent.style.overflowY === 'scroll' || parent.style.overflowY === 'auto')) {
-			return parent; // 如果可以，则返回该元素
+		if (
+			parent.scrollHeight > parent.clientHeight || // 自然高度大于客户区高度
+			parent.style.overflowY === 'scroll' ||
+			parent.style.overflowY === 'auto'
+		) {
+			return parent // 如果可以，则返回该元素
 		}
-		parent = parent.parentNode;
+		parent = parent.parentNode
 	}
 	// 若没有找到可以滚动的父元素，则返回null
-	return null;
+	return null
 }
 
 onMounted(() => {
@@ -152,14 +155,21 @@ const butCody = e => {
 }
 </script>
 <style lang="scss" scoped>
-
-ol, ul {
+ol,
+ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6, li, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+p {
   overflow-wrap: break-word;
 }
 
@@ -231,7 +241,7 @@ h1, h2, h3, h4, h5, h6, li, p {
   .zai-code pre {
     padding: 20px 24px;
     border-radius: 8px;
-		overflow-x: scroll;
+    overflow-x: scroll;
     scrollbar-width: none;
   }
 
@@ -266,7 +276,6 @@ h1, h2, h3, h4, h5, h6, li, p {
   overflow-y: scroll;
   scrollbar-width: none;
 
-
   .content {
     position: relative;
     border-top: 1px solid var(--vp-c-asides-divider);
@@ -288,11 +297,11 @@ h1, h2, h3, h4, h5, h6, li, p {
     border-radius: 2px;
     height: 18px;
     background-color: var(--zai-success);
-    transition: top .25s cubic-bezier(0, 1, .5, 1), background-color .5s, opacity .25s;
+    transition: top 0.25s cubic-bezier(0, 1, 0.5, 1), background-color 0.5s, opacity 0.25s;
   }
 
   .outline-title {
-    letter-spacing: .4px;
+    letter-spacing: 0.4px;
     line-height: 28px;
     font-size: 13px;
     font-weight: 600;
@@ -305,7 +314,7 @@ h1, h2, h3, h4, h5, h6, li, p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: color .5s;
+    transition: color 0.5s;
     font-weight: 400;
     cursor: pointer;
     overflow-wrap: break-word;
