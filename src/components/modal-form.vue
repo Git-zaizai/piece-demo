@@ -2,6 +2,7 @@
 const props = defineProps<{
   show: boolean
   formBtnLoading?: boolean
+  displaydirective?: boolean
 }>()
 const emit = defineEmits(['update:show', 'update:formBtnLoading', 'confirmForm'])
 
@@ -21,7 +22,7 @@ const butLoading = computed({
 </script>
 
 <template>
-  <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
+  <n-modal v-model:show="showModal" :display-directive="displaydirective || 'if'" :show-icon="false" preset="dialog" title="新建">
     <slot></slot>
     <template #action>
       <n-space>

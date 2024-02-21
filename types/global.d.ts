@@ -1,8 +1,17 @@
+/// <reference types="vite/client" />
+/// <reference types="@vue/runtime-dom" />
+
+declare module '*.md' {
+    import { DefineComponent } from "vue"
+    const component: DefineComponent<{}, {}, any>
+    export default component
+}
+
 declare interface Window {
     $loadingBar: typeof import('naive-ui').LoadingBarApi
     $dialog: typeof import('naive-ui').DialogApi
     $notification: typeof import('naive-ui').NotificationApi
-    $message: typeof import('naive-ui').MessageApi
+    $message: typeof import('naive-ui')['MessageApi']
 }
 
 interface ImportMetaEnv {
@@ -19,4 +28,4 @@ interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
 
-type ZaiColumns = import('naive-ui').DataTableColumns
+type ZaiColumns<T = any> = import('naive-ui').DataTableColumns<T>

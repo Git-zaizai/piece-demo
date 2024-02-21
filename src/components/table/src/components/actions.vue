@@ -12,22 +12,24 @@ const props = defineProps<{
     <n-button type="success" ghost size="small" @click="props.upFn()">
       <template #icon>
         <n-icon>
-          <Edit32Regular/>
+          <Edit32Regular />
         </n-icon>
       </template>
-      EDIT
+      <span class="actions-text">EDIT</span>
     </n-button>
     <n-button type="error" ghost size="small" @click="props.delFn()">
       <template #icon>
         <n-icon>
-          <Delete16Regular/>
+          <Delete16Regular />
         </n-icon>
       </template>
-      DEL
+      <span class="actions-text">DEL</span>
     </n-button>
   </div>
 </template>
 
 <style scoped lang="scss">
-
+.actions-text {
+  font-size: 17px;
+}
 </style>

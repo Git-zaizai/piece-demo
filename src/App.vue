@@ -1,37 +1,21 @@
 <template>
-  <!--  <WindowPropoerty>-->
-  <!--    <lay-out>-->
-  <!--      <template #header>-->
-  <!--        <layout-header></layout-header>-->
-  <!--      </template>-->
-  <!--      <template #content>-->
-  <!--        <Main/>-->
-  <!--      </template>-->
-  <!--    </lay-out>-->
-  <!--  </WindowPropoerty>-->
-  <n-config-provider
-    :theme="common.bodyConfigColor.theme"
-    :theme-overrides="view.naiveThemeOverrides"
-    :locale="zhCN"
-  >
+  <n-config-provider :theme="common.bodyConfigColor.theme" :theme-overrides="view.naiveThemeOverrides" :locale="zhCN">
     <layout-header />
-    <!--    <layout-home v-show="isLayout"/>
-        <router-view v-show="!isLayout"/>-->
-    <layout-home v-if="isLayout" />
-    <router-view v-else />
+    <component :is="isLayout ? LayoutHome : RouterView" />
     <setting-drawer />
   </n-config-provider>
 </template>
 <script setup lang="ts">
-import { zhCN } from "naive-ui"
-import { useCommonStore } from "@/store"
-import { useViewStore } from "@/store/modules/useViewStore"
-import { addThemeCssVarsToHtml } from "@/utils/color"
-import { SettingDrawer } from "@/layout/setting-drawer"
-import LayoutHeader from "@/layout/layout-header/index.vue"
-import LayoutHome from "@/layout/layout-hemo.vue"
-import { routeModuleList } from "@/router/routers"
-import type { AppRouteRecordRaw } from "@/router/types"
+import { zhCN } from 'naive-ui'
+import { useCommonStore } from '@/store'
+import { useViewStore } from '@/store/modules/useViewStore'
+import { addThemeCssVarsToHtml } from '@/utils/color'
+import { SettingDrawer } from '@/layout/setting-drawer'
+import LayoutHeader from '@/layout/layout-header/index.vue'
+import LayoutHome from '@/layout/layout-hemo.vue'
+import { routeModuleList } from '@/router/routers'
+import type { AppRouteRecordRaw } from '@/router/types'
+import { RouterView } from 'vue-router'
 
 const view = useViewStore()
 const common = useCommonStore()
@@ -48,11 +32,11 @@ if (common.constantInverted) {
 
 watch(
   () => view.naiveThemeOverrides,
-  (value) => {
+  value => {
     if (value && value.common) {
       addThemeCssVarsToHtml(value.common, common.inverted)
     } else {
-      document.documentElement.style.cssText = ""
+      document.documentElement.style.cssText = ''
     }
   },
   { immediate: true }
@@ -69,21 +53,15 @@ function getRouterName(routes: AppRouteRecordRaw[]): string[] {
   return res
 }
 
-const routerPaths = ["Root", ...getRouterName(routeModuleList)]
+const routerPaths = ['Root', ...getRouterName(routeModuleList)]
+// const routerPaths = []
 const route = useRoute()
 const isLayout = ref(true)
-watch(route, (value) => {
+watch(route, value => {
   isLayout.value = routerPaths.includes(value.name as string)
 })
-
-/*
- console.log('加载条 Loading Bar', window.$loadingBar);
- console.log('对话框 Dialog', window.$dialog);
- console.log('信息 Message', window.$message);
- console.log('通知 Notification', window.$notification);
- */
 </script>
 
 <style lang="scss">
-@import "./styles/index.scss";
+@import './styles/index.scss';
 </style>

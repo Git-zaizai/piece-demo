@@ -10,7 +10,12 @@ export default defineComponent({
     setup(props) {
         return () => (
             <div class='flex-juspb-alc'>
-                <NButton type='success' ghost size='small' onClick={ () => props.upFn() }>
+                <NButton
+                    type='success'
+                    ghost
+                    size='small'
+                    onClick={ () => props.upFn() }
+                >
                     { {
                         icon: () => (
                             <NIcon class='scale-X'>
@@ -22,11 +27,14 @@ export default defineComponent({
                         default: () => '导出'
                     } }
                 </NButton>
-                <NButton type='warning' ghost size='small' onClick={ () => props.delFn() }>
+                <NButton
+                    type='warning'
+                    ghost
+                    size='small'
+                    onClick={ () => props.delFn() }
+                >
                     { {
-                        icon: () => (
-                            <NIcon component={ FileImport }/>
-                        ),
+                        icon: () => <NIcon component={ FileImport }/>,
                         default: () => '导入'
                     } }
                 </NButton>

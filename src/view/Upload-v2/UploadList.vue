@@ -1,8 +1,6 @@
 <template>
   <div class="upload-list">
-    <div class="ul-title">
-      上传列表
-    </div>
+    <div class="ul-title">上传列表</div>
     <div class="ul-list-view">
       <n-scrollbar>
         <div class="ul-item flex-alc" v-for="item in props.fileList" :key="item.id">
@@ -11,13 +9,13 @@
           <n-tooltip trigger="hover">
             <template #trigger>
               <n-button
-                  text
-                  class="cent-but"
-                  :disabled="item.downloadUrl === ''"
-                  @click="codeDownloadUrl(item.downloadUrl)"
+                text
+                class="cent-but"
+                :disabled="item.downloadUrl === ''"
+                @click="codeDownloadUrl(item.downloadUrl)"
               >
                 <template #icon>
-                  <n-icon size="18" :component="LinkSquare16Regular"/>
+                  <n-icon size="18" :component="LinkSquare16Regular" />
                 </template>
               </n-button>
             </template>
@@ -27,7 +25,7 @@
             <template #trigger>
               <n-button text class="cent-but" :disabled="item.imgUrl === ''" @click="preViewClick(item.id)">
                 <template #icon>
-                  <n-icon size="18" :component="EyeOutline"/>
+                  <n-icon size="18" :component="EyeOutline" />
                 </template>
               </n-button>
             </template>
@@ -36,13 +34,13 @@
           <n-tooltip trigger="hover">
             <template #trigger>
               <n-button
-                  text
-                  class="cent-but"
-                  :disabled="item.status === 'success'"
-                  @click="emit('againUpload',item.id)"
+                text
+                class="cent-but"
+                :disabled="item.status === 'success'"
+                @click="emit('againUpload', item.id)"
               >
                 <template #icon>
-                  <n-icon size="16" :component="ArrowClockwise20Filled"/>
+                  <n-icon size="16" :component="ArrowClockwise20Filled" />
                 </template>
               </n-button>
             </template>
@@ -52,7 +50,7 @@
             <template #trigger>
               <n-button text @click="emit('delFile', item.id)">
                 <template #icon>
-                  <n-icon size="16" :component="DeleteDismiss24Regular"/>
+                  <n-icon size="16" :component="DeleteDismiss24Regular" />
                 </template>
               </n-button>
             </template>
@@ -60,12 +58,12 @@
           </n-tooltip>
 
           <n-progress
-              class="ul-item-progress"
-              type="line"
-              :status="item.status"
-              :percentage="item.percentage"
-              :height="1"
-              :show-indicator="false"
+            class="ul-item-progress"
+            type="line"
+            :status="item.status"
+            :percentage="item.percentage"
+            :height="1"
+            :show-indicator="false"
           />
         </div>
       </n-scrollbar>
@@ -73,13 +71,7 @@
     <div class="ul-img" style="display: none">
       <n-image-group show-toolbar-tooltip>
         <n-space>
-          <n-image
-              v-for="imageItem in imageList"
-              :key="imageItem.id"
-              :src="imageItem.url"
-              ref="imageRef"
-              width="100"
-          />
+          <n-image v-for="imageItem in imageList" :key="imageItem.id" :src="imageItem.url" ref="imageRef" width="100" />
         </n-space>
       </n-image-group>
     </div>
@@ -102,11 +94,12 @@ const emit = defineEmits<{
 }>()
 
 const imageList = computed(() => {
-  return props.fileList.filter(fv => fv.imgUrl !== '').map(mv => {
-    if (mv.imgUrl !== '') return { id: mv.id, url: mv.imgUrl }
-  })
+  return props.fileList
+    .filter(fv => fv.imgUrl !== '')
+    .map(mv => {
+      if (mv.imgUrl !== '') return { id: mv.id, url: mv.imgUrl }
+    })
 })
-
 
 /** 查看图片 **/
 const imageRef = ref<HTMLElement | null>(null)
@@ -121,12 +114,38 @@ function preViewClick(id: number) {
  * @function codeDownloadUrl 复制链接
  * */
 function codeDownloadUrl(downloadUrl: string) {
-  navigator.clipboard.writeText(downloadUrl).then(() => {
-    window.$message.success('复制成功')
-  }, (e) => {
-    window.$message.error('复制失败')
-    console.log('复制链接失败 错误：', e)
-  })
+  console.log('asdasdasdasdasd')
+
+  const clipboard = navigator.clipboard
+  console.log('clipboard', clipboard)
+
+  if (clipboard) {
+    clipboard.writeText(downloadUrl).then(
+      () => {
+        window.$message.success('复制成功')
+      },
+      e => {
+        window.$message.error('复制失败')
+        console.log('复制链接失败 错误：', e)
+      }
+    )
+  } else {
+    const textarea = document.createElement('textarea')
+    textarea.setAttribute('readonly', 'readonly')
+    textarea.value = downloadUrl
+    document.body.appendChild(textarea)
+    textarea.select()
+    const exec = document.execCommand('copy')
+    console.log('exec', exec)
+
+    if (exec) {
+      document.execCommand('copy')
+      window.$message.success('复制成功')
+    } else {
+      window.$message.error('复制失败')
+    }
+    document.body.removeChild(textarea)
+  }
 }
 
 /** 未使用 **/
@@ -155,7 +174,7 @@ $border-dashed: 1px dashed rgb(224, 224, 230);
     line-height: 50px;
     color: var(--table-text);
     font-weight: 700;
-    font-family: "幼圆";
+    font-family: '幼圆';
     text-align: center;
     border-top: $border-dashed;
     border-left: $border-dashed;
@@ -188,7 +207,7 @@ $border-dashed: 1px dashed rgb(224, 224, 230);
   .ul-item {
     position: relative;
     padding: 0 20px;
-    transition: all .3s linear;
+    transition: all 0.3s linear;
 
     .ul-item-name {
       flex: 1;
@@ -196,7 +215,7 @@ $border-dashed: 1px dashed rgb(224, 224, 230);
       line-height: 50px;
       color: var(--table-text);
       font-weight: 700;
-      font-family: "幼圆";
+      font-family: '幼圆';
       width: 40%;
     }
 

@@ -3,19 +3,16 @@ import type { Component, VNodeChild } from 'vue'
 
 
 /**
- * @interface 自定义RouteMeta内容
+ * @interface navigation 自定义RouteMeta内容
  * */
-export interface navigationData {
-    headerText: string
+export interface navigation {
     contentText: string
-    footerText: string
 }
 
-export interface metaexports extends RouteMeta {
+export interface Meta extends RouteMeta {
     keepAlive?: string
     title?: string
-    navigationData?: navigationData,
-    homeShow?: boolean
+    navigation?: navigation,
     icon?: () => VNodeChild
 }
 
@@ -35,7 +32,7 @@ export interface AppRouteRecordRaw {
     path: string;
     name: string;
     redirect?: string;
-    meta?: metaexports;
+    meta?: Meta;
     component?: Component | string;
     children?: AppRouteRecordRaw[];
     fullPath?: string;

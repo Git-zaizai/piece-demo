@@ -1,56 +1,82 @@
-import request from '@/api/request'
-import Storage from '@/utils/Storage'
-import { useFileIndexStore } from '@/store/modules/useFileIndexStore'
-import { CallbackConfig, LocalUploadListItem, GetLocalUploadList } from './types'
+import { http } from '@/api'
 
 export const isImage = (name: string): boolean => {
-    const fileType = name.split('.').pop()
-    return [ 'png', 'jpg', 'jpeg', 'svg', 'gif', 'JPG', 'PNG', 'JPEG', 'SVG' ].includes(fileType)
+  const fileType = name.split('.').pop()
+  return [
+    'png',
+    'jpg',
+    'jpeg',
+    'svg',
+    'gif',
+    'JPG',
+    'PNG',
+    'JPEG',
+    'SVG'
+  ].includes(fileType)
 }
 
-/**
- * @function readyUpload 返回一个请求函数
- * */
-export function readyUpload(formdata: FormData, callbackConfig: CallbackConfig) {
-    return new Promise((resolve, reject) => {
-        request.post('/web/upload-home', formdata, {
-            onUploadProgress: callbackConfig.onUploadProgress
-        }).then(res => {
-            resolve(callbackConfig.resolve(res))
-        }).catch(err => {
-            reject(callbackConfig.reject(err))
-        })
-    })
+export function fileBlob(file: File): Blob[] {
+  const blobArr = []
+  const blobSize = 1024 * 1024
+  for (let i = 0; i < file.size; i += blobSize) {
+    blobArr.push(file.slice(i, i + blobSize))
+  }
+  return blobArr
 }
 
-/**
- *@function insertLocal 保存上传记录到本地
- * */
-export function insertLocal(list: LocalUploadListItem[]) {
-    const fileIndexStore = useFileIndexStore()
-    let loaclList: LocalUploadListItem[] = Storage.get(fileIndexStore.LocalUploadListName)
-    if (loaclList === null) {
-        loaclList = list
-    } else {
-        loaclList.push(...list)
-        loaclList = loaclList.slice(0, fileIndexStore.LocalUploadListLength)
-    }
-    Storage.set(fileIndexStore.LocalUploadListName, loaclList)
+export function getFormData(file): FormData[] {
+  const blobList = fileBlob(file.file)
+  return blobList.map(item => {
+    const formdata = new FormData()
+    formdata.append('name', file.file.name)
+    formdata.append('file', item)
+    return formdata
+  })
 }
 
-/**
- * @function getLocalTheLatest 获取最新的本地上传记录
- * */
-export function getLocalTheLatest(len: number): GetLocalUploadList {
-    const fileIndexStore = useFileIndexStore()
-    const loaclList: LocalUploadListItem[] = Storage.get(fileIndexStore.LocalUploadListName)
-    const allList = [], images = []
-    loaclList.slice(len - 1, loaclList.length).forEach(item => {
-        const nodeItem = { downloadUrl: item.downloadUrl, name: item.name, isImg: isImage(item.name) }
-        allList.push(nodeItem)
-        if (nodeItem.isImg) {
-            images.push(nodeItem)
+export async function mergeUpload(foamDataList: FormData[], callback: (i: number) => void): Promise<number> {
+  return new Promise((resolve, reject) => {
+    let index = 0
+    const success = []
+    const errMap = []
+    const upload = async (i?: number) => {
+      const at = i ?? index
+      index++
+      if (at > foamDataList.length - 1) return
+      try {
+        foamDataList[at].append('id', at.toString())
+        await http.post('/upload-plus', foamDataList[at])
+        callback(index)
+        /** 在这里判断保证全部完成后才能退出 */
+        if (success.length === foamDataList.length - 1) {
+          return resolve(success.length)
         }
-    })
-    return { allList, images }
+        success.push(at)
+        return upload()
+      } catch {
+        if (errMap.length >= 3) {
+          return reject(-1)
+        }
+        errMap.push(at)
+        return upload(at)
+      }
+    }
+
+    for (let r = 0, leng = Math.min(foamDataList.length, 6); r < leng; r++) {
+      upload()
+    }
+  })
+}
+
+export function processingPath(files, rootPath: string): string[] {
+  const phs = []
+  for (const { path } of files) {
+    let ph = path.split('/')
+    ph.pop()
+    ph = ph.join('/')
+    if (ph.length !== rootPath.length) {
+      phs.push(ph)
+    }
+  }
+  return phs
 }

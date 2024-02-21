@@ -24,7 +24,7 @@ export const admin: AppRouteRecordRaw = {
     ],
 }
 
-const routeModules = import.meta.glob('./modules/*.ts', { eager: true })
+const routeModules = import.meta.glob('./modules/**.ts', { eager: true })
 const adminRouters = []
 for (const key in routeModules) {
     const mod = routeModules[key] as { default: AppRouteRecordRaw }
@@ -34,4 +34,5 @@ for (const key in routeModules) {
         adminRouters.push(mod.default)
     }
 }
+adminRouters.reverse()
 export { adminRouters }

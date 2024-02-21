@@ -9,11 +9,16 @@
 /* 多行文本隐藏 */
 @mixin text-overflow-line($i) {
   overflow: hidden;
-  word-break: break-all; /* break-all(允许在单词内换行。) */
-  text-overflow: ellipsis; /* 超出部分省略号 */
-  display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
-  -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
-  -webkit-line-clamp: $i; /** 显示的行数 **/
+  word-break: break-all;
+  /* break-all(允许在单词内换行。) */
+  text-overflow: ellipsis;
+  /* 超出部分省略号 */
+  display: -webkit-box;
+  /** 对象作为伸缩盒子模型显示 **/
+  -webkit-box-orient: vertical;
+  /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+  -webkit-line-clamp: $i;
+  /** 显示的行数 **/
 }
 
 .view-curspointer {
@@ -66,6 +71,155 @@
 }
 
 /** margin 设置 **/
+.w-100 {
+  width: 100%;
+}
+
+.w-100-vw {
+  width: 100vw;
+}
+
+.wax-100 {
+  max-width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.ml-5 {
+  margin-left: 5px;
+}
+
+.ml-10 {
+  margin-left: 10px;
+}
+
+.ml-15 {
+  margin-left: 15px;
+}
+
+.ml-20 {
+  margin-left: 20px;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
 .mt-10 {
   margin-top: 10px;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}
+
+.mr-20 {
+  margin-right: 20px;
+}
+
+.mb-5 {
+  margin-bottom: 5px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.text-align {
+  text-align: center;
+}
+
+/********************/
+.el-transition-200 {
+  transition: all 0.2s linear;
+}
+
+.el-transition-all-200 {
+  transition: all 0.2s linear;
+}
+
+.el-transition-color-300 {
+  transition: color 0.3s ease-in-out;
+}
+
+/******************************/
+
+.demo-view{
+  padding: 20px;
+}
+
+@mixin fiex-alc {
+  display: flex;
+  align-items: center;
+}
+
+.flex-alc {
+  @include fiex-alc;
+}
+
+.flex-juspb-alc {
+  @include fiex-alc;
+  justify-content: space-between;
+}
+
+.flex-fd-re {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.flex-alc-juc {
+  @include fiex-alc;
+  justify-content: center;
+}
+
+.filx-fdc-jusb {
+  @include fiex-alc;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flex-fdc-alc-juc {
+  @include fiex-alc;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flex-juc {
+  display: flex;
+  justify-content: center;
+}
+
+.flex-juc-alc {
+  display: flex;
+  flex-direction: column;
 }

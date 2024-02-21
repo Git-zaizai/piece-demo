@@ -1,6 +1,6 @@
 <script setup lang="ts" name="db">
 import { ZaiTable } from '@/components/table'
-import { getMongoDb, getMySql, getDbLists, setDbFile, upload } from '@/api'
+import { getMongoDb, getMySql, getDbLists, setDbFile, upload, createTable } from '@/api'
 import IndexActionsColumns from '../components/index-actionsColumns'
 import type { DataTableBaseColumn } from 'naive-ui'
 import { NButton } from 'naive-ui'
@@ -20,7 +20,7 @@ const columns: ZaiColumns = [
   {
     title: '备注',
     key: 'beizhu',
-    render: row => {
+    render: () => {
       return '无'
     }
   }
@@ -31,7 +31,7 @@ const actionsColumns: DataTableBaseColumn = {
   key: "actions_0",
   fixed: "right",
   width: 200,
-  render(row, rowIndex) {
+  render(row) {
     return h(IndexActionsColumns, {
       upFn: bindDbExport.bind(null, row),
       delFn: bindDbImport.bind(null, row)
@@ -98,26 +98,36 @@ const state: State = reactive({
   delKey: 'id'
 })
 
+const mongoState = reactive({
+  formShow: false,
+  filterKay: '_id'
+})
+
 const init = async () => {
   try {
-    const mysql = await getMySql()
-    const mongo = await getMongoDb()
-    const datas = []
-    mongo.data.data.forEach(mgv => {
-      datas.push({
-        dbname: mgv.split(".").pop(),
-        db: 'MongoDB',
-        beizhu: ''
+    const response = await Promise.allSettled([getMySql(), getMongoDb()])
+    const result = []
+    if (response[0].status === "fulfilled") {
+      const arr = response[0].value.data.data
+      arr.forEach((myv: { Tables_in_gadgets: string }) => {
+        result.push({
+          dbname: myv.Tables_in_gadgets,
+          db: 'MySQL',
+          beizhu: ''
+        })
       })
-    })
-    mysql.data.data.forEach(myv => {
-      datas.push({
-        dbname: myv.Tables_in_gadgets,
-        db: 'MySQL',
-        beizhu: ''
+    }
+    if (response[1].status === "fulfilled") {
+      const arr = response[1].value.data.data
+      arr.forEach((mgv: string) => {
+        result.push({
+          dbname: mgv.split(".").pop(),
+          db: 'MongoDB',
+          beizhu: ''
+        })
       })
-    })
-    state.data = datas
+    }
+    state.data = result
   } catch (e) {
     console.log(e)
   }
@@ -126,7 +136,13 @@ init()
 
 function bindDbImport(row: any) {
   state.row = row
-  state.formShow = true
+  if (row.db === 'MySQL') {
+    mongoState.formShow = false
+    state.formShow = true
+  } else {
+    state.formShow = false
+    mongoState.formShow = true
+  }
 }
 
 const bindFileChange = (data: any) => {
@@ -142,20 +158,21 @@ const netPrompt = (type: string, cont: string) => {
     content: cont,
     meta: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     action: () =>
-        h(
-            NButton,
-            {
-              text: true,
-              type: 'primary',
-              onClick: () => {
-                net.destroy()
-              }
-            },
-            {
-              default: () => '已读'
-            }
-        )
+      h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => {
+            net.destroy()
+          }
+        },
+        {
+          default: () => '已读'
+        }
+      )
   })
+  return net
 }
 
 const confirm = async () => {
@@ -168,21 +185,23 @@ const confirm = async () => {
     // @ts-ignore
     formData.set('file', state.files[0].file)
     formData.set('path', '0')
-    const res_file = await upload(formData)
+    const { data: res_file } = await upload(formData)
+
     const { data } = await setDbFile({
       path: (res_file.data.url as string).replace('/uploads', ''),
       db: state.row.db,
       tableName: state.row.dbname,
-      delkey: state.delKey
+      delkey: state.delKey,
+      filterKay: mongoState.filterKay
     })
     if (data.code === 200) {
-      netPrompt('success', `${ state.row.dbname } 导入成功`)
+      netPrompt('success', `${state.row.dbname} 导入成功`)
     } else {
       netPrompt('error', data.data.msg)
     }
   } catch (e) {
     console.log(e)
-    netPrompt('error', `${ state.row.dbname } 导入失败`)
+    netPrompt('error', `${state.row.dbname} 导入失败`)
   }
 }
 
@@ -190,27 +209,30 @@ const confirm = async () => {
 
 <template>
   <div>
-    <zai-table :data="state.data"
-               :columns="columns"
-               checkbox-key="dbname"
-               :actions-columns="actionsColumns"
-               @flushed="init"
-               :checkbox="false"/>
+    <zai-table :data="state.data" :columns="columns" checkbox-key="dbname" :actions-columns="actionsColumns"
+      @flushed="init" :checkbox="false" />
     <modal-form v-model:show="state.formShow" title="导入" @confirm-form="confirm">
-      <input-file title="JSON文件" @file-change="bindFileChange"/>
+      <input-file title="JSON文件" @file-change="bindFileChange" />
       <n-card class="mt-10" v-show="state.files.length"> 文件: {{ state.fileName }}</n-card>
       <n-form-item label="要删除key，比如自动递增的id" class="mt-10">
         <n-input v-model:value="state.delKey" clearable></n-input>
       </n-form-item>
       <h4>详细说明：</h4>
       <h4>mysql有个神奇的语法：insert into ... on duplicate key update，该语法在insert的时候，
-          如果insert的数据会引起唯一索引（包括主键索引）的冲突，即这个唯一值重复了，则不会执行insert操作，
-          而执行后面的update操作</h4>
+        如果insert的数据会引起唯一索引（包括主键索引）的冲突，即这个唯一值重复了，则不会执行insert操作，
+        而执行后面的update操作</h4>
       <h4>所有默认 key:id，你不输入将不会进行update操作会直接往后添加</h4>
+    </modal-form>
+    <modal-form v-model:show="mongoState.formShow" title="导入" @confirm-form="confirm">
+      <input-file title="JSON文件" @file-change="bindFileChange" />
+      <n-card class="mt-10" v-show="state.files.length"> 文件: {{ state.fileName }}</n-card>
+      <n-form-item label="要比较的Key" class="mt-10">
+        <n-input v-model:value="mongoState.filterKay" clearable></n-input>
+      </n-form-item>
+      <h4>详细说明：</h4>
+      <h4>使用的是mongdodb的bulkWrite方法，详细可以问chatGPT</h4>
     </modal-form>
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

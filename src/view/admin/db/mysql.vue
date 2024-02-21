@@ -5,7 +5,7 @@ import { ZaiTable } from "@/components/table"
 </script>
 
 <template>
-  <zai-table></zai-table>
+  <zai-table checkbox-key="id"></zai-table>
 </template>
 
 <style scoped lang="scss"></style>

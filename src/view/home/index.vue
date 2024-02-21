@@ -1,177 +1,172 @@
 <template>
-  <n-layout :native-scrollbar="false" v-once>
-    <div class="banner">
-      <left-image v-if="imageis.left" class="left-image"/>
-      <right-image v-if="imageis.right" class="right-image"/>
-    </div>
-    <n-el class="home-content">
-      <div class="hc-title flex-fdc-alc-juc">
-        <h2 class="hc-search">Search</h2>
-        <n-input round placeholder="站内搜索">
-          <template #suffix>
-            <n-icon :component="FlashOutline"/>
-          </template>
-        </n-input>
-      </div>
-      <n-scrollbar style="max-height: calc(100vh - 64px - 140px)">
-        <div class="hc-card">
-          <home-navigation :route-array="homeCardRouteArray"></home-navigation>
-        </div>
-      </n-scrollbar>
-    </n-el>
-  </n-layout>
+	<div class="min-w">
+		<left-image class="left-image"/>
+		<right-image class="right-image"/>
+		<div class="box-navigation flex-juc-alc" :style="themeVars">
+			<div class="box-list" v-for="item in routeModuleList" :key="item.name">
+				<div class="box-list-header el-transition">
+					<n-icon size="26" class="box-list-icon el-transition">
+						<CubeOutline/>
+					</n-icon>
+					<h2 class="box-list-title">{{ item.meta.title }}</h2>
+				</div>
+				<template v-if="item?.children?.length">
+					<div class="box-list-item w-100">
+						<article
+								class="box view-curspointer el-transition"
+								:class="boxClass"
+								v-for="chItem in item.children"
+								:key="chItem.name"
+								@click="bindBoxClick(chItem)"
+						>
+							<div class="box-header">
+								<n-icon size="20">
+									<FlashOutline/>
+								</n-icon>
+								<h5 class="box-title">{{ chItem.meta.title }} </h5>
+							</div>
+							<p class="box-desc">{{ chItem.meta?.navigation?.contentText ?? 'desc' }}</p>
+						</article>
+					</div>
+				</template>
+			</div>
+		</div>
+	</div>
 </template>
-
 <script name="home" lang="ts" setup>
 import LeftImage from './Left.vue'
 import RightImage from './Right.vue'
-import HomeNavigation from '@/components/HomeNavigation/index.vue'
-import { FlashOutline } from '@vicons/ionicons5'
+import { FlashOutline, CubeOutline } from '@vicons/ionicons5'
 import { routeModuleList } from '@/router/routers'
+import type { AppRouteRecordRaw } from '@/router/types'
+import { useThemeVars } from 'naive-ui'
+import { useCommonStore } from '@/store'
 
-const imageis = reactive({
-  left: false,
-  right: true
+const comm = useCommonStore()
+
+const boxClass = ref('box-theme')
+const themeVars = computed(() => {
+	const vars = useThemeVars()
+	let dark = {}
+	boxClass.value = 'box-theme'
+	if (comm.inverted) {
+		boxClass.value = 'box-dark'
+		dark['--box-back'] = '#202127'
+		dark['--box-back-hover'] = '#252732'
+	}
+	return {
+		'--box-box': vars.value.boxShadow1,
+		'--box-border': vars.value.borderColor,
+		'--box-desc': vars.value.textColor3,
+		'--box-back': '#fff',
+		'--box-back-hover': vars.value.hoverColor,
+		'--box-success': vars.value.successColorHover,
+		...dark
+	}
 })
 
-const homeCardRouteArray = computed(() => {
-  return routeModuleList.filter(item => item.meta.homeShow)
-})
+const router = useRouter()
+
+function bindBoxClick(route: AppRouteRecordRaw) {
+	if (/(http|https):\/\/([\w.]+\/?)\S*/ig.test(route.path)) {
+		window.open(route.path)
+	} else {
+		router.push({
+			name: route.name
+		})
+	}
+}
 </script>
-
 <style lang="scss" scoped>
-.banner {
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  text-align: center;
-  justify-content: center;
-}
-
-.banner::after {
-  content: '';
-  width: 100%;
-  height: 64px;
-}
-
 .left-image {
-  right: calc(50% + 270px);
-  width: calc(50% - 270px);
-  min-width: 440px;
+	position: fixed;
+	left: 0;
+	// right: calc(50% + 270px);
+	// width: calc(50% - 270px);
+	min-width: 20vw;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .right-image {
-  right: 0;
-  width: 41vw;
-  min-width: 440px;
+	position: fixed;
+	right: 0;
+	// width: 440px;
+	min-width: 20vw;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
-/*@media only screen and (max-width: 1920px) {
-  .left-image {
-    right: calc(50% + 270px);
-    width: calc(50% - 270px);
-    min-width: 440px;
-  }
-
-  .right-image {
-    left: calc(50% + 270px);
-    width: calc(50% - 270px);
-    min-width: 440px;
-  }
+.box-navigation {
+	width: 60vw;
+	margin: 0 auto;
 }
 
-@media only screen and (min-width: 1920px) {
-  .left-image {
-    left: 0;
-    width: 700px;
-  }
-
-  .right-image {
-    right: 0;
-    width: 700px;
-  }
-}*/
-
-.left-image {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+.box-list {
+	display: inline-block;
+	margin: 20px 0 10px 0;
+	
+	.box-list-header {
+		margin-bottom: 15px;
+		display: inline-flex;
+		align-items: center;
+		
+		&:hover {
+			transform: scale(1.05);
+		}
+		
+		&:hover .box-list-icon {
+			color: var(--box-success);
+		}
+	}
+	
+	&-title {
+		margin-left: 10px;
+	}
+	
+	.box-list-item {
+		display: inline-flex;
+		flex-wrap: wrap;
+	}
 }
 
-.right-image {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+.box {
+	padding: 12px;
+	transition: all 0.25s;
+	box-shadow: var(--box-box);
+	border-radius: 8px;
+	background: var(--box-back);
+	margin: 0 20px 15px 0;
+	
+	&-header {
+		display: flex;
+		align-items: center;
+	}
+	
+	&-title {
+		font-size: 18px;
+		font-weight: 700;
+		margin-left: 10px;
+	}
+	
+	&-desc {
+		display: -webkit-box;
+		flex-grow: 1;
+		margin-top: 7px;
+		line-height: 1.5;
+		font-size: 14px;
+		color: var(--box-desc);
+	}
+	
 }
 
-/*@media only screen and (max-width: 1023px) {
-  .banner {
-    position: static;
-    text-align: left;
-    padding-left: 16px;
-    transform: none;
-    padding-top: 60px;
-    padding-right: 16px;
-    min-height: 550px;
-    height: calc(100vh - 124px);
-  }
-
-  .left-image {
-    position: relative;
-    left: -16px;
-    min-width: unset;
-    width: 300px;
-    top: 8px;
-    transform: none;
-  }
-}*/
-
-.home-content {
-  position: fixed;
-  width: calc(100vw - 41vw);
-  height: calc(100vh - 64px);
-  left: 0;
-  top: 64px;
-
-  .hc-title {
-    width: 80%;
-    height: 140px;
-    padding: 0 10%;
-  }
-
-  .hc-search {
-    margin-bottom: 10px;
-    color: var(--text-color-2);
-  }
-
-  .hc-card {
-    padding: 20px;
-  }
-
-
+.box-theme:hover {
+	transform: scale(1.05);
+	background: var(--box-back-hover);
 }
 
-.hc-card-item {
-  ::v-deep(.n-tag) {
-    padding: 0 calc(var(--n-height) / 3) 0 18px;
-  }
-
-  .hc-ci-header {
-    height: 30px;
-  }
-
-  .hc-ci-content {
-    padding: 10px 0 0 0;
-  }
-
-  .hc-cont-item {
-    min-width: 171px;
-    width: 300px;
-    max-width: 300px;
-    transition: all .3s linear;
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
+.box-dark:hover {
+	transform: scale(1.1);
+	background: var(--box-back-hover);
 }
 </style>
