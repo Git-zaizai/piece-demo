@@ -22,6 +22,7 @@ interface ImportMetaEnv {
     readonly VITE_GLOB_IMG_URL: string // 图片前缀地址
     readonly VITE_GLOB_ROUTER_PREFIX: string // 路由前缀
     readonly VITE_BASE_URL: string //项目 base
+    readonly VITE_GITHUB: string // 
 }
 
 interface ImportMeta {

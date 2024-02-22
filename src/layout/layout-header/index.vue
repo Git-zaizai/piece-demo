@@ -62,7 +62,7 @@ const loginShow = async () => {
 	}
 }
 const topgithub = () => {
-	window.open('https://github.com/Git-zaizai/home-demo')
+	window.open(import.meta.env.VITE_GITHUB)
 }
 </script>
 
