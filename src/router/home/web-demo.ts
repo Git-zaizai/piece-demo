@@ -1,17 +1,16 @@
 import { AppRouteRecordRaw } from '../types'
 
-const WebDemo: AppRouteRecordRaw = {
-	path: '/web-demo',
-	name: 'web-demo',
+const Demo: AppRouteRecordRaw = {
+	path: '/demo',
+	name: 'demo',
 	meta: {
-		title: 'web demo'
+		title: 'demo'
 	},
-	sort: 1,
 	children: [
 		{
 			path: 'tab-demo',
 			name: 'tab-demo',
-			component: () => import('@/view/demo/web/tab/index.vue'),
+			component: () => import('@/view/Test/tab/index.vue'),
 			meta: {
 				title: 'tabDemo',
 				navigation: {
@@ -22,7 +21,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'space',
 			name: 'space',
-			component: () => import('@/view/demo/web/space.vue'),
+			component: () => import('@/view/Test/space.vue'),
 			meta: {
 				title: '主题变化',
 				navigation: {
@@ -33,7 +32,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'slot',
 			name: 'slot',
-			component: () => import('@/view/demo/web/TestSlot/TestSlot.vue'),
+			component: () => import('@/view/Test/TestSlot/TestSlot.vue'),
 			meta: {
 				title: 'slot实验',
 				navigation: {
@@ -44,7 +43,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'monacoEditor',
 			name: 'monacoEditor',
-			component: () => import('@/view/demo/web/monacoEditor/index.vue'),
+			component: () => import('@/view/Test/monacoEditor/index.vue'),
 			meta: {
 				title: 'monaco-editor',
 				navigation: {
@@ -66,7 +65,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'naive-ui-code',
 			name: 'naive-ui-code',
-			component: () => import('@/view/demo/web/code.vue'),
+			component: () => import('@/view/Test/code.vue'),
 			meta: {
 				title: 'naive-ui-code naive-ui-code',
 				navigation: {
@@ -77,7 +76,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'vue-render',
 			name: 'vue-render',
-			component: () => import('@/view/demo/web/vue-render/index.vue'),
+			component: () => import('@/view/Test/vue-render/index.vue'),
 			meta: {
 				title: 'vue render',
 				navigation: {
@@ -88,7 +87,7 @@ const WebDemo: AppRouteRecordRaw = {
 		{
 			path: 'md-to-vue',
 			name: 'md-to-vue',
-			component: () => import('@/view/demo/web/mdtovue.md'),
+			component: () => import('@/view/Test/mdtovue.md'),
 			meta: {
 				title: 'md-to-vue',
 				navigation: {
@@ -99,4 +98,4 @@ const WebDemo: AppRouteRecordRaw = {
 	]
 }
 
-export default WebDemo
+export default Demo
