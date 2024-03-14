@@ -1,16 +1,17 @@
 import { AppRouteRecordRaw } from '../types'
 
-const Demo: AppRouteRecordRaw = {
-	path: '/demo',
-	name: 'demo',
+const WebDemo: AppRouteRecordRaw = {
+	path: '/web-demo',
+	name: 'web-demo',
 	meta: {
-		title: 'demo'
+		title: 'web demo'
 	},
+	sort: 1,
 	children: [
 		{
 			path: 'tab-demo',
 			name: 'tab-demo',
-			component: () => import('@/view/Test/tab/index.vue'),
+			component: () => import('@/view/demo/web/tab/index.vue'),
 			meta: {
 				title: 'tabDemo',
 				navigation: {
@@ -21,7 +22,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'space',
 			name: 'space',
-			component: () => import('@/view/Test/space.vue'),
+			component: () => import('@/view/demo/web/space.vue'),
 			meta: {
 				title: '主题变化',
 				navigation: {
@@ -32,7 +33,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'slot',
 			name: 'slot',
-			component: () => import('@/view/Test/TestSlot/TestSlot.vue'),
+			component: () => import('@/view/demo/web/TestSlot/TestSlot.vue'),
 			meta: {
 				title: 'slot实验',
 				navigation: {
@@ -43,7 +44,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'monacoEditor',
 			name: 'monacoEditor',
-			component: () => import('@/view/Test/monacoEditor/index.vue'),
+			component: () => import('@/view/demo/web/monacoEditor/index.vue'),
 			meta: {
 				title: 'monaco-editor',
 				navigation: {
@@ -65,7 +66,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'naive-ui-code',
 			name: 'naive-ui-code',
-			component: () => import('@/view/Test/code.vue'),
+			component: () => import('@/view/demo/web/code.vue'),
 			meta: {
 				title: 'naive-ui-code naive-ui-code',
 				navigation: {
@@ -76,7 +77,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'vue-render',
 			name: 'vue-render',
-			component: () => import('@/view/Test/vue-render/index.vue'),
+			component: () => import('@/view/demo/web/vue-render/index.vue'),
 			meta: {
 				title: 'vue render',
 				navigation: {
@@ -87,7 +88,7 @@ const Demo: AppRouteRecordRaw = {
 		{
 			path: 'md-to-vue',
 			name: 'md-to-vue',
-			component: () => import('@/view/Test/mdtovue.md'),
+			component: () => import('@/view/demo/web/mdtovue.md'),
 			meta: {
 				title: 'md-to-vue',
 				navigation: {

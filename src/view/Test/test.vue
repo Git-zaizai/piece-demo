@@ -250,7 +250,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCommonStore } from '@/store/index'
+import { useCommonStore } from '@/store'
 import { useThemeVars } from 'naive-ui'
 
 const outlineMarkerTop = ref(0)
