@@ -50,7 +50,6 @@ routeModuleList.sort((a, b)=> {
 	return aSort - bSort
 })
 
-
 const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
 export { routeModuleList, hemoRoutes }
