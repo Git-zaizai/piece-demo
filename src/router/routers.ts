@@ -18,26 +18,10 @@ const Root: AppRouteRecordRaw = {
 		{
 			path: 'test-r',
 			name: 'test-r',
-			component: () => import('@/view/Test/test/test.vue'),
+			component: () => import('@/view/Test/test.vue'),
 			meta: {
 				title: 'test'
 			},
-		}
-	]
-}
-
-/**
- * @param 主路由
- */
-const test: AppRouteRecordRaw = {
-	path: '/test',
-	name: 'test',
-	component: LayoutHome,
-	children: [
-		{
-			path: 'test1',
-			name: 'test1',
-			component: () => import('@/view/Test/test/test.vue'),
 		}
 	]
 }
@@ -60,7 +44,13 @@ for (const key in routeModules) {
 	}
 }
 
-const routers = [Root, test, ...routeModuleList, admin, ...adminRouters]
+routeModuleList.sort((a, b)=> {
+	let aSort = a.sort ?? 100
+	let bSort = b.sort ?? 100
+	return aSort - bSort
+})
+
+const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
 export { routeModuleList, hemoRoutes }
 
