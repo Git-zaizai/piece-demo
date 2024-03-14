@@ -66,3 +66,13 @@ export function copyStr(value: string): void {
 export function rand(m: number, n: number) {
 	return Math.ceil(Math.random() * (n - m + 1) + m - 1)
 }
+
+
+/**
+ * @function isMobile 判断手机端
+ * */
+export function isMobile() {
+	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+		navigator.userAgent
+	)
+}
