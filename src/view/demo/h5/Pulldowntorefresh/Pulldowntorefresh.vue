@@ -1,29 +1,29 @@
 <template>
-	<div class="zai-pull" :class="showScrollBar && 'hide-scroll'" @scroll="pullScroll" :style="cssVars" ref="zaiPullRef">
-		<div class="zai-pull-loaderBox">
-			<i class="zai-pull-loader"></i>
-		</div>
-		<div>
-			<slot>
-				<div v-for="i in 20">
-					啊
-					<n-divider />
-					啊
-				</div>
-			</slot>
-		</div>
-	</div>
+  <div class="zai-pull" :class="showScrollBar && 'hide-scroll'" @scroll="pullScroll" :style="cssVars" ref="zaiPullRef">
+    <div class="zai-pull-loaderBox">
+      <i class="zai-pull-loader"></i>
+    </div>
+    <div>
+      <slot>
+        <div v-for="i in 20">
+          啊
+          <n-divider />
+          啊
+        </div>
+      </slot>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 defineOptions({
-	name: 'pull-down-to-refresh'
+  name: 'pull-down-to-refresh'
 })
 
 const props = defineProps({
-	showScrollBar: {
-		type: Boolean,
-		default: false
-	}
+  showScrollBar: {
+    type: Boolean,
+    default: false
+  }
 })
 
 // 最大上拉距离
@@ -32,58 +32,51 @@ const DISTANCE_Y_MAX_LIMIT = 70
 const DISTANCE_Y_MIN_LIMIT = 40
 
 let startY = 0,
-	startX = 0,
-	endY = 0,
-	endX = 0,
-	distanceY = 0,
-	distanceX = 0,
-	loadLock = false,
-	viewScrollTop = 0,
-	viewScrollHeight = 0
+  startX = 0,
+  endY = 0,
+  endX = 0,
+  distanceY = 0,
+  distanceX = 0,
+  loadLock = false,
+  viewScrollTop = 0,
+  viewScrollHeight = 0
 
 const cssVars = ref({
-	'--loader-y': 0
+  '--loader-y': 0
 })
 
 const zaiPullRef = ref<HTMLDivElement | null>(null)
 
 function pullScroll(e: any) {
-	const { scrollHeight, clientHeight, scrollTop } = e.target
-	viewScrollTop = scrollTop
-	if (clientHeight + scrollTop >= scrollHeight - 100) {
-
-	}
+  const { scrollHeight, clientHeight, scrollTop } = e.target
+  viewScrollTop = scrollTop
+  if (clientHeight + scrollTop >= scrollHeight - 100) {
+  }
 }
 
-function start() {
+function start() {}
 
-}
+function move() {}
 
-function move() {
-
-}
-
-function end() {
-
-}
+function end() {}
 
 onMounted(() => {
-	const pullDom = zaiPullRef.value
-	if (pullDom) {
-		pullDom.addEventListener('touchstart', start, { passive: false })
-		pullDom.addEventListener('touchmove', move, { passive: false })
-		pullDom.addEventListener('touchend', end, { passive: false })
-		viewScrollHeight = pullDom.scrollHeight
-	}
+  const pullDom = zaiPullRef.value
+  if (pullDom) {
+    pullDom.addEventListener('touchstart', start, { passive: false })
+    pullDom.addEventListener('touchmove', move, { passive: false })
+    pullDom.addEventListener('touchend', end, { passive: false })
+    viewScrollHeight = pullDom.scrollHeight
+  }
 })
 
 onUnmounted(() => {
-	const pullDom = zaiPullRef.value
-	if (pullDom) {
-		pullDom.removeEventListener('touchstart', start)
-		pullDom.removeEventListener('touchmove', move)
-		pullDom.removeEventListener('touchend', end)
-	}
+  const pullDom = zaiPullRef.value
+  if (pullDom) {
+    pullDom.removeEventListener('touchstart', start)
+    pullDom.removeEventListener('touchmove', move)
+    pullDom.removeEventListener('touchend', end)
+  }
 })
 </script>
 <style scoped lang="scss">
