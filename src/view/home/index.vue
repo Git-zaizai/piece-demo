@@ -1,12 +1,12 @@
 <template>
-	<div class="min-w">
-		<left-image class="left-image"/>
-		<right-image class="right-image"/>
+	<div>
+		<left-image class="left-image" />
+		<right-image class="right-image" />
 		<div class="box-navigation flex-juc-alc" :style="themeVars">
 			<div class="box-list" v-for="item in routeModuleList" :key="item.name">
 				<div class="box-list-header el-transition">
 					<n-icon size="26" class="box-list-icon el-transition">
-						<CubeOutline/>
+						<CubeOutline />
 					</n-icon>
 					<h2 class="box-list-title">{{ item.meta.title }}</h2>
 				</div>
@@ -21,7 +21,7 @@
 						>
 							<div class="box-header">
 								<n-icon size="20">
-									<FlashOutline/>
+									<FlashOutline />
 								</n-icon>
 								<h5 class="box-title">{{ chItem.meta.title }} </h5>
 							</div>
@@ -79,94 +79,126 @@ function bindBoxClick(route: AppRouteRecordRaw) {
 </script>
 <style lang="scss" scoped>
 .left-image {
-	position: fixed;
-	left: 0;
-	// right: calc(50% + 270px);
-	// width: calc(50% - 270px);
-	min-width: 20vw;
-	top: 50%;
-	transform: translateY(-50%);
+  position: fixed;
+  left: 0;
+  // right: calc(50% + 270px);
+  // width: calc(50% - 270px);
+  min-width: 20vw;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .right-image {
-	position: fixed;
-	right: 0;
-	// width: 440px;
-	min-width: 20vw;
-	top: 50%;
-	transform: translateY(-50%);
+  position: fixed;
+  right: 0;
+  // width: 440px;
+  min-width: 20vw;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
+
 .box-navigation {
-	width: 60vw;
-	margin: 0 auto;
+  width: 60vw;
+  margin: 0 auto;
+}
+
+
+@media screen and (max-width: 980px) {
+
+  .box-navigation {
+    width: calc(100vw - 5vw);
+    overflow-y: scroll;
+    position: fixed;
+    z-index: 10;
+    padding-left: 5vw;
+    height: calc(100vh - 64px);
+    background-color: transparent;
+  }
+
+  .left-image {
+    top: 30%;
+    min-width: 80vw;
+    opacity: 0.2;
+  }
+
+  .right-image {
+    top: 70%;
+    min-width: 80vw;
+    opacity: 0.2;
+  }
 }
 
 .box-list {
-	display: inline-block;
-	margin: 20px 0 10px 0;
-	
-	.box-list-header {
-		margin-bottom: 15px;
-		display: inline-flex;
-		align-items: center;
-		
-		&:hover {
-			transform: scale(1.05);
-		}
-		
-		&:hover .box-list-icon {
-			color: var(--box-success);
-		}
-	}
-	
-	&-title {
-		margin-left: 10px;
-	}
-	
-	.box-list-item {
-		display: inline-flex;
-		flex-wrap: wrap;
-	}
+  display: inline-block;
+  margin: 20px 0 10px 0;
+
+  .box-list-header {
+    margin-bottom: 15px;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:hover .box-list-icon {
+      color: var(--box-success);
+    }
+  }
+
+  &-title {
+    margin-left: 10px;
+  }
+
+  .box-list-item {
+    display: inline-flex;
+    flex-wrap: wrap;
+  }
 }
 
 .box {
-	padding: 12px;
-	transition: all 0.25s;
-	box-shadow: var(--box-box);
-	border-radius: 8px;
-	background: var(--box-back);
-	margin: 0 20px 15px 0;
-	
-	&-header {
-		display: flex;
-		align-items: center;
-	}
-	
-	&-title {
-		font-size: 18px;
-		font-weight: 700;
-		margin-left: 10px;
-	}
-	
-	&-desc {
-		display: -webkit-box;
-		flex-grow: 1;
-		margin-top: 7px;
-		line-height: 1.5;
-		font-size: 14px;
-		color: var(--box-desc);
-	}
-	
+  padding: 12px;
+  transition: all 0.25s;
+  box-shadow: var(--box-box);
+  border-radius: 8px;
+  background: var(--box-back);
+  margin: 0 20px 15px 0;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+  }
+
+  &-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-left: 10px;
+  }
+
+  &-desc {
+    display: -webkit-box;
+    flex-grow: 1;
+    margin-top: 7px;
+    line-height: 1.5;
+    font-size: 14px;
+    color: var(--box-desc);
+  }
+
 }
 
 .box-theme:hover {
-	transform: scale(1.05);
-	background: var(--box-back-hover);
+  transform: scale(1.05);
+  background: var(--box-back-hover);
 }
 
 .box-dark:hover {
-	transform: scale(1.1);
-	background: var(--box-back-hover);
+  transform: scale(1.1);
+  background: var(--box-back-hover);
 }
 </style>
