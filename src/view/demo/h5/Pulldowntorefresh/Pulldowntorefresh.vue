@@ -1,217 +1,256 @@
 <template>
-  <div class="zai-pull" :style="cssVars">
-    <div class="zai-pull-loaderBox">
-      <template v-if="ArrowIcon < 3">
-        <n-icon
-          color="var(--success-color)"
-          size="20"
-          :component="ArrowDownSharp"
-          class="el-transition-200"
-          :style="{
-            transform: ArrowIcon === 1 ? 'rotate(0deg)' : 'rotate(180deg)'
-          }"
-        />
-        <transition name="fade" mode="out-in" appear>
-          <span class="ml-5" v-if="ArrowIcon === 1">下拉</span>
-          <span class="ml-5" v-else>放手</span>
-        </transition>
-      </template>
+	<div
+			class="zai-pull" :class="{'hide-scroll': showScrollBar}" :style="cssVars" ref="zaiPullRef"
+	>
+		<div class="zai-pull-loaderBox">
+			<transition name="fade" mode="out-in" appear>
+				<div class="flex-alc" v-if="ArrowIcon === 1">
+					<n-icon color="var(--success-color)" size="20" :component="ArrowDown" />
+					<span class="ml-5">下拉</span>
+				</div>
+				<div class="flex-alc" v-else-if="ArrowIcon === 2">
+					<n-icon color="var(--success-color)" size="20" :component="ArrowUpOutline" />
+					<span class="ml-5">放手</span>
+				</div>
 
-      <div class="flex-alc" v-else><i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span></div>
-    </div>
-    <div @scroll="pullScroll" ref="zaiPullRef" class="scroll-y" :class="{ 'hide-scroll': showScrollBar }">
-      <slot>
-        <div v-for="i in 20">
-          啊
-          <n-divider />
-          啊
-        </div>
-      </slot>
-      <div class="zai-pull-bottom-box">
-        <i class="zai-pull-loader"></i>
-        <span>{{ bottomBoxStatus ? '加载中...' : '没有更多了' }}</span>
-      </div>
-    </div>
-  </div>
+				<div class="flex-alc" v-else>
+					<i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span>
+				</div>
+			</transition>
+		</div>
+		<div class="scroll-y" @scroll="pullScroll">
+			<slot>
+				<div v-for="i in 20">
+					啊
+					<n-divider />
+					啊
+				</div>
+			</slot>
+		</div>
+		<teleport to="body">
+			<div class="pull-up-loaderBox" :style="{'--pull-up-y': pullUpYRef + 'px',...cssVars}">
+				<transition name="fade" mode="out-in" appear>
+					<div class="flex-alc" v-if="ArrowIcon === 1">
+						<n-icon color="var(--success-color)" size="20" :component="ArrowUpOutline" />
+						<span class="ml-5">上拉</span>
+					</div>
+					<div class="flex-alc" v-else-if="ArrowIcon === 2">
+						<n-icon color="var(--success-color)" size="20" :component="ArrowDown" />
+						<span class="ml-5">放手</span>
+					</div>
+
+					<div class="flex-alc" v-else>
+						<i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
+					</div>
+				</transition>
+			</div>
+		</teleport>
+		<div style="position: fixed;top: 50vh;left: 50vw;">
+			<n-button @click="but">修改</n-button>
+		</div>
+	</div>
 </template>
 <script setup lang="ts">
-import { useDebounceFn, useThrottleFn } from '@vueuse/core'
 import { useThemeVars } from 'naive-ui'
-import { ArrowDownSharp } from '@vicons/ionicons5'
-import type { Ref } from 'vue'
 
-defineOptions({
-  name: 'pull-down-to-refresh'
-})
+import { ArrowUpOutline, ArrowDown } from '@vicons/ionicons5'
 
-interface Props {
-  // 是否显示滚动条
-  showScrollBar?: boolean
-  // 是否开启无限下拉
-  InfiniteDropdown?: boolean
-  // 下拉刷新回调
-  onDropdown?: (fn: () => void) => Promise<void>
-  // 开局刷新展示
-  initrefresh?: boolean
-  // 触底加载回调
-  onPullupLoading?: (bottomBoxStatus: Ref<boolean>) => Promise<void>
+const but = () => {
+	if (ArrowIcon.value < 3) {
+		ArrowIcon.value++
+	} else {
+		ArrowIcon.value = 1
+	}
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  showScrollBar: false,
-  InfiniteDropdown: true,
-  initrefresh: false
+defineOptions({
+	name: 'pull-down-to-refresh'
 })
 
-// 最大上拉距离
+const props = defineProps({
+	showScrollBar: {
+		type: Boolean,
+		default: false
+	},
+	InfiniteDropdown: {
+		type: Boolean,
+		default: true
+	}
+})
+
+// 最大下拉距离
 const DISTANCE_Y_MAX_LIMIT = 70
-// 最小上拉距离
+// 最小下拉距离
 const DISTANCE_Y_MIN_LIMIT = 40
+const PULL_UP_Y_MAX = -100
+const PULL_UP_Y_MIN = -50
 
 let startY = 0,
-  startX = 0,
-  endY = 0,
-  endX = 0,
-  distanceY = 0,
-  distanceX = 0,
-  loadLock = false,
-  viewScrollTop = 0,
-  viewScrollHeight = 0
+	startX = 0,
+	endY = 0,
+	endX = 0,
+	distanceY = 0,
+	distanceX = 0,
+	loadLock = false,
+	viewScrollTop = 0,
+	viewScrollHeight = 0
 
 const naiveTheme = useThemeVars()
 const cssVars = computed(() => {
-  return {
-    '--success-color': naiveTheme.value.successColor,
-    '--border-color': naiveTheme.value.borderColor,
-    '--distance-y': distanceYRef.value + 'px'
-  }
+	return {
+		'--success-color': naiveTheme.value.successColor,
+		'--border-color': naiveTheme.value.borderColor,
+		'--distance-y': distanceYRef.value + 'px',
+
+	}
 })
-
 const zaiPullRef = ref<HTMLDivElement | null>(null)
-
 const ArrowIcon = ref<1 | 2 | 3>(1)
 const distanceYRef = ref(0)
+const pullUpYRef = ref(0)
 
-const overflow = ref<'scroll' | 'hidden'>('scroll')
-const bottomBoxStatus = ref(true)
 
-const pullScroll = function (e: any) {
-  const { scrollHeight, clientHeight, scrollTop } = e.target
-  viewScrollTop = scrollTop
-  if (clientHeight + scrollTop >= scrollHeight) {
-    if (props.onPullupLoading) {
-      overflow.value = 'hidden'
-      props.onPullupLoading(bottomBoxStatus).then(() => {
-        overflow.value = 'scroll'
-      })
-    }
-  }
+function pullScroll(e: any) {
+	const { scrollHeight, clientHeight, scrollTop } = e.target
+	viewScrollTop = scrollTop
+	if (clientHeight + scrollTop >= scrollHeight - 100) {
+	}
 }
 
 function start(e: TouchEvent) {
-  if (viewScrollTop > 0) {
-    return
-  }
-  if (loadLock) {
-    return
-  }
-
-  startY = e.touches[0].clientY
-  startX = e.touches[0].clientX
+	/*	if (viewScrollTop > 0) {
+	 return
+	 }*/
+	if (loadLock) {
+		return
+	}
+	startY = e.touches[0].clientY
+	startX = e.touches[0].clientX
 }
 
 function move(e: TouchEvent) {
-  if (loadLock) {
-    return
-  }
-  if (viewScrollTop > 0) {
-    return
-  }
-  endY = e.touches[0].clientY
-  endX = e.touches[0].clientX
+	/*if (viewScrollTop > 0) {
+	 return
+	 }*/
+	endY = e.touches[0].clientY
+	endX = e.touches[0].clientX
+	if (loadLock) {
+		return
+	}
+	/*if (endY - startY < 0) {
+	 return
+	 }*/
 
-  if (endY - startY < 0) {
-    return
-  }
 
-  distanceY = endY - startY
-  distanceX = endX - startX
-  const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI)
-  if (deg > DISTANCE_Y_MIN_LIMIT) {
-    ;[startY, startX] = [endY, endX]
-    return
-  }
-  let percent = (100 - distanceY * 0.5) / 100
-  percent = Math.max(0.5, percent)
-  distanceY = distanceY * percent
-  if (distanceY > DISTANCE_Y_MAX_LIMIT) {
-    ArrowIcon.value = 2
-    if (!props.InfiniteDropdown) {
-      distanceY = DISTANCE_Y_MAX_LIMIT
-    }
-  }
-  distanceYRef.value = distanceY
-  console.log('🚀 ~ move ~ distanceYRef:', distanceYRef.value)
+	distanceY = endY - startY
+	distanceX = endX - startX
+
+	const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI)
+	if (deg > DISTANCE_Y_MIN_LIMIT) {
+		;[startY, startX] = [endY, endX]
+		return
+	}
+	let percent = (100 - distanceY * 0.5) / 100
+	percent = Math.max(0.5, percent)
+	distanceY = distanceY * percent
+
+	if (viewScrollTop === 0 && distanceY > 0) {
+		if (distanceY > DISTANCE_Y_MAX_LIMIT) {
+			ArrowIcon.value = 2
+			if (!props.InfiniteDropdown) {
+				distanceY = DISTANCE_Y_MAX_LIMIT
+			}
+		}
+		distanceYRef.value = distanceY
+	}
+
+
+	if (viewScrollTop >= viewScrollHeight && distanceY < 0) {
+		if (distanceY < PULL_UP_Y_MAX) {
+			ArrowIcon.value = 2
+			distanceY = PULL_UP_Y_MAX
+		}
+		distanceYRef.value = distanceY
+		pullUpYRef.value = distanceY
+	}
+
 }
 
-const initDropdown = () => {
-  loadLock = false
-  distanceY = 0
-  distanceYRef.value = 0
-  ArrowIcon.value = 1
-  overflow.value = 'scroll'
-  document.querySelector('.n-scrollbar-container').style.overflow = 'scroll'
-}
 function end() {
-  if (viewScrollTop > 0) {
-    return
-  }
-  if (loadLock) {
-    return
-  }
-  if (endY - startY < 0) {
-    return
-  }
-  if (distanceY < DISTANCE_Y_MAX_LIMIT) {
-    ArrowIcon.value = 1
-    distanceYRef.value = distanceY
-    return
-  }
-  loadLock = true
-  ArrowIcon.value = 3
-  distanceYRef.value = DISTANCE_Y_MAX_LIMIT
-  overflow.value = 'hidden'
+	/*if (viewScrollTop > 0) {
+	 return
+	 }*/
+	if (loadLock) {
+		return
+	}
+	/*if (endY - startY < 0) {
+	 return
+	 }*/
 
-  document.querySelector('.n-scrollbar-container').style.overflow = 'hidden'
-  if (props.onDropdown) {
-    overflow.value = 'hidden'
-    props.onDropdown(initDropdown)
-  }
+	if (viewScrollTop === 0 && distanceY > 0) {
+
+		if (distanceY < DISTANCE_Y_MAX_LIMIT) {
+			ArrowIcon.value = 1
+			distanceYRef.value = 0
+			return
+		}
+		distanceYRef.value = DISTANCE_Y_MAX_LIMIT
+		ArrowIcon.value = 3
+		loadLock = true
+
+		setTimeout(() => {
+			loadLock = false
+			distanceY = 0
+			distanceYRef.value = 0
+			ArrowIcon.value = 1
+		}, 1000)
+	}
+
+	if (viewScrollTop >= viewScrollHeight && distanceY < 0) {
+		if (distanceY < PULL_UP_Y_MAX) {
+			ArrowIcon.value = 1
+			pullUpYRef.value = 0
+			return
+		}
+		pullUpYRef.value = PULL_UP_Y_MIN
+		distanceYRef.value = PULL_UP_Y_MIN
+		loadLock = true
+		ArrowIcon.value = 3
+		setTimeout(() => {
+			loadLock = false
+			distanceY = 0
+			ArrowIcon.value = 1
+			distanceYRef.value = 0
+			pullUpYRef.value = 0
+		}, 1000)
+	}
 }
 
 onMounted(() => {
-  const pullDom = zaiPullRef.value
-  if (pullDom) {
-    pullDom.addEventListener('touchstart', start, { passive: false })
-    pullDom.addEventListener('touchmove', move, { passive: false })
-    pullDom.addEventListener('touchend', end, { passive: false })
-  }
+	const pullDom = zaiPullRef.value
+	if (pullDom) {
+		pullDom.addEventListener('touchstart', start, { passive: false })
+		pullDom.addEventListener('touchmove', move, { passive: false })
+		pullDom.addEventListener('touchend', end, { passive: false })
+		viewScrollHeight = pullDom.scrollHeight + pullDom.clientHeight - 90
+	}
 })
 
 onUnmounted(() => {
-  const pullDom = zaiPullRef.value
-  if (pullDom) {
-    pullDom.removeEventListener('touchstart', start)
-    pullDom.removeEventListener('touchmove', move)
-    pullDom.removeEventListener('touchend', end)
-  }
+	const pullDom = zaiPullRef.value
+	if (pullDom) {
+		pullDom.removeEventListener('touchstart', start)
+		pullDom.removeEventListener('touchmove', move)
+		pullDom.removeEventListener('touchend', end)
+	}
 })
 </script>
 <style scoped lang="scss">
 .scroll-y {
-  overflow-y: v-bind(overflow);
+  overflow-y: scroll;
   height: 100%;
 }
+
 
 @media screen and (max-width: 980px) {
   .zai-pull-web {
@@ -243,15 +282,30 @@ onUnmounted(() => {
       animation: loadingskKeyframes 1s linear infinite;
     }
 
-    &-bottom-box {
-      width: 100%;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+
   }
 
+
+  .pull-up-loaderBox {
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: -50px;
+    left: 0;
+    height: 50px;
+    transform: translateY(var(--pull-up-y));
+  }
+  .pull-up-loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    margin-right: 5px;
+    border-bottom: 2px solid var(--success-color);
+    animation: loadingskKeyframes 1s linear infinite;
+  }
   .hide-scroll::-webkit-scrollbar {
     display: none;
   }
@@ -304,4 +358,6 @@ onUnmounted(() => {
   background: var(--n-scrollbar-color-hover);
   opacity: 0.5;
 }
+
+
 </style>
