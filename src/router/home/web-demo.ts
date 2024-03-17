@@ -88,7 +88,7 @@ const Demo: AppRouteRecordRaw = {
     {
       path: 'md-to-vue',
       name: 'md-to-vue',
-      component: () => import('@/view/Test/mdtovue.md'),
+      component: () => import('@/view/demo/web/mdtovue.md'),
       meta: {
         title: 'md-to-vue',
         navigation: {
