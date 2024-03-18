@@ -12,17 +12,26 @@
 					/>
 					<span class="ml-5">{{ downRef.text }}</span>
 				</div>
-				<div class="flex-alc" v-else><i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span></div>
+				<div class="flex-alc" v-else>
+					<i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span>
+				</div>
 			</transition>
 		</div>
 		<div class="scroll-y" @scroll="pullScroll" ref="scrollYRef">
 			<slot></slot>
-			<p v-if="pullUpCompleted">
-				{{ pullup.text }}
-			</p>
+			<div class="hitBottom-loaderBox" v-if="bottomLoading">
+				<transition name="fade" mode="out-in" appear>
+					<div class="flex-alc" v-if="hitBottomShowNull">
+						<span class="ml-5">没有更多了</span>
+					</div>
+					<div class="flex-alc" v-else>
+						<i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
+					</div>
+				</transition>
+			</div>
 		</div>
 
-		<teleport to="body">
+		<teleport to="body" v-if="!bottomLoading">
 			<div class="pull-up-loaderBox" :style="{ '--pull-up-y': pullup.y + 'px', ...cssVars }">
 				<transition name="fade" mode="out-in" appear>
 					<div class="flex-alc" v-if="pullup.iconStatus < 3">
@@ -31,12 +40,15 @@
 								size="20"
 								:component="ArrowUpOutline"
 								class="el-transition-200"
-								:class="pullup.iconStatus === 1 ? 'rotate-0' : 'rotate--180'"
+								:class="pullup.iconStatus === 2 ? 'rotate--180' : 'rotate-0'"
 						/>
 						<span class="ml-5">{{ pullup.text }}</span>
 					</div>
-					<div class="flex-alc" v-else>
+					<div class="flex-alc" v-else-if="pullup.iconStatus === 3">
 						<i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
+					</div>
+					<div class="flex-alc" v-else-if="pullup.iconStatus === 4">
+						没有更多了
 					</div>
 				</transition>
 			</div>
@@ -66,22 +78,31 @@ let startY = 0,
 	endX = 0,
 	distanceY = 0,
 	distanceX = 0,
-	loadLock = false,
+	loadLock = true,
 	// 滚动距离
 	viewScrollTop = 0,
 	// 滚动高度
-	viewScrollHeight = 0
+	viewScrollHeight = 0,
+	// 手指按下时的滚动距离
+	startPullUpScrollTop = 0
 
 interface Props {
+	// 是否隐藏滚动条
 	showScrollBar?: boolean
+	// 无限下拉（上拉）
 	InfiniteDropdown?: boolean
+	// 开启触底加载  true 触底 false 上拉
+	bottomLoading?: boolean
+	// 下拉刷新回调
 	onDown: (fn: () => void) => void | Promise<void>
-	onPull: (fn: (pullCallback: string, pullUpCompleted: boolean) => void) => void | Promise<void>
+	// 触底加载与上拉加载回调
+	onPull: (fn: (status: number) => void) => void | Promise<void>
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	showScrollBar: false,
-	InfiniteDropdown: true
+	InfiniteDropdown: true,
+	bottomLoading: false
 })
 
 const naiveTheme = useThemeVars()
@@ -96,22 +117,33 @@ const zaiPullRef = ref<HTMLDivElement | null>(null)
 const scrollYRef = ref<HTMLDivElement | null>(null)
 const distanceYRef = ref(0)
 
+// 下拉刷新
 const downRef = ref({
 	iconStatus: 1,
 	text: '下拉'
 })
 
-const pullUpCompleted = ref(false)
+// 上拉加载
 const pullup = ref({
 	y: 0,
 	iconStatus: 1,
 	text: '上拉'
 })
 
+// 触底加载
+const hitBottomShowNull = ref(false)
+
+function hitBottomCallback(value: number = 1) {
+	hitBottomShowNull.value = value === 4
+}
+
 function pullScroll(e: any) {
 	const { scrollHeight, clientHeight, scrollTop } = e.target
 	viewScrollTop = scrollTop + clientHeight
-	console.log('pullScroll', viewScrollTop)
+	console.log('触底', props.bottomLoading && viewScrollTop >= scrollHeight)
+	if (props.bottomLoading && viewScrollTop >= scrollHeight) {
+		props.onPull && props.onPull(hitBottomCallback)
+	}
 }
 
 function start(e: TouchEvent) {
@@ -123,6 +155,9 @@ function start(e: TouchEvent) {
 	}
 	startY = e.touches[0].clientY
 	startX = e.touches[0].clientX
+
+	const { scrollTop, clientHeight } = scrollYRef.value
+	startPullUpScrollTop = scrollTop + clientHeight
 }
 
 function move(e: TouchEvent) {
@@ -164,7 +199,27 @@ function move(e: TouchEvent) {
 		distanceYRef.value = distanceY
 	}
 
-	if (!pullUpCompleted.value && viewScrollTop >= viewScrollHeight && distanceY < 0) {
+
+	/**
+	 *
+	 * if
+	 * 	判断是否开启了上拉加载
+	 * 	判断手指摁下时 滚动距离是不是到达了底部
+	 * 	判断是否数据没有 4 状态表示没有更多了
+	 * 	判断当前滚动距离是否 >= 可滚动距离
+	 * 	判断方向为 负数 负数为上拉
+	 *
+	 *
+	 * **/
+
+
+	console.log(startPullUpScrollTop, 'viewScrollHeight', viewScrollHeight, startPullUpScrollTop >= viewScrollHeight)
+	if (!props.bottomLoading
+		&& startPullUpScrollTop >= viewScrollHeight
+		&& pullup.value.iconStatus !== 4
+		&& viewScrollTop >= viewScrollHeight
+		&& distanceY < 0) {
+		console.log('阿斯卡带回来')
 		if (distanceY < PULL_UP_Y_MIN) {
 			pullup.value.iconStatus = 2
 			pullup.value.text = '放手'
@@ -211,8 +266,23 @@ function end() {
 		}
 	}
 
+	/**
+	 *
+	 * if
+	 * 	判断是否开启了上拉加载
+	 * 	判断手指摁下时 滚动距离是不是到达了底部
+	 * 	判断是否数据没有 4 状态表示没有更多了
+	 * 	判断当前滚动距离是否 >= 可滚动距离
+	 * 	判断方向为 负数 负数为上拉
+	 *
+	 *
+	 * **/
 
-	if (viewScrollTop >= viewScrollHeight && distanceY < 0) {
+	if (!props.bottomLoading
+		&& startPullUpScrollTop >= viewScrollHeight
+		&& pullup.value.iconStatus !== 4
+		&& viewScrollTop >= viewScrollHeight
+		&& distanceY < 0) {
 		if (distanceY > PULL_UP_Y_MIN) {
 			pullup.value = {
 				y: 0,
@@ -249,23 +319,21 @@ function downCallback() {
 	}
 }
 
-function pullCallback(pullText = '上拉', completed?: boolean) {
+function pullCallback(status: number = 1) {
 	loadLock = false
 	distanceY = 0
 	distanceYRef.value = 0
 	pullup.value = {
 		y: 0,
-		iconStatus: 1,
-		text: pullText
-	}
-	if (typeof completed !== 'undefined') {
-		pullUpCompleted.value = completed
+		iconStatus: status,
+		text: '上拉'
 	}
 }
 
 // 初始化MutationObserver来监听插槽内容的变化
 const observer = new MutationObserver(() => {
 	nextTick(() => {
+		loadLock = false
 		viewScrollHeight = scrollYRef.value.scrollHeight
 	})
 })
@@ -294,6 +362,10 @@ onUnmounted(() => {
 })
 </script>
 <style scoped lang="scss">
+.el-transition-200 {
+  transition: all 0.2s linear;
+}
+
 .scroll-y {
   overflow-y: scroll;
   height: 100%;
@@ -339,6 +411,14 @@ onUnmounted(() => {
       border-bottom: 2px solid var(--success-color);
       animation: loadingskKeyframes 1s linear infinite;
     }
+  }
+
+  .hitBottom-loaderBox {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
   }
 
   .pull-up-loaderBox {
