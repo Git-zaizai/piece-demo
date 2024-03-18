@@ -3,6 +3,7 @@
 		<pull-down-to-refresh
 				:on-down="dropdown"
 				:on-pull="onPullupLoading"
+				bottomLoading
 		>
 			<n-list hoverable clickable>
 				<n-list-item v-for="(item, index) in list" :key="index">
@@ -54,9 +55,9 @@ const createData = (len = 10, time = 1500) => {
 	})
 }
 const list = ref<Array<{ text: string }>>([])
-createData(50).then((data: any) => {
+/*createData(50).then((data: any) => {
 	list.value = list.value.concat(data)
-})
+})*/
 
 const dropdown = async (fn: Function) => {
 	return createData(10, 1500).then((data: any) => {
@@ -68,10 +69,10 @@ const dropdown = async (fn: Function) => {
 let page = 1
 const onPullupLoading = (callbcak) => {
 	return createData(2, 3000).then((data: any) => {
-		list.value = list.value.concat(data)
 		if (page > 3) {
-			callbcak('已经没有了', false)
+			callbcak(4)
 		} else {
+			list.value = list.value.concat(data)
 			callbcak()
 		}
 		page++
