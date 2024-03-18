@@ -2,40 +2,40 @@
   <div class="zai-pull" :class="{ 'hide-scroll': showScrollBar }" :style="cssVars" ref="zaiPullRef">
     <div class="zai-pull-loaderBox">
       <transition name="fade" mode="out-in" appear>
-        <div class="flex-alc" v-if="downRef.iconStatus < 3">
-          <n-icon
-            color="var(--success-color)"
-            size="20"
-            :component="ArrowDown"
-            class="el-transition-200"
-            :class="downRef.iconStatus === 1 ? 'rotate-0' : 'rotate-180'"
-          />
-          <span class="ml-5">{{ downRef.text }}</span>
+        <div class="flex-alc" v-if="ArrowIcon === 1">
+          <n-icon color="var(--success-color)" size="20" :component="ArrowDown" />
+          <span class="ml-5">下拉</span>
         </div>
+        <div class="flex-alc" v-else-if="ArrowIcon === 2">
+          <n-icon color="var(--success-color)" size="20" :component="ArrowUpOutline" />
+          <span class="ml-5">放手</span>
+        </div>
+
         <div class="flex-alc" v-else><i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span></div>
       </transition>
     </div>
-    <div class="scroll-y" @scroll="pullScroll" ref="scrollYRef">
-      <slot> </slot>
+    <div class="scroll-y" @scroll="pullScroll">
+      <slot>
+        <div v-for="i in 20">
+          啊
+          <n-divider />
+          啊
+        </div>
+      </slot>
     </div>
-
     <teleport to="body">
-      <div class="pull-up-loaderBox" :style="{ '--pull-up-y': pullup.y + 'px', ...cssVars }">
+      <div class="pull-up-loaderBox" :style="{ '--pull-up-y': pullUpYRef + 'px', ...cssVars }">
         <transition name="fade" mode="out-in" appear>
-          <div class="flex-alc" v-if="pullup.iconStatus < 3">
-            <n-icon
-              color="var(--success-color)"
-              size="20"
-              :component="ArrowUpOutline"
-              class="el-transition-200"
-              :class="pullup.iconStatus === 1 ? 'rotate-0' : 'rotate--180'"
-            />
-            <span class="ml-5">{{ pullup.text }}</span>
+          <div class="flex-alc" v-if="ArrowIcon === 1">
+            <n-icon color="var(--success-color)" size="20" :component="ArrowUpOutline" />
+            <span class="ml-5">上拉</span>
           </div>
-          <div class="flex-alc" v-else>
-            <i class="pull-up-loader"></i>
-            <span class="ml-5">加载...</span>
+          <div class="flex-alc" v-else-if="ArrowIcon === 2">
+            <n-icon color="var(--success-color)" size="20" :component="ArrowDown" />
+            <span class="ml-5">放手</span>
           </div>
+
+          <div class="flex-alc" v-else><i class="pull-up-loader"></i> <span class="ml-5">加载...</span></div>
         </transition>
       </div>
     </teleport>
@@ -46,29 +46,26 @@ import { useThemeVars } from 'naive-ui'
 import { ArrowUpOutline, ArrowDown } from '@vicons/ionicons5'
 
 defineOptions({
-  name: 'pull-down-to-refresh'
+  name: 'pull-down-to-refresh-v1'
 })
 
-interface Props {
-  showScrollBar?: boolean
-  InfiniteDropdown?: boolean
-  onDown: () => void | Promise<void>
-  onPull: () => void | Promise<void>
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  showScrollBar: false,
-  InfiniteDropdown: true
+const props = defineProps({
+  showScrollBar: {
+    type: Boolean,
+    default: false
+  },
+  InfiniteDropdown: {
+    type: Boolean,
+    default: true
+  }
 })
 
 // 最大下拉距离
-const DISTANCE_Y_MAX_LIMIT = 100
+const DISTANCE_Y_MAX_LIMIT = 70
 // 最小下拉距离
-const DISTANCE_Y_MIN_LIMIT = 70
-// 最大上拉距离
+const DISTANCE_Y_MIN_LIMIT = 40
 const PULL_UP_Y_MAX = -100
-// 最小下拉距离
-const PULL_UP_Y_MIN = -70
+const PULL_UP_Y_MIN = -50
 
 let startY = 0,
   startX = 0,
@@ -89,17 +86,9 @@ const cssVars = computed(() => {
   }
 })
 const zaiPullRef = ref<HTMLDivElement | null>(null)
-const scrollYRef = ref<HTMLDivElement | null>(null)
+const ArrowIcon = ref<1 | 2 | 3>(1)
 const distanceYRef = ref(0)
-const downRef = ref({
-  iconStatus: 1,
-  text: '下拉'
-})
-const pullup = ref({
-  y: 0,
-  iconStatus: 1,
-  text: '上拉'
-})
+const pullUpYRef = ref(0)
 
 function pullScroll(e: any) {
   const { scrollHeight, clientHeight, scrollTop } = e.target
@@ -142,15 +131,11 @@ function move(e: TouchEvent) {
   }
   let percent = (100 - distanceY * 0.5) / 100
   percent = Math.max(0.5, percent)
-
   distanceY = distanceY * percent
 
   if (viewScrollTop === 0 && distanceY > 0) {
-    if (distanceY > DISTANCE_Y_MIN_LIMIT) {
-      downRef.value = {
-        iconStatus: 2,
-        text: '放手'
-      }
+    if (distanceY > DISTANCE_Y_MAX_LIMIT) {
+      ArrowIcon.value = 2
       if (!props.InfiniteDropdown) {
         distanceY = DISTANCE_Y_MAX_LIMIT
       }
@@ -159,15 +144,12 @@ function move(e: TouchEvent) {
   }
 
   if (viewScrollTop >= viewScrollHeight && distanceY < 0) {
-    if (distanceY < PULL_UP_Y_MIN) {
-      pullup.value.iconStatus = 2
-      pullup.value.text = '放手'
-      if (!props.InfiniteDropdown) {
-        distanceY = PULL_UP_Y_MAX
-      }
+    if (distanceY < PULL_UP_Y_MAX) {
+      ArrowIcon.value = 2
+      distanceY = PULL_UP_Y_MAX
     }
     distanceYRef.value = distanceY
-    pullup.value.y = distanceY
+    pullUpYRef.value = distanceY
   }
 }
 
@@ -183,65 +165,41 @@ function end() {
 	 }*/
 
   if (viewScrollTop === 0 && distanceY > 0) {
-    if (distanceY < DISTANCE_Y_MIN_LIMIT) {
-      downRef.value = {
-        iconStatus: 1,
-        text: '下拉'
-      }
+    if (distanceY < DISTANCE_Y_MAX_LIMIT) {
+      ArrowIcon.value = 1
       distanceYRef.value = 0
       return
     }
-
-    distanceYRef.value = DISTANCE_Y_MIN_LIMIT
-    downRef.value.iconStatus = 3
+    distanceYRef.value = DISTANCE_Y_MAX_LIMIT
+    ArrowIcon.value = 3
     loadLock = true
 
     setTimeout(() => {
       loadLock = false
       distanceY = 0
       distanceYRef.value = 0
-
-      downRef.value = {
-        iconStatus: 1,
-        text: '下拉'
-      }
-    }, 1200)
+      ArrowIcon.value = 1
+    }, 1000)
   }
   if (viewScrollTop >= viewScrollHeight && distanceY < 0) {
-    if (distanceY > PULL_UP_Y_MIN) {
-      pullup.value = {
-        y: 0,
-        iconStatus: 1,
-        text: '上拉'
-      }
-      distanceYRef.value = 0
+    if (distanceY < PULL_UP_Y_MAX) {
+      ArrowIcon.value = 1
+      pullUpYRef.value = 0
       return
     }
-
-    loadLock = true
+    pullUpYRef.value = PULL_UP_Y_MAX
     distanceYRef.value = PULL_UP_Y_MIN
-    pullup.value.iconStatus = 3
-    pullup.value.y = PULL_UP_Y_MIN
+    loadLock = true
+    ArrowIcon.value = 3
     setTimeout(() => {
       loadLock = false
       distanceY = 0
+      ArrowIcon.value = 1
       distanceYRef.value = 0
-      pullup.value = {
-        y: 0,
-        iconStatus: 1,
-        text: '上拉'
-      }
-    }, 2000)
+      pullUpYRef.value = 0
+    }, 1000)
   }
 }
-
-// 初始化MutationObserver来监听插槽内容的变化
-const observer = new MutationObserver(() => {
-  nextTick(() => {
-    const pullDom = zaiPullRef.value
-    viewScrollHeight = pullDom.scrollHeight + pullDom.clientHeight
-  })
-})
 
 onMounted(() => {
   const pullDom = zaiPullRef.value
@@ -249,11 +207,8 @@ onMounted(() => {
     pullDom.addEventListener('touchstart', start, { passive: false })
     pullDom.addEventListener('touchmove', move, { passive: false })
     pullDom.addEventListener('touchend', end, { passive: false })
-    viewScrollHeight = pullDom.scrollHeight + pullDom.clientHeight
-    observer.observe(scrollYRef.value as HTMLDivElement, {
-      childList: true, // 观察子节点的变化
-      subtree: true // 观察整个子树
-    })
+    viewScrollHeight = pullDom.scrollHeight + pullDom.clientHeight - 90
+    console.log('🚀 ~ onMounted ~ viewScrollHeight:', viewScrollHeight)
   }
 })
 
@@ -273,17 +228,6 @@ onUnmounted(() => {
 }
 
 @media screen and (max-width: 980px) {
-  .rotate-0 {
-    transform: rotate(0deg);
-  }
-
-  .rotate-180 {
-    transform: rotate(180deg);
-  }
-  .rotate--180 {
-    transform: rotate(-180deg);
-  }
-
   .zai-pull-web {
     overflow-y: visible;
   }
@@ -320,12 +264,11 @@ onUnmounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    bottom: -70px;
+    bottom: -50px;
     left: 0;
-    height: 70px;
+    height: 50px;
     transform: translateY(var(--pull-up-y));
   }
-
   .pull-up-loader {
     width: 16px;
     height: 16px;
@@ -335,7 +278,6 @@ onUnmounted(() => {
     border-bottom: 2px solid var(--success-color);
     animation: loadingskKeyframes 1s linear infinite;
   }
-
   .hide-scroll::-webkit-scrollbar {
     display: none;
   }
