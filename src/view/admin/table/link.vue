@@ -283,25 +283,16 @@ const tabs = ref<string[]>([])
 const formData = ref<Row>({
   _id: '',
   title: '',
-  start: 1,
-  finish: 111,
+  start: 0,
+  finish: 0,
   duwan: 1,
   tabs: [],
-  wanjie: 0,
+  wanjie: 1,
   isdel: 1,
   link: '',
   linkback: '',
   beizhu: '',
-  links: [
-    {
-      linkName: '',
-      url: '1'
-    },
-    {
-      linkName: '',
-      url: '2'
-    }
-  ],
+  links: [],
   addDate: null,
   update: null,
   finishtime: null,
@@ -363,9 +354,20 @@ const formSubmit = () => {
   formRef.value.validate(async (err: any) => {
     try {
       if (!err) {
-        const response = await http.post(`/mong/novel/${isAction}`, formData.value)
+        let body: Row = JSON.parse(JSON.stringify(formData.value))
         if (isAction === 'add') {
-          state.value.unshift(response.data.data)
+          delete body._id
+          body.addDate = dayjs().format()
+          body.update = dayjs().format()
+          body.finishtime = dayjs().format()
+          if (!Array.isArray(body.rate)) {
+            body.rate = body.rate.split('') as any[]
+          }
+        }
+        const response = await http.post(`/mong/novel/${isAction}`, body)
+        if (isAction === 'add') {
+          body._id = response.data.data.insertedId
+          state.value.unshift(body)
         } else {
           const index = state.value.findIndex(v => v._id === formData.value._id)
           state.value[index] = formData.value
@@ -417,7 +419,7 @@ function bindRemoveLink(index) {
       scroll-x
       :actions-columns="actionsColumns"
     />
-    <modal-form v-model:show="showForm" displaydirective="show" @confirm-form="formSubmit" style="width: 60vw">
+    <modal-form v-model:show="showForm" displaydirective @confirm-form="formSubmit" style="width: 60vw">
       <n-form
         ref="formRef"
         label-placement="left"
