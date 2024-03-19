@@ -1,6 +1,6 @@
 import { AppRouteRecordRaw } from '../types'
 
-const Demo: AppRouteRecordRaw = {
+const WebDemo: AppRouteRecordRaw = {
   path: '/demo',
   name: 'demo',
   meta: {
