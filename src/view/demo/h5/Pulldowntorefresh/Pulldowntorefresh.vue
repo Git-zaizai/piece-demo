@@ -1,66 +1,63 @@
 <template>
-	<div class="zai-pull" :class="{ 'hide-scroll': showScrollBar }" :style="cssVars" ref="zaiPullRef">
-		<div class="zai-pull-loaderBox">
-			<transition name="fade" mode="out-in" appear>
-				<div class="flex-alc" v-if="downRef.iconStatus < 3">
-					<n-icon
-							color="var(--success-color)"
-							size="20"
-							:component="ArrowDown"
-							class="el-transition-200"
-							:class="downRef.iconStatus === 1 ? 'rotate-0' : 'rotate-180'"
-					/>
-					<span class="ml-5">{{ downRef.text }}</span>
-				</div>
-				<div class="flex-alc" v-else>
-					<i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span>
-				</div>
-			</transition>
-		</div>
-		<div class="scroll-y" @scroll="pullScroll" ref="scrollYRef">
-			<slot></slot>
-			<div class="hitBottom-loaderBox" v-if="bottomLoading">
-				<transition name="fade" mode="out-in" appear>
-					<div class="flex-alc" v-if="hitBottomShowNull">
-						<span class="ml-5">没有更多了</span>
-					</div>
-					<div class="flex-alc" v-else>
-						<i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
-					</div>
-				</transition>
-			</div>
-		</div>
+  <div class="zai-pull" :class="{ 'hide-scroll': showScrollBar }" :style="cssVars" ref="zaiPullRef">
+    <div class="zai-pull-loaderBox">
+      <transition name="fade" mode="out-in" appear>
+        <div class="flex-alc" v-if="downRef.iconStatus < 3">
+          <n-icon
+            color="var(--success-color)"
+            size="20"
+            :component="ArrowDown"
+            class="el-transition-200"
+            :class="downRef.iconStatus === 1 ? 'rotate-0' : 'rotate-180'"
+          />
+          <span class="ml-5">{{ downRef.text }}</span>
+        </div>
+        <div class="flex-alc" v-else><i class="zai-pull-loader"></i> <span class="ml-5">刷新...</span></div>
+      </transition>
+    </div>
+    <div class="scroll-y" @scroll="pullScroll" ref="scrollYRef">
+      <slot></slot>
+      <div class="hitBottom-loaderBox" v-if="bottomLoading">
+        <transition name="fade" mode="out-in" appear>
+          <div class="flex-alc" v-if="hitBottomShowNull">
+            <span class="ml-5">没有更多了</span>
+          </div>
+          <div class="flex-alc" v-else><i class="pull-up-loader"></i> <span class="ml-5">加载...</span></div>
+        </transition>
+      </div>
+      <div class="hitBottom-loaderBox flex-alc" v-if="pullup.iconStatus === 4">
+        <span class="ml-5">没有更多了</span>
+      </div>
+    </div>
 
-		<teleport to="body" v-if="!bottomLoading">
-			<div class="pull-up-loaderBox" :style="{ '--pull-up-y': pullup.y + 'px', ...cssVars }">
-				<transition name="fade" mode="out-in" appear>
-					<div class="flex-alc" v-if="pullup.iconStatus < 3">
-						<n-icon
-								color="var(--success-color)"
-								size="20"
-								:component="ArrowUpOutline"
-								class="el-transition-200"
-								:class="pullup.iconStatus === 2 ? 'rotate--180' : 'rotate-0'"
-						/>
-						<span class="ml-5">{{ pullup.text }}</span>
-					</div>
-					<div class="flex-alc" v-else-if="pullup.iconStatus === 3">
-						<i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
-					</div>
-					<div class="flex-alc" v-else-if="pullup.iconStatus === 4">
-						没有更多了
-					</div>
-				</transition>
-			</div>
-		</teleport>
-	</div>
+    <teleport to="body" v-if="!bottomLoading">
+      <div class="pull-up-loaderBox" :style="{ '--pull-up-y': pullup.y + 'px', ...cssVars }">
+        <transition name="fade" mode="out-in" appear>
+          <div class="flex-alc" v-if="pullup.iconStatus < 3">
+            <n-icon
+              color="var(--success-color)"
+              size="20"
+              :component="ArrowUpOutline"
+              class="el-transition-200"
+              :class="pullup.iconStatus === 2 ? 'rotate--180' : 'rotate-0'"
+            />
+            <span class="ml-5">{{ pullup.text }}</span>
+          </div>
+          <div class="flex-alc" v-else-if="pullup.iconStatus === 3">
+            <i class="pull-up-loader"></i> <span class="ml-5">加载...</span>
+          </div>
+          <div class="flex-alc" v-else-if="pullup.iconStatus === 4">没有更多了</div>
+        </transition>
+      </div>
+    </teleport>
+  </div>
 </template>
 <script setup lang="ts">
 import { useThemeVars } from 'naive-ui'
 import { ArrowUpOutline, ArrowDown } from '@vicons/ionicons5'
 
 defineOptions({
-	name: 'pull-down-to-refresh'
+  name: 'pull-down-to-refresh'
 })
 
 // 最大下拉距离
@@ -73,292 +70,330 @@ const PULL_UP_Y_MAX = -100
 const PULL_UP_Y_MIN = -70
 
 let startY = 0,
-	startX = 0,
-	endY = 0,
-	endX = 0,
-	distanceY = 0,
-	distanceX = 0,
-	loadLock = true,
-	// 滚动距离
-	viewScrollTop = 0,
-	// 滚动高度
-	viewScrollHeight = 0,
-	// 手指按下时的滚动距离
-	startPullUpScrollTop = 0
+  startX = 0,
+  endY = 0,
+  endX = 0,
+  distanceY = 0,
+  distanceX = 0,
+  loadLock = true,
+  // 滚动距离
+  viewScrollTop = 0,
+  // 滚动高度
+  viewScrollHeight = 0,
+  // 手指按下时的滚动距离
+  startPullUpScrollTop = 0
 
 interface Props {
-	// 是否隐藏滚动条
-	showScrollBar?: boolean
-	// 无限下拉（上拉）
-	InfiniteDropdown?: boolean
-	// 开启触底加载  true 触底 false 上拉
-	bottomLoading?: boolean
-	// 下拉刷新回调
-	onDown: (fn: () => void) => void | Promise<void>
-	// 触底加载与上拉加载回调
-	onPull: (fn: (status: number) => void) => void | Promise<void>
+  // 是否隐藏滚动条
+  showScrollBar?: boolean
+  // 无限下拉（上拉）
+  InfiniteDropdown?: boolean
+  // 开启触底加载  true 触底 false 上拉
+  bottomLoading?: boolean
+  // 下拉刷新回调
+  onDown: (fn: () => void) => void | Promise<void>
+  // 触底加载与上拉加载回调
+  onPull: (fn: (status: number) => void) => void | Promise<void>
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	showScrollBar: false,
-	InfiniteDropdown: true,
-	bottomLoading: false
+  showScrollBar: false,
+  InfiniteDropdown: true,
+  bottomLoading: false
 })
 
 const naiveTheme = useThemeVars()
 const cssVars = computed(() => {
-	return {
-		'--success-color': naiveTheme.value.successColor,
-		'--border-color': naiveTheme.value.borderColor,
-		'--distance-y': distanceYRef.value + 'px'
-	}
+  return {
+    '--success-color': naiveTheme.value.successColor,
+    '--border-color': naiveTheme.value.borderColor,
+    '--distance-y': distanceYRef.value + 'px'
+  }
 })
 const zaiPullRef = ref<HTMLDivElement | null>(null)
 const scrollYRef = ref<HTMLDivElement | null>(null)
 const distanceYRef = ref(0)
 
 // 下拉刷新
-const downRef = ref({
-	iconStatus: 1,
-	text: '下拉'
+interface Down {
+  // 三个状态  1 正在下拉 2 到达放手区域 3 刷新中
+  iconStatus: 1 | 2 | 3
+  text: '下拉' | '放手'
+}
+
+const downRef = ref<Down>({
+  iconStatus: 1,
+  text: '下拉'
 })
 
 // 上拉加载
-const pullup = ref({
-	y: 0,
-	iconStatus: 1,
-	text: '上拉'
+interface PullUp {
+  // 上拉距离
+  y: number
+  // 四个状态  1 正在上拉 2 到达放手区域 3 加载中 4 没有更多了
+  iconStatus: 1 | 2 | 3 | 4
+  //
+  text: '上拉' | '放手'
+}
+const pullup = ref<PullUp>({
+  y: 0,
+  iconStatus: 1,
+  text: '上拉'
 })
 
 // 触底加载
 const hitBottomShowNull = ref(false)
 
 function hitBottomCallback(value: number = 1) {
-	hitBottomShowNull.value = value === 4
+  hitBottomShowNull.value = value === 4
 }
 
 function pullScroll(e: any) {
-	const { scrollHeight, clientHeight, scrollTop } = e.target
-	viewScrollTop = scrollTop + clientHeight
-	console.log('触底', props.bottomLoading && viewScrollTop >= scrollHeight)
-	if (props.bottomLoading && viewScrollTop >= scrollHeight) {
-		props.onPull && props.onPull(hitBottomCallback)
-	}
+  const { scrollHeight, clientHeight, scrollTop } = e.target
+  viewScrollTop = scrollTop + clientHeight
+  if (props.bottomLoading && !hitBottomShowNull.value && viewScrollTop >= scrollHeight) {
+    props.onPull && props.onPull(hitBottomCallback)
+  }
 }
 
 function start(e: TouchEvent) {
-	/*	if (viewScrollTop > 0) {
+  /*	if (viewScrollTop > 0) {
 	 return
 	 }*/
-	if (loadLock) {
-		return
-	}
-	startY = e.touches[0].clientY
-	startX = e.touches[0].clientX
+  if (loadLock) {
+    return
+  }
+  startY = e.touches[0].clientY
+  startX = e.touches[0].clientX
 
-	const { scrollTop, clientHeight } = scrollYRef.value
-	startPullUpScrollTop = scrollTop + clientHeight
+  const { scrollTop, clientHeight } = scrollYRef.value
+  startPullUpScrollTop = scrollTop + clientHeight
 }
 
 function move(e: TouchEvent) {
-	/*if (viewScrollTop > 0) {
+  /*if (viewScrollTop > 0) {
 	 return
 	 }*/
-	endY = e.touches[0].clientY
-	endX = e.touches[0].clientX
-	if (loadLock) {
-		return
-	}
-	/*if (endY - startY < 0) {
+  endY = e.touches[0].clientY
+  endX = e.touches[0].clientX
+  if (loadLock) {
+    return
+  }
+  /*if (endY - startY < 0) {
 	 return
 	 }*/
 
-	distanceY = endY - startY
-	distanceX = endX - startX
+  distanceY = endY - startY
+  distanceX = endX - startX
 
-	const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI)
-	if (deg > DISTANCE_Y_MIN_LIMIT) {
-		;[startY, startX] = [endY, endX]
-		return
-	}
-	let percent = (100 - distanceY * 0.5) / 100
-	percent = Math.max(0.5, percent)
+  const deg = Math.atan(Math.abs(distanceX) / distanceY) * (180 / Math.PI)
+  if (deg > DISTANCE_Y_MIN_LIMIT) {
+    ;[startY, startX] = [endY, endX]
+    return
+  }
+  let percent = (100 - distanceY * 0.5) / 100
+  percent = Math.max(0.5, percent)
 
-	distanceY = distanceY * percent
+  distanceY = distanceY * percent
 
-	if (viewScrollTop === 0 && distanceY > 0) {
-		if (distanceY > DISTANCE_Y_MIN_LIMIT) {
-			downRef.value = {
-				iconStatus: 2,
-				text: '放手'
-			}
-			if (!props.InfiniteDropdown) {
-				distanceY = DISTANCE_Y_MAX_LIMIT
-			}
-		}
-		distanceYRef.value = distanceY
-	}
+  /**
+   * if
+   *  判断滚动条道顶部
+   *  判断方向为 正数 下拉
+   *
+   */
+  if (viewScrollTop === 0 && distanceY > 0) {
+    if (distanceY > DISTANCE_Y_MIN_LIMIT) {
+      downRef.value = {
+        iconStatus: 2,
+        text: '放手'
+      }
+      if (!props.InfiniteDropdown) {
+        distanceY = DISTANCE_Y_MAX_LIMIT
+      }
+    }
+    distanceYRef.value = distanceY
+  }
 
+  /**
+   *
+   * if
+   * 	判断是否开启了上拉加载
+   * 	判断手指摁下时 滚动距离是不是到达了底部
+   * 	判断是否数据没有 4 状态表示没有更多了
+   * 	判断当前滚动距离是否 >= 可滚动距离
+   * 	判断方向为 负数 负数为上拉
+   *
+   *
+   * **/
 
-	/**
-	 *
-	 * if
-	 * 	判断是否开启了上拉加载
-	 * 	判断手指摁下时 滚动距离是不是到达了底部
-	 * 	判断是否数据没有 4 状态表示没有更多了
-	 * 	判断当前滚动距离是否 >= 可滚动距离
-	 * 	判断方向为 负数 负数为上拉
-	 *
-	 *
-	 * **/
-
-
-	console.log(startPullUpScrollTop, 'viewScrollHeight', viewScrollHeight, startPullUpScrollTop >= viewScrollHeight)
-	if (!props.bottomLoading
-		&& startPullUpScrollTop >= viewScrollHeight
-		&& pullup.value.iconStatus !== 4
-		&& viewScrollTop >= viewScrollHeight
-		&& distanceY < 0) {
-		console.log('阿斯卡带回来')
-		if (distanceY < PULL_UP_Y_MIN) {
-			pullup.value.iconStatus = 2
-			pullup.value.text = '放手'
-			if (!props.InfiniteDropdown) {
-				distanceY = PULL_UP_Y_MAX
-			}
-		}
-		distanceYRef.value = distanceY
-		pullup.value.y = distanceY
-	}
+  if (
+    !props.bottomLoading &&
+    startPullUpScrollTop >= viewScrollHeight &&
+    pullup.value.iconStatus !== 4 &&
+    viewScrollTop >= viewScrollHeight &&
+    distanceY < 0
+  ) {
+    if (distanceY < PULL_UP_Y_MIN) {
+      pullup.value.iconStatus = 2
+      pullup.value.text = '放手'
+      if (!props.InfiniteDropdown) {
+        distanceY = PULL_UP_Y_MAX
+      }
+    }
+    distanceYRef.value = distanceY
+    pullup.value.y = distanceY
+  }
 }
 
 function end() {
-	/*if (viewScrollTop > 0) {
+  /*if (viewScrollTop > 0) {
 	 return
 	 }*/
-	if (loadLock) {
-		return
-	}
-	/*if (endY - startY < 0) {
+  if (loadLock) {
+    return
+  }
+  /*if (endY - startY < 0) {
 	 return
 	 }*/
 
-	if (viewScrollTop === 0 && distanceY > 0) {
-		if (distanceY < DISTANCE_Y_MIN_LIMIT) {
-			downRef.value = {
-				iconStatus: 1,
-				text: '下拉'
-			}
-			distanceYRef.value = 0
-			return
-		}
+  if (viewScrollTop === 0 && distanceY > 0) {
+    if (distanceY < DISTANCE_Y_MIN_LIMIT) {
+      downRef.value = {
+        iconStatus: 1,
+        text: '下拉'
+      }
+      distanceYRef.value = 0
+      return
+    }
 
-		distanceYRef.value = DISTANCE_Y_MIN_LIMIT
-		downRef.value.iconStatus = 3
-		loadLock = true
+    distanceYRef.value = DISTANCE_Y_MIN_LIMIT
+    downRef.value.iconStatus = 3
+    loadLock = true
 
-		if (props.onDown) {
-			props.onDown(downCallback)
-		} else {
-			setTimeout(() => {
-				downCallback()
-			}, 2000)
-		}
-	}
+    if (props.onDown) {
+      props.onDown(downCallback)
+    } else {
+      setTimeout(() => {
+        downCallback()
+      }, 2000)
+    }
+  }
 
-	/**
-	 *
-	 * if
-	 * 	判断是否开启了上拉加载
-	 * 	判断手指摁下时 滚动距离是不是到达了底部
-	 * 	判断是否数据没有 4 状态表示没有更多了
-	 * 	判断当前滚动距离是否 >= 可滚动距离
-	 * 	判断方向为 负数 负数为上拉
-	 *
-	 *
-	 * **/
+  /**
+   *
+   * if
+   * 	判断是否开启了上拉加载
+   * 	判断手指摁下时 滚动距离是不是到达了底部
+   * 	判断是否数据没有 4 状态表示没有更多了
+   * 	判断当前滚动距离是否 >= 可滚动距离
+   * 	判断方向为 负数 负数为上拉
+   *
+   *
+   * **/
 
-	if (!props.bottomLoading
-		&& startPullUpScrollTop >= viewScrollHeight
-		&& pullup.value.iconStatus !== 4
-		&& viewScrollTop >= viewScrollHeight
-		&& distanceY < 0) {
-		if (distanceY > PULL_UP_Y_MIN) {
-			pullup.value = {
-				y: 0,
-				iconStatus: 1,
-				text: '上拉'
-			}
-			distanceYRef.value = 0
-			return
-		}
+  if (
+    !props.bottomLoading &&
+    startPullUpScrollTop >= viewScrollHeight &&
+    pullup.value.iconStatus !== 4 &&
+    viewScrollTop >= viewScrollHeight &&
+    distanceY < 0
+  ) {
+    if (distanceY > PULL_UP_Y_MIN) {
+      pullup.value = {
+        y: 0,
+        iconStatus: 1,
+        text: '上拉'
+      }
+      distanceYRef.value = 0
+      return
+    }
 
-		loadLock = true
-		distanceYRef.value = PULL_UP_Y_MIN
-		pullup.value.iconStatus = 3
-		pullup.value.y = PULL_UP_Y_MIN
+    loadLock = true
+    distanceYRef.value = PULL_UP_Y_MIN
+    pullup.value.iconStatus = 3
+    pullup.value.y = PULL_UP_Y_MIN
 
-		if (props.onPull) {
-			props.onPull(pullCallback)
-		} else {
-			setTimeout(() => {
-				pullCallback()
-			}, 2000)
-		}
-	}
+    if (props.onPull) {
+      props.onPull(pullCallback)
+    } else {
+      setTimeout(() => {
+        pullCallback()
+      }, 2000)
+    }
+  }
 }
 
 function downCallback() {
-	loadLock = false
-	distanceY = 0
-	distanceYRef.value = 0
+  loadLock = false
+  distanceY = 0
+  distanceYRef.value = 0
 
-	downRef.value = {
-		iconStatus: 1,
-		text: '下拉'
-	}
+  downRef.value = {
+    iconStatus: 1,
+    text: '下拉'
+  }
 }
 
-function pullCallback(status: number = 1) {
-	loadLock = false
-	distanceY = 0
-	distanceYRef.value = 0
-	pullup.value = {
-		y: 0,
-		iconStatus: status,
-		text: '上拉'
-	}
+function pullCallback(status: 1 | 2 | 3 | 4 = 1) {
+  loadLock = false
+  distanceY = 0
+  distanceYRef.value = 0
+  pullup.value = {
+    y: 0,
+    iconStatus: status,
+    text: '上拉'
+  }
 }
 
-// 初始化MutationObserver来监听插槽内容的变化
+// 使用 MutationObserver 来监听插槽内容的变化
 const observer = new MutationObserver(() => {
-	nextTick(() => {
-		loadLock = false
-		viewScrollHeight = scrollYRef.value.scrollHeight
-	})
+  nextTick(() => {
+    loadLock = false
+    viewScrollHeight = scrollYRef.value.scrollHeight
+  })
 })
 
 onMounted(() => {
-	const pullDom = zaiPullRef.value
-	if (pullDom) {
-		pullDom.addEventListener('touchstart', start, { passive: false })
-		pullDom.addEventListener('touchmove', move, { passive: false })
-		pullDom.addEventListener('touchend', end, { passive: false })
-		observer.observe(scrollYRef.value as HTMLDivElement, {
-			childList: true, // 观察子节点的变化
-			subtree: true // 观察整个子树
-		})
-	}
+  const pullDom = zaiPullRef.value
+  if (pullDom) {
+    pullDom.addEventListener('touchstart', start, { passive: false })
+    pullDom.addEventListener('touchmove', move, { passive: false })
+    pullDom.addEventListener('touchend', end, { passive: false })
+    observer.observe(scrollYRef.value as HTMLDivElement, {
+      childList: true, // 观察子节点的变化
+      subtree: true // 观察整个子树
+    })
+    onDownMoutd()
+  }
 })
 
+// 初始化自动加载第一次刷新
+function onDownMoutd() {
+  setTimeout(() => {
+    distanceYRef.value = 80
+  }, 500)
+  setTimeout(() => {
+    downRef.value = {
+      iconStatus: 3,
+      text: '放手'
+    }
+  }, 700)
+  setTimeout(() => {
+    if (props.onDown) {
+      props.onDown(downCallback)
+    }
+  }, 700)
+}
+
 onUnmounted(() => {
-	const pullDom = zaiPullRef.value
-	if (pullDom) {
-		pullDom.removeEventListener('touchstart', start)
-		pullDom.removeEventListener('touchmove', move)
-		pullDom.removeEventListener('touchend', end)
-		observer.disconnect()
-	}
+  const pullDom = zaiPullRef.value
+  if (pullDom) {
+    pullDom.removeEventListener('touchstart', start)
+    pullDom.removeEventListener('touchmove', move)
+    pullDom.removeEventListener('touchend', end)
+    observer.disconnect()
+  }
 })
 </script>
 <style scoped lang="scss">
@@ -423,6 +458,7 @@ onUnmounted(() => {
 
   .pull-up-loaderBox {
     position: fixed;
+    background-color: rgba(250, 250, 252, 1);
     width: 100%;
     display: flex;
     justify-content: center;
