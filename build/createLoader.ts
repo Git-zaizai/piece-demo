@@ -10,9 +10,15 @@ export default async () => {
     // @ts-ignore
     langs: Object.keys(bundledLanguages)
   })
-  const md = markdown()
 
-  // 保存原有的规矩函数 暂时用不上
+  let transformers = null
+  const md = markdown({}, {
+    linkify: true,
+    breaks: true,
+    xhtmlOut: true,
+  })
+
+  // 保存原有的规矩函数
   const code_block = md.renderer.rules.code_block
   const fence = md.renderer.rules.fence
 
@@ -20,19 +26,28 @@ export default async () => {
   // @ts-ignore
   function codeRules(tokens: any, idx: number, options: any, env: any, slf: any): string {
     const lang = tokens[idx].info
-
-    const code_html = highlighter.codeToHtml(tokens[idx].content, {
-      lang,
-      theme: 'one-dark-pro',
-      transformers: [
-        {
-          name: '@shikijs/markdown-it:block-class',
-          code(node) {
-            node.properties.class = `language-${lang}`
-          }
+    if (!transformers) {
+      transformers = {
+        name: "@shikijs/markdown-it:block-class",
+        code(node) {
+          node.properties.class = `language-${options.lang}`;
         }
-      ]
-    })
+      }
+    }
+    const code_html = highlighter.codeToHtml(tokens[idx].content,
+      {
+        lang,
+        theme: 'one-dark-pro',
+        transformers: [
+          {
+            name: "@shikijs/markdown-it:block-class",
+            code(node) {
+              node.properties.class = `language-${lang}`;
+            }
+          },
+          transformers
+        ]
+      })
 
     return getCodeView(lang, code_html)
   }
