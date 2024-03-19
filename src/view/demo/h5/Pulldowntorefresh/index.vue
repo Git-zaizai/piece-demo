@@ -1,92 +1,113 @@
 <template>
-	<div class="pull">
-		<pull-down-to-refresh
-				:on-down="dropdown"
-				:on-pull="onPullupLoading"
-				bottomLoading
-		>
-			<n-list hoverable clickable>
-				<n-list-item v-for="(item, index) in list" :key="index">
-					{{ item.text }}
-				</n-list-item>
-			</n-list>
-		</pull-down-to-refresh>
-		<div style="position: fixed; top: 50vh; left: 50vw">
-			<n-button @click="but">父组件 添加</n-button>
-		</div>
-		<!-- <Pulldowntorefresh2>
+  <div class="pull">
+    <pull-down-to-refresh :on-down="dropdownFn" :on-pull="onPullupLoading" :bottomLoading="active">
+      <n-list hoverable clickable>
+        <n-list-item v-for="(item, index) in list" :key="item.id">
+          <n-card>
+            <template #header>
+              <n-avatar size="large" :src="item.author.avatar_url" class="mr-20" />
+              <span>{{ item.title }}</span>
+            </template>
+            {{ item.content }}
+            <template #footer> create_at: {{ dayjs(item.create_at).format('YYYY-MM-DD HH:mm:ss') }} </template>
+            <template #action>
+              <p>last_reply_at: {{ dayjs(item.last_reply_at).format('YYYY-MM-DD HH:mm:ss') }}</p>
+            </template>
+          </n-card>
+        </n-list-item>
+      </n-list>
+    </pull-down-to-refresh>
+    <div style="position: fixed; right: 2vh; top: 10vh">
+      <div>
+        <n-switch v-model:value="active" />
+        <span>上拉 true 触底 false</span>
+      </div>
+    </div>
+    <!-- <Pulldowntorefresh2>
 			<n-list hoverable clickable>
 				<n-list-item v-for="(item, index) in list" :key="index">
 					{{ item.text }}
 				</n-list-item>
 			</n-list>
 		</Pulldowntorefresh2> -->
-	</div>
+  </div>
 </template>
 <script setup lang="ts">
 import PullDownToRefresh from './Pulldowntorefresh.vue'
 import Pulldowntorefresh2 from './Pulldowntorefresh2.vue'
 import { isMobile } from '@/utils'
+import { http } from '@/api'
+import dayjs from 'dayjs'
 
 defineOptions({
-	name: 'Pulldowntorefresh'
+  name: 'Pulldowntorefresh'
 })
 
 onMounted(() => {
-	if (!isMobile()) {
-		window.$message.warning('请切换到手机端，\n web端无法操作，\n 样式也可能有问题', {
-			closable: true,
-			duration: 0,
-			showIcon: true
-		})
-	}
+  if (!isMobile()) {
+    window.$message.warning('请切换到手机端，\n web端无法操作，\n 样式也可能有问题', {
+      closable: true,
+      duration: 0,
+      showIcon: true
+    })
+  }
+  // dropdownFn(() => {})
 })
+const list = ref<any[]>([])
+const active = ref(false)
 
-const createData = (len = 10, time = 1500) => {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			let data = Array.from({ length: len }).map(() => {
-				return {
-					text: Math.random().toString(36).slice(2, 12)
-				}
-			})
-			resolve(data)
-		}, time)
-	})
-}
-const list = ref<Array<{ text: string }>>([])
-/*createData(50).then((data: any) => {
-	list.value = list.value.concat(data)
-})*/
+const dropdownFn = async dropdownCallback => {
+  const topics = await http.get('https://cnodejs.org/api/v1/topics', {
+    params: {
+      page: 1,
+      tab: 'ask',
+      limit: 10,
+      mdrender: false
+    }
+  })
 
-const dropdown = async (fn: Function) => {
-	return createData(10, 1500).then((data: any) => {
-		list.value = list.value.concat(data)
-		fn()
-	})
+  list.value = topics.data.data.map((v, _) => {
+    if (v.content.length > 100) {
+      v.content = v.content.slice(0, 50)
+    }
+    return v
+  })
+  setTimeout(() => dropdownCallback(), 1500)
 }
 
 let page = 1
-const onPullupLoading = (callbcak) => {
-	return createData(2, 3000).then((data: any) => {
-		if (page > 3) {
-			callbcak(4)
-		} else {
-			list.value = list.value.concat(data)
-			callbcak()
-		}
-		page++
-		console.log(list.value.length)
-	})
-}
-const but = () => {
-	createData(2, 1500).then((data: any) => {
-		list.value = list.value.concat(data)
-	})
+const onPullupLoading = async callbcak => {
+  const topics = await http.get('https://cnodejs.org/api/v1/topics', {
+    params: {
+      page: page,
+      tab: 'ask',
+      limit: 3,
+      mdrender: false
+    }
+  })
+
+  const data = topics.data.data.map((v, _) => {
+    if (v.content.length > 100) {
+      v.content = v.content.slice(0, 50)
+    }
+    return v
+  })
+
+  setTimeout(() => {
+    list.value = list.value.concat(data)
+    if (page > 3) {
+      callbcak(4)
+    } else {
+      callbcak()
+    }
+
+    page++
+  }, 1500)
 }
 </script>
 <style scoped lang="scss">
 .pull {
   height: calc(100vh - (64px));
+  background-color: rgba(250, 250, 252, 1);
 }
 </style>
