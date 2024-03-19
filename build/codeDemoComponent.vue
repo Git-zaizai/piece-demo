@@ -42,7 +42,7 @@ let parentScroll: null | HTMLHtmlElement = null
 const outlineClick = (item, index, e) => {
 	e.preventDefault()
 	if (parentScroll) {
-		parentScroll.scrollTo({ top: item.top - 10 })
+		parentScroll.scrollTo({ top: item.top })
 	}
 	active.value = index
 	outlineMarkerTop.value = e.target.offsetTop + 5
@@ -82,6 +82,7 @@ onMounted(() => {
 		const outlineLink = document.querySelector('.outline-link')
 		outlineMarkerTop.value = outlineLink.offsetTop + 4
 	})
+
 })
 
 const common = useCommonStore()
@@ -143,6 +144,7 @@ let timeout
 const butCody = e => {
 	// 获取父节点
 	const parent = e.target.parentNode
+	console.log('啊实打实刚看到', parent)
 	copyStr(parent.querySelector('pre code').innerText)
 	codyMeg.value = `var(--vp-icon-copied)`
 	timeout && clearTimeout(timeout)
@@ -164,7 +166,7 @@ h1, h2, h3, h4, h5, h6, li, p {
 }
 
 .md-view {
-  width: 100vw;
+  width: 80vw;
   display: flex;
   justify-content: center;
 }
@@ -186,7 +188,7 @@ h1, h2, h3, h4, h5, h6, li, p {
   //font-size: 14px;
 
   .zai-code {
-    width: calc(100vw - 318px);
+    // width: calc(100% - 20px);
     position: relative;
     // padding: 0 10px;
 
@@ -231,8 +233,6 @@ h1, h2, h3, h4, h5, h6, li, p {
   .zai-code pre {
     padding: 20px 24px;
     border-radius: 8px;
-		overflow-x: scroll;
-    scrollbar-width: none;
   }
 
   .lang {
@@ -269,7 +269,6 @@ h1, h2, h3, h4, h5, h6, li, p {
 
   .content {
     position: relative;
-    border-top: 1px solid var(--vp-c-asides-divider);
     border-left: 1px solid var(--vp-c-asides-divider);
     padding-left: 16px;
     font-size: 13px;

@@ -3,6 +3,7 @@ import { AppRouteRecordRaw } from '../types'
 const file: AppRouteRecordRaw = {
     path: '/File',
     name: 'File',
+    sort: 0,
     meta: {
         title: '文件',
     },

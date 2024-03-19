@@ -4,12 +4,12 @@
 			<n-gradient-text :size="26" type="success"> ( *￣▽￣)(っ´Ι`)っ</n-gradient-text>
 		</n-text>
 		<div class="nav-end flex-alc">
-			<n-button size="small" quaternary class="nav-picker" @click="commonstore.getinverted(!commonstore.inverted)">
+			<n-button size="small" quaternary class="nav-picker nav-h5" @click="commonstore.getinverted(!commonstore.inverted)">
 				{{ commonstore.inverted ? '白昼' : '黑夜' }}
 			</n-button>
-			<n-button size="small" tag="a" quaternary class="nav-picker" @click="loginShow"> 控制台(っ´Ι`)っ</n-button>
-			<n-button size="small" quaternary class="nav-picker" @click="topgithub"> GitHub</n-button>
-			<n-text class="nav-picker padded"> 1.5.0</n-text>
+			<n-button size="small" tag="a" quaternary class="nav-picker nav-h5" @click="loginShow"> 控制台(っ´Ι`)っ</n-button>
+			<n-button size="small" quaternary class="nav-picker" @click="topgithub">GitHub</n-button>
+			<n-text class="nav-picker padded nav-h5">0.2.7</n-text>
 			<n-button size="small" quaternary class="nav-picker" @click="view.setDrawerShow">
 				<n-icon size="22">
 					<CodeSandboxOutlined />
@@ -62,7 +62,7 @@ const loginShow = async () => {
 	}
 }
 const topgithub = () => {
-	window.open('https://github.com/Git-zaizai/home-demo')
+	window.open(import.meta.env.VITE_GITHUB)
 }
 </script>
 
@@ -94,5 +94,15 @@ const topgithub = () => {
 
 .nav-picker:last-child {
 	margin-right: 0;
+}
+
+@media screen and (max-width: 980px) {
+	.nav-h5{
+		display: none;
+	}
+
+  .nav{
+		padding: 0 10px;
+	}
 }
 </style>
