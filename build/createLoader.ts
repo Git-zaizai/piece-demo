@@ -10,75 +10,44 @@ export default async () => {
     // @ts-ignore
     langs: Object.keys(bundledLanguages)
   })
-  const md = markdown()
 
-  // 保存原有的规矩函数 暂时用不上
+  let transformers = null
+  const md = markdown({}, {
+    linkify: true,
+    breaks: true,
+    xhtmlOut: true,
+  })
+
+  // 保存原有的规矩函数
   const code_block = md.renderer.rules.code_block
   const fence = md.renderer.rules.fence
 
-<<<<<<< HEAD
   // 重写函数
   // @ts-ignore
   function codeRules(tokens: any, idx: number, options: any, env: any, slf: any): string {
     const lang = tokens[idx].info
-
-    const code_html = highlighter.codeToHtml(tokens[idx].content, {
-      lang,
-      theme: 'one-dark-pro',
-      transformers: [
-        {
-          name: '@shikijs/markdown-it:block-class',
-          code(node) {
-            node.properties.class = `language-${lang}`
-          }
+    if (!transformers) {
+      transformers = {
+        name: "@shikijs/markdown-it:block-class",
+        code(node) {
+          node.properties.class = `language-${options.lang}`;
         }
-      ]
-    })
-=======
-	// 重写函数
-	// @ts-ignore
-	function codeRules(tokens: any, idx: number, options: any, env: any, slf: any): string {
-		const lang = tokens[idx].info
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-		console.log('lang',lang)
-		if (!transformers) {
-			transformers = {
-				name: "@shikijs/markdown-it:block-class",
-				code(node) {
-					node.properties.class = `language-${ options.lang }`;
-				}
-			}
-		}
->>>>>>> 9a62177 (vite解析md最终版)
-=======
->>>>>>> 1b9889d (最终版vite转换md 说什么都不改了)
-
-		const code_html = highlighter.codeToHtml(tokens[idx].content,
-			{
-				lang,
-				theme: 'one-dark-pro',
-				transformers: [
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 1b9889d (最终版vite转换md 说什么都不改了)
-					{
-						name: "@shikijs/markdown-it:block-class",
-						code(node) {
-							node.properties.class = `language-${ lang }`;
-						}
-					}
-<<<<<<< HEAD
-=======
-					transformers
->>>>>>> 9a62177 (vite解析md最终版)
-=======
->>>>>>> 1b9889d (最终版vite转换md 说什么都不改了)
-				]
-			})
->>>>>>> 9c74f39678d1ff01f404b20eed96c7654d261ff3
+      }
+    }
+    const code_html = highlighter.codeToHtml(tokens[idx].content,
+      {
+        lang,
+        theme: 'one-dark-pro',
+        transformers: [
+          {
+            name: "@shikijs/markdown-it:block-class",
+            code(node) {
+              node.properties.class = `language-${lang}`;
+            }
+          },
+          transformers
+        ]
+      })
 
     return getCodeView(lang, code_html)
   }

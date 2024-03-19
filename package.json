@@ -28,17 +28,7 @@
     "naive-ui": "^2.34.3",
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^3.1.0",
-<<<<<<< HEAD
     "shiki": "^1.1.1",
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    "shiki": "^1.1.1",
->>>>>>> a41271d (完成使用vite解析md完成)
-=======
->>>>>>> 9a62177 (vite解析md最终版)
->>>>>>> 9c74f39678d1ff01f404b20eed96c7654d261ff3
     "vue": "^3.3.13",
     "vue-router": "4"
   },
