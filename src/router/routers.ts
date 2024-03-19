@@ -50,7 +50,6 @@ routeModuleList.sort((a, b)=> {
 	return aSort - bSort
 })
 
-console.log(routeModuleList);
 
 const routers = [Root, ...routeModuleList, admin, ...adminRouters]
 
