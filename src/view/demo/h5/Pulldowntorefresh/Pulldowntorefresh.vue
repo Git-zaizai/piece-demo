@@ -150,7 +150,7 @@ function hitBottomCallback(value: number = 1) {
 
 function pullScroll(e: any) {
   const { scrollHeight, clientHeight, scrollTop } = e.target
-  viewScrollTop = scrollTop + clientHeight
+  viewScrollTop = scrollTop
   if (props.bottomLoading && !hitBottomShowNull.value && viewScrollTop >= scrollHeight) {
     props.onPull && props.onPull(hitBottomCallback)
   }
@@ -202,6 +202,7 @@ function move(e: TouchEvent) {
    *  判断方向为 正数 下拉
    *
    */
+  console.log(viewScrollTop, distanceY)
   if (viewScrollTop === 0 && distanceY > 0) {
     if (distanceY > DISTANCE_Y_MIN_LIMIT) {
       downRef.value = {

@@ -1,5 +1,5 @@
 <template>
-  <div class="pull">
+  <div class="pull" :style="cssVars">
     <pull-down-to-refresh :on-down="dropdownFn" :on-pull="onPullupLoading" :bottomLoading="active">
       <n-list hoverable clickable>
         <n-list-item v-for="(item, index) in list" :key="item.id">
@@ -38,9 +38,18 @@ import Pulldowntorefresh2 from './Pulldowntorefresh2.vue'
 import { isMobile } from '@/utils'
 import { http } from '@/api'
 import dayjs from 'dayjs'
+import { useThemeVars } from 'naive-ui'
 
 defineOptions({
   name: 'Pulldowntorefresh'
+})
+
+const naiveTheme = useThemeVars()
+const cssVars = computed(() => {
+  return {
+    '--border-color': naiveTheme.value.borderColor,
+    '--view-color': naiveTheme.value.tableHeaderColor
+  }
 })
 
 onMounted(() => {
@@ -108,6 +117,6 @@ const onPullupLoading = async callbcak => {
 <style scoped lang="scss">
 .pull {
   height: calc(100vh - (64px));
-  background-color: rgba(250, 250, 252, 1);
+  background-color: var(--border-color);
 }
 </style>
