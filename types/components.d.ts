@@ -46,18 +46,19 @@ declare module '@vue/runtime-core' {
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NMenu: typeof import('naive-ui')['NMenu']
     NModal: typeof import('naive-ui')['NModal']
-<<<<<<< HEAD
+    NList: typeof import('naive-ui')['NList']
+    NListItem: typeof import('naive-ui')['NListItem']
+    NMenu: typeof import('naive-ui')['NMenu']
+    NModal: typeof import('naive-ui')['NModal']
     NPopconfirm: typeof import('naive-ui')['NPopconfirm']
     NPopover: typeof import('naive-ui')['NPopover']
     NProgress: typeof import('naive-ui')['NProgress']
     NRadioButton: typeof import('naive-ui')['NRadioButton']
     NRadioGroup: typeof import('naive-ui')['NRadioGroup']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
-=======
     NPopover: typeof import('naive-ui')['NPopover']
     NRadioButton: typeof import('naive-ui')['NRadioButton']
     NRadioGroup: typeof import('naive-ui')['NRadioGroup']
->>>>>>> 58bb803 (更新naive的DiscreteApi)
     NSelect: typeof import('naive-ui')['NSelect']
     NSpace: typeof import('naive-ui')['NSpace']
     NSpin: typeof import('naive-ui')['NSpin']
