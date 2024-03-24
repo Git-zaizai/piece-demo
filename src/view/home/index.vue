@@ -1,37 +1,37 @@
 <template>
-	<div>
-		<left-image class="left-image" />
-		<right-image class="right-image" />
-		<div class="box-navigation flex-juc-alc" :style="themeVars">
-			<div class="box-list" v-for="item in routeModuleList" :key="item.name">
-				<div class="box-list-header el-transition">
-					<n-icon size="26" class="box-list-icon el-transition">
-						<CubeOutline />
-					</n-icon>
-					<h2 class="box-list-title">{{ item.meta.title }}</h2>
-				</div>
-				<template v-if="item?.children?.length">
-					<div class="box-list-item w-100">
-						<article
-								class="box view-curspointer el-transition"
-								:class="boxClass"
-								v-for="chItem in item.children"
-								:key="chItem.name"
-								@click="bindBoxClick(chItem)"
-						>
-							<div class="box-header">
-								<n-icon size="20">
-									<FlashOutline />
-								</n-icon>
-								<h5 class="box-title">{{ chItem.meta.title }} </h5>
-							</div>
-							<p class="box-desc">{{ chItem.meta?.navigation?.contentText ?? 'desc' }}</p>
-						</article>
-					</div>
-				</template>
-			</div>
-		</div>
-	</div>
+  <div>
+    <left-image class="left-image" />
+    <right-image class="right-image" />
+    <div class="box-navigation flex-juc-alc" :style="themeVars">
+      <div class="box-list" v-for="item in routeModuleList" :key="item.name">
+        <div class="box-list-header el-transition">
+          <n-icon size="26" class="box-list-icon el-transition">
+            <CubeOutline />
+          </n-icon>
+          <h2 class="box-list-title">{{ item.meta.title }}</h2>
+        </div>
+        <template v-if="item?.children?.length">
+          <div class="box-list-item w-100">
+            <article
+              class="box view-curspointer el-transition"
+              :class="boxClass"
+              v-for="chItem in item.children"
+              :key="chItem.name"
+              @click="bindBoxClick(chItem)"
+            >
+              <div class="box-header">
+                <n-icon size="20">
+                  <FlashOutline />
+                </n-icon>
+                <h5 class="box-title">{{ chItem.meta.title }}</h5>
+              </div>
+              <p class="box-desc" v-html="strToBr(chItem.meta?.navigation?.contentText)"></p>
+            </article>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 <script name="home" lang="ts" setup>
 import LeftImage from './Left.vue'
@@ -46,35 +46,40 @@ const comm = useCommonStore()
 
 const boxClass = ref('box-theme')
 const themeVars = computed(() => {
-	const vars = useThemeVars()
-	let dark = {}
-	boxClass.value = 'box-theme'
-	if (comm.inverted) {
-		boxClass.value = 'box-dark'
-		dark['--box-back'] = '#202127'
-		dark['--box-back-hover'] = '#252732'
-	}
-	return {
-		'--box-box': vars.value.boxShadow1,
-		'--box-border': vars.value.borderColor,
-		'--box-desc': vars.value.textColor3,
-		'--box-back': '#fff',
-		'--box-back-hover': vars.value.hoverColor,
-		'--box-success': vars.value.successColorHover,
-		...dark
-	}
+  const vars = useThemeVars()
+  let dark = {}
+  boxClass.value = 'box-theme'
+  if (comm.inverted) {
+    boxClass.value = 'box-dark'
+    dark['--box-back'] = '#202127'
+    dark['--box-back-hover'] = '#252732'
+  }
+  return {
+    '--box-box': vars.value.boxShadow1,
+    '--box-border': vars.value.borderColor,
+    '--box-desc': vars.value.textColor3,
+    '--box-back': '#fff',
+    '--box-back-hover': vars.value.hoverColor,
+    '--box-success': vars.value.successColorHover,
+    ...dark
+  }
 })
 
 const router = useRouter()
 
 function bindBoxClick(route: AppRouteRecordRaw) {
-	if (/(http|https):\/\/([\w.]+\/?)\S*/ig.test(route.path)) {
-		window.open(route.path)
-	} else {
-		router.push({
-			name: route.name
-		})
-	}
+  if (/(http|https):\/\/([\w.]+\/?)\S*/gi.test(route.path)) {
+    window.open(route.path)
+  } else {
+    router.push({
+      name: route.name
+    })
+  }
+}
+
+function strToBr(str: string) {
+  if (!str) return 'desc'
+  return str.replaceAll('\n', '<br>')
 }
 </script>
 <style lang="scss" scoped>
@@ -97,15 +102,12 @@ function bindBoxClick(route: AppRouteRecordRaw) {
   transform: translateY(-50%);
 }
 
-
 .box-navigation {
   width: 60vw;
   margin: 0 auto;
 }
 
-
 @media screen and (max-width: 980px) {
-
   .box-navigation {
     width: calc(100vw - 5vw);
     overflow-y: scroll;
@@ -189,7 +191,6 @@ function bindBoxClick(route: AppRouteRecordRaw) {
     font-size: 14px;
     color: var(--box-desc);
   }
-
 }
 
 .box-theme:hover {
