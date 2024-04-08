@@ -53,7 +53,9 @@
           <n-checkbox :value="3" label="保存设置在本地" />
         </n-space>
       </n-checkbox-group>
-      <n-button strong secondary type="error" size="tiny" class="w-100 mt-5" @click="removemerge"> 删除所有分片 </n-button>
+      <n-button strong secondary type="error" size="tiny" class="w-100 mt-5" @click="removemerge">
+        删除所有分片
+      </n-button>
     </n-popover>
   </div>
 </template>
@@ -134,7 +136,8 @@ async function uploadClick() {
         response = await http.post('/upload-merge', {
           name: iterator.file.name,
           path: citiesPath ? rootPath + iterator.path : '0',
-          leng: foamDataList.length
+          leng: foamDataList.length,
+          dbInsert: '1'
         })
         // 判断文件小于 < 1mb 延时隐藏进度条 给人看起来像上传过了
         if (foamDataList.length === 1) {
@@ -169,7 +172,8 @@ async function displayReFile(index: number) {
       response = await http.post('/upload-merge', {
         name: fileItem.file.name,
         path: cities.value.includes(1) ? rootPath + fileItem.path : '0',
-        leng: foamDataList.length
+        leng: foamDataList.length,
+        dbInsert: '1'
       })
       // 判断文件小于 < 1mb 延时隐藏进度条 给人看起来像上传过了
       if (foamDataList.length === 1) {

@@ -189,7 +189,7 @@ const deepUpload = async (filelist: FilesItem[], rootDirectory: string) => {
         ? `${rootDirectory}/${uploadFileList[i].path}`
         : '0'
     )
-    formdata.append('dbInsert', '0')
+    formdata.append('dbInsert', '1')
     request.push(readyUpload(formdata, callbackConfig))
   }
 
