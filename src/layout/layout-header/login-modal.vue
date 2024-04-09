@@ -17,12 +17,20 @@ watch(active, val => {
 })
 
 const loginClk = async () => {
+  let messageReactive = null
   try {
+    messageReactive = window.$message.loading('登录中...', {
+      duration: 0
+    })
     const res = await login({ pwd: pad.value })
-    show.value = false
     local.set('info', res.data.data)
-    router.push({ name: 'admin' })
+    setTimeout(() => {
+      messageReactive.destroy()
+      show.value = false
+      router.push({ name: 'admin' })
+    }, 1000)
   } catch (e) {
+    messageReactive.destroy()
     window.$message.error('啥也没有！')
   }
 }

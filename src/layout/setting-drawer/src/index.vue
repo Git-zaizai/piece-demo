@@ -1,10 +1,7 @@
 <template>
   <n-drawer v-model:show="view.drawerShow" :width="view.drawerWidth">
     <n-drawer-content title="主题配置" closable>
-
-      <n-divider>
-        主题模式
-      </n-divider>
+      <n-divider> 主题模式 </n-divider>
 
       <n-space vertical justify="space-between">
         <n-space justify="space-between">
@@ -13,24 +10,27 @@
         </n-space>
         <n-space justify="space-between">
           <span>恒定主题</span>
-          <n-switch :value="common.constantInverted"
-            @update-value="common.$patch({ constantInverted: !common.constantInverted })" />
+          <n-switch
+            :value="common.constantInverted"
+            @update-value="common.$patch({ constantInverted: !common.constantInverted })"
+          />
         </n-space>
       </n-space>
 
-      <n-divider>
-        过渡动画
-      </n-divider>
+      <n-divider> 过渡动画 </n-divider>
 
       <n-space justify="space-between">
         <span>页面切换动画类型</span>
-        <n-select style="width: 120px" size="small" :value="view.transition.value" :options="view.transitionList"
-          @update:value="view.setTransition" />
+        <n-select
+          style="width: 120px"
+          size="small"
+          :value="view.transition.value"
+          :options="view.transitionList"
+          @update:value="view.setTransition"
+        />
       </n-space>
 
-      <n-divider>
-        主题
-      </n-divider>
+      <n-divider> 主题 </n-divider>
 
       <n-grid :cols="8" :x-gap="8" :y-gap="12" class="">
         <n-grid-item v-for="color in themeColorList" :key="color" class="flex-x-center">
@@ -39,16 +39,17 @@
       </n-grid>
 
       <n-space vertical class="mt-px">
-
-        <n-color-picker :modes="['hex']" :value="view.themeColor" :show-alpha="false"
-          @update-value="view.setThemeColor" />
+        <n-color-picker
+          :modes="['hex']"
+          :value="view.themeColor"
+          :show-alpha="false"
+          @update-value="view.setThemeColor"
+        />
 
         <n-button :block="true" @click="() => closeModal(true)">更多颜色</n-button>
 
         <n-space justify="space-between" class="mt-px">
-          <span class="flex-alc">
-            自定义 info 的颜色
-          </span>
+          <span class="flex-alc"> 自定义 info 的颜色 </span>
 
           <n-tooltip trigger="hover">
             <template #trigger>
@@ -57,20 +58,20 @@
             是否自定义info的颜色(默认取比主题色深一级的颜色)
           </n-tooltip>
         </n-space>
-
       </n-space>
 
-      <n-button class="save-mt-auto" type="primary" block dashed @click="view.$reset()">
-        <h3>
-          保存设置
-        </h3>
-      </n-button>
-      <n-button class="mt-auto" type="primary" block dashed @click="view.$reset()">
-        <h3>
-          重置主题
-        </h3>
-      </n-button>
+      <div class="mt-auto">
+        <n-button type="primary" block dashed @click="view.$reset()">
+          <h3>保存设置</h3>
+        </n-button>
+        <n-button type="primary" block dashed @click="view.$reset()">
+          <h3>重置主题</h3>
+        </n-button>
 
+        <n-button type="primary" block dashed @click="deleteLocal">
+          <h3>清楚所有</h3>
+        </n-button>
+      </div>
     </n-drawer-content>
   </n-drawer>
   <ColorModal :visible="bool" @close="closeModal" />
@@ -83,10 +84,17 @@ import ColorModal from './components/color-modal.vue'
 import { useToggle } from '@vueuse/core'
 import { useCommonStore } from '@/store'
 import { themeColorList } from './colorData'
+import Storage from '@/utils/Storage'
 
 const view = useViewStore()
 const common = useCommonStore()
 const [bool, closeModal] = useToggle()
+
+function deleteLocal() {
+  view.$reset()
+  common.$reset()
+  Storage.remove('info')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -94,15 +102,13 @@ const [bool, closeModal] = useToggle()
   margin-top: 15px;
 }
 
-.save-mt-auto {
-  position: absolute;
-  width: 87%;
-  bottom: 70px;
-}
-
 .mt-auto {
   position: absolute;
   width: 87%;
   bottom: 20px;
+
+  ::v-deep(.n-button) {
+    margin-top: 10px;
+  }
 }
 </style>

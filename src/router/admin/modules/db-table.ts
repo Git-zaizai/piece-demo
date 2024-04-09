@@ -22,6 +22,15 @@ const dbTable: AppRouteRecordRaw = {
         title: 'link',
         icon: renderIcon(BookStar20Regular)
       }
+    },
+    {
+      path: 'files',
+      name: 'files',
+      component: () => import('@/view/admin/table/files.vue'),
+      meta: {
+        title: '文件监控',
+        icon: renderIcon(BookStar20Regular)
+      }
     }
   ]
 }
