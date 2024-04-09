@@ -7,5 +7,8 @@ export default {
     },
     remove(key: string) {
         window.localStorage.removeItem(key)
+    },
+    clear() {
+        window.localStorage.clear()
     }
 }

@@ -117,7 +117,7 @@ const createColumns = (tabOptions): ZaiColumns => [
         </NSpace>
       )
     },
-    minWidth: 200,
+    minWidth: 500,
     filterOptions: tabOptions,
     filter(
       value: string,
