@@ -12,6 +12,7 @@ import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 import shikiMdVue from './build/vite-shiki-md-vue'
+import vitepressMdplugin from './build/contentLoader'
 
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
 export default defineConfig(async configEnv => {
@@ -27,7 +28,7 @@ export default defineConfig(async configEnv => {
 
   return {
     plugins: [
-      shikiMdVue(),
+      vitepressMdplugin(),
       vue({
         include: [/\.vue$/, /\.md$/]
       }),
