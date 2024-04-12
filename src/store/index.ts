@@ -1,4 +1,4 @@
-import { createPinia, defineStore } from 'pinia';
+import { createPinia, defineStore } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import type { GlobalTheme } from 'naive-ui'
 import { darkTheme } from 'naive-ui'
@@ -8,12 +8,12 @@ Pinia.use(piniaPluginPersistedstate)
 export { Pinia }
 
 export interface State {
-    inverted: boolean
-    bodyConfigColor: {
-        theme: GlobalTheme | null
-    }
-    globetrotterShow: boolean,
-    constantInverted: boolean
+  inverted: boolean
+  bodyConfigColor: {
+    theme: GlobalTheme | null
+  }
+  globetrotterShow: boolean
+  constantInverted: boolean
 }
 
 /**
@@ -21,32 +21,34 @@ export interface State {
  * @var inverted 菜单 头部 背景颜色控制
  */
 export const useCommonStore = defineStore({
-    id: 'common',
-    state: (): State => ({
-        inverted: true,
-        bodyConfigColor: {
-            theme: darkTheme,
-        },
-        globetrotterShow: true,
-        constantInverted: true,
-    }),
-    actions: {
-        getinverted(isdata: boolean) {
-            window.$loadingBar.start();
-            this.inverted = isdata
-            if (isdata) {
-                this.bodyConfigColor = {
-                    theme: darkTheme
-                }
-            } else {
-                this.bodyConfigColor.theme = null
-            }
-            setTimeout(() => {
-                window.$loadingBar.finish();
-            }, 500)
-        },
+  id: 'common',
+  state: (): State => ({
+    inverted: true,
+    bodyConfigColor: {
+      theme: darkTheme
     },
-    persist: {
-        paths: ['inverted', 'constantInverted'],
-    },
+    globetrotterShow: true,
+    constantInverted: true
+  }),
+  actions: {
+    getinverted(isdata: boolean) {
+      window.$loadingBar.start()
+      this.inverted = isdata
+      if (isdata) {
+        this.bodyConfigColor = {
+          theme: darkTheme
+        }
+        document.documentElement.classList.add('dark')
+      } else {
+        this.bodyConfigColor.theme = null
+        document.documentElement.classList.remove('dark')
+      }
+      setTimeout(() => {
+        window.$loadingBar.finish()
+      }, 500)
+    }
+  },
+  persist: {
+    paths: ['inverted', 'constantInverted']
+  }
 })

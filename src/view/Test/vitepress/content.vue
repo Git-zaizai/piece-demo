@@ -1,0 +1,474 @@
+<template>
+  <div v-pre class="vp-doc _zh_guide_what-is-vitepress">
+    <div class="vp-doc has-sidebar has-aside">
+      <h1 id="使用-vite-解析-md-文件转为-vue-组件" tabindex="-1">
+        使用 <code>vite</code> 解析 <code>md</code> 文件转为 <code>vue</code> 组件
+        <a
+          class="header-anchor"
+          href="#使用-vite-解析-md-文件转为-vue-组件"
+          aria-label='Permalink to "使用 `vite` 解析 `md` 文件转为 `vue` 组件"'
+          >​</a
+        >
+      </h1>
+      <h1 id="使用的插件" tabindex="-1">
+        使用的插件 <a class="header-anchor" href="#使用的插件" aria-label='Permalink to "使用的插件"'>​</a>
+      </h1>
+      <div class="language-shell">
+        <button title="Copy Code" class="copy"></button><span class="lang">shell</span>
+        <pre
+          class="shiki one-dark-pro vp-code"
+        ><code><span class="line"><span style="color:#61AFEF;">pnpm</span><span style="color:#98C379;"> add markdown-it</span></span>
+<span class="line"><span style="color:#61AFEF;">pnpm</span><span style="color:#98C379;"> add shiki</span></span></code></pre>
+      </div>
+      <h1 id="shiki-代码高亮器" tabindex="-1">
+        <code>shiki</code> 代码高亮器
+        <a class="header-anchor" href="#shiki-代码高亮器" aria-label='Permalink to "`shiki` 代码高亮器"'>​</a>
+      </h1>
+      <p>
+        <strong><a href="https://shiki-zh-docs.vercel.app/" target="_blank" rel="noreferrer">文档地址：前往</a></strong>
+      </p>
+      <h1 id="实现" tabindex="-1">实现 <a class="header-anchor" href="#实现" aria-label='Permalink to "实现"'>​</a></h1>
+      <h2 id="主函数" tabindex="-1">
+        主函数 <a class="header-anchor" href="#主函数" aria-label='Permalink to "主函数"'>​</a>
+      </h2>
+      <div class="language-ts">
+        <button title="Copy Code" class="copy"></button><span class="lang">ts</span>
+        <pre
+          class="shiki one-dark-pro vp-code"
+        ><code><span class="line"><span style="color:#C678DD;">import</span><span style="color:#E06C75;"> createLoader</span><span style="color:#C678DD;"> from</span><span style="color:#98C379;"> './createLoader'</span></span>
+<span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">readFile</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'node:fs/promises'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">export</span><span style="color:#C678DD;"> default</span><span style="color:#C678DD;"> async</span><span style="color:#ABB2BF;"> () </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> mdLoader</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> await</span><span style="color:#61AFEF;"> createLoader</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#C678DD;">	return</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E06C75;">		name</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'vite-shiki-md-vue'</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">		enforce</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'pre'</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#61AFEF;">		transform</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">fileStr</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">id</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#C678DD;">			if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">id</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">endsWith</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'.md'</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#C678DD;">				const</span><span style="color:#E5C07B;"> code</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> mdLoader</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">fileStr</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">				return</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E06C75;">					code</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">					map</span><span style="color:#ABB2BF;">: { </span><span style="color:#E06C75;">mappings</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">''</span><span style="color:#ABB2BF;"> }</span></span>
+<span class="line"><span style="color:#ABB2BF;">				}</span></span>
+<span class="line"><span style="color:#ABB2BF;">			}</span></span>
+<span class="line"><span style="color:#ABB2BF;">		},</span></span>
+<span class="line"><span style="color:#C678DD;">		async</span><span style="color:#61AFEF;"> handleHotUpdate</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">ctx</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#C678DD;">			const</span><span style="color:#ABB2BF;"> { </span><span style="color:#E5C07B;">file</span><span style="color:#ABB2BF;"> } </span><span style="color:#56B6C2;">=</span><span style="color:#E06C75;"> ctx</span></span>
+<span class="line"><span style="color:#C678DD;">			if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">file</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">endsWith</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'.md'</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">				// 读取文件内容</span></span>
+<span class="line"><span style="color:#C678DD;">				let</span><span style="color:#E06C75;"> fileConent</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> await</span><span style="color:#61AFEF;"> readFile</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">file</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">				const</span><span style="color:#E5C07B;"> code</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> mdLoader</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">fileConent</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">toString</span><span style="color:#ABB2BF;">())</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">				/* 在vite4.3.0 直接这样就可以了 */</span></span>
+<span class="line"><span style="color:#E5C07B;">				ctx</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">read</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> () </span><span style="color:#C678DD;">=&gt;</span><span style="color:#E06C75;"> code</span></span>
+<span class="line"><span style="color:#ABB2BF;">			}</span></span>
+<span class="line"><span style="color:#ABB2BF;">		}</span></span>
+<span class="line"><span style="color:#ABB2BF;">	}</span></span>
+<span class="line"><span style="color:#ABB2BF;">}</span></span></code></pre>
+      </div>
+      <h1 id="createloader-函数" tabindex="-1">
+        <code>createLoader</code> 函数
+        <a class="header-anchor" href="#createloader-函数" aria-label='Permalink to "`createLoader` 函数"'>​</a>
+      </h1>
+      <div class="language-ts">
+        <button title="Copy Code" class="copy"></button><span class="lang">ts</span>
+        <pre
+          class="shiki one-dark-pro vp-code"
+        ><code><span class="line"><span style="color:#C678DD;">import</span><span style="color:#E06C75;"> markdown</span><span style="color:#C678DD;"> from</span><span style="color:#98C379;"> 'markdown-it'</span></span>
+<span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">getHighlighter</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">bundledLanguages</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'shiki'</span></span>
+<span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">createVueComponent</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">getCodeView</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> './getCodeComponnent'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">export</span><span style="color:#C678DD;"> default</span><span style="color:#C678DD;"> async</span><span style="color:#ABB2BF;"> () </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> getVueCode</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> await</span><span style="color:#61AFEF;"> createVueComponent</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">	// 创建高亮渲染器</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> highlighter</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> await</span><span style="color:#61AFEF;"> getHighlighter</span><span style="color:#ABB2BF;">({</span></span>
+<span class="line"><span style="color:#E06C75;">		themes</span><span style="color:#ABB2BF;">: [</span><span style="color:#98C379;">'one-dark-pro'</span><span style="color:#ABB2BF;">],</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">		// @ts-ignore</span></span>
+<span class="line"><span style="color:#E06C75;">		langs</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">Object</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">keys</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">bundledLanguages</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">	})</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> md</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> markdown</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">	// 保存原有的规矩函数 暂时用不上</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> code_block</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> md</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">renderer</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">rules</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">code_block</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> fence</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> md</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">renderer</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">rules</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">fence</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">	// 重写函数</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">	// @ts-ignore</span></span>
+<span class="line"><span style="color:#C678DD;">	function</span><span style="color:#61AFEF;"> codeRules</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">tokens</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">any</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">idx</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">number</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">options</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">any</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">env</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">any</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">slf</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">any</span><span style="color:#ABB2BF;">): </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">		const</span><span style="color:#E5C07B;"> lang</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> tokens</span><span style="color:#ABB2BF;">[</span><span style="color:#E06C75;">idx</span><span style="color:#ABB2BF;">].</span><span style="color:#E06C75;">info</span></span>
+<span class="line"><span style="color:#C678DD;">		const</span><span style="color:#E5C07B;"> code_html</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> highlighter</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">codeToHtml</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">tokens</span><span style="color:#ABB2BF;">[</span><span style="color:#E06C75;">idx</span><span style="color:#ABB2BF;">].</span><span style="color:#E06C75;">content</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#ABB2BF;">			{</span></span>
+<span class="line"><span style="color:#E06C75;">				lang</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">				theme</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'one-dark-pro'</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">				transformers</span><span style="color:#ABB2BF;">: [</span></span>
+<span class="line"><span style="color:#ABB2BF;">					{</span></span>
+<span class="line"><span style="color:#E06C75;">						name</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">"@shikijs/markdown-it:block-class"</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#61AFEF;">						code</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">node</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#E5C07B;">							node</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">properties</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">class</span><span style="color:#56B6C2;"> =</span><span style="color:#98C379;"> `language-</span><span style="color:#C678DD;">${</span><span style="color:#E06C75;"> lang</span><span style="color:#C678DD;"> }</span><span style="color:#98C379;">`</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">						}</span></span>
+<span class="line"><span style="color:#ABB2BF;">					}</span></span>
+<span class="line"><span style="color:#ABB2BF;">				]</span></span>
+<span class="line"><span style="color:#ABB2BF;">			})</span></span>
+<span class="line"><span style="color:#C678DD;">		return</span><span style="color:#61AFEF;"> getCodeView</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">lang</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">code_html</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E5C07B;">	md</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">renderer</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">rules</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">fence</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> codeRules</span></span>
+<span class="line"><span style="color:#E5C07B;">	md</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">renderer</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">rules</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">code_block</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> codeRules</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">	return</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;font-style:italic;">str</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">		return</span><span style="color:#61AFEF;"> getVueCode</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">md</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">render</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">str</span><span style="color:#ABB2BF;">))</span></span>
+<span class="line"><span style="color:#ABB2BF;">	}</span></span>
+<span class="line"><span style="color:#ABB2BF;">}</span></span></code></pre>
+      </div>
+      <h2 id="getcodecomponnent-函数" tabindex="-1">
+        <code>getCodeComponnent</code> 函数
+        <a class="header-anchor" href="#getcodecomponnent-函数" aria-label='Permalink to "`getCodeComponnent` 函数"'
+          >​</a
+        >
+      </h2>
+      <div class="language-ts">
+        <button title="Copy Code" class="copy"></button><span class="lang">ts</span>
+        <pre
+          class="shiki one-dark-pro vp-code"
+        ><code><span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">dirname</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">join</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'node:path'</span></span>
+<span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">fileURLToPath</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'node:url'</span></span>
+<span class="line"><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">readFile</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'node:fs/promises'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">const</span><span style="color:#E5C07B;"> __dirname</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> dirname</span><span style="color:#ABB2BF;">(</span><span style="color:#61AFEF;">fileURLToPath</span><span style="color:#ABB2BF;">(</span><span style="color:#C678DD;">import</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">meta</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">url</span><span style="color:#ABB2BF;">))</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">/**</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;"> * 使用文件方便修改模版</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;"> * */</span></span>
+<span class="line"><span style="color:#C678DD;">export</span><span style="color:#C678DD;"> const</span><span style="color:#61AFEF;"> createVueComponent</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> async</span><span style="color:#ABB2BF;"> () </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">	let</span><span style="color:#E06C75;"> codeDemoStr</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">any</span><span style="color:#56B6C2;"> =</span><span style="color:#C678DD;"> await</span><span style="color:#61AFEF;"> readFile</span><span style="color:#ABB2BF;">(</span><span style="color:#61AFEF;">join</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">__dirname</span><span style="color:#ABB2BF;">, </span><span style="color:#98C379;">'./codeDemoComponent.vue'</span><span style="color:#ABB2BF;">))</span></span>
+<span class="line"><span style="color:#E06C75;">	codeDemoStr</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> codeDemoStr</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">toString</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> codeReg</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> /&lt;!--CODE--&gt;/</span></span>
+<span class="line"><span style="color:#C678DD;">	return</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;font-style:italic;">stars</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">[] | </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">		// @ts-ignore</span></span>
+<span class="line"><span style="color:#C678DD;">		const</span><span style="color:#E5C07B;"> replace_str</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> Array</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">isArray</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">stars</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">?</span><span style="color:#E5C07B;"> stars</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">join</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'</span><span style="color:#56B6C2;">\n</span><span style="color:#98C379;">'</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">:</span><span style="color:#E06C75;"> stars</span></span>
+<span class="line"><span style="color:#C678DD;">		return</span><span style="color:#E5C07B;"> codeDemoStr</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">replace</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">codeReg</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">replace_str</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">	}</span></span>
+<span class="line"><span style="color:#ABB2BF;">}</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">/**</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;"> * 高亮代码容器，与vitepress差不多</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;"> * */</span></span>
+<span class="line"><span style="color:#C678DD;">export</span><span style="color:#C678DD;"> const</span><span style="color:#61AFEF;"> getCodeView</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;font-style:italic;">lang</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">code</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">): </span><span style="color:#E5C07B;">string</span><span style="color:#C678DD;"> =&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">	return</span><span style="color:#98C379;"> `&lt;div class="zai-code"&gt;</span></span>
+<span class="line"><span style="color:#98C379;">	&lt;button class="zai-but-copy" @click="butCody" :style="{backgroundImage: codyMeg}"&gt;&lt;/button&gt;</span></span>
+<span class="line"><span style="color:#98C379;">	&lt;span class="lang"&gt;</span><span style="color:#C678DD;">${</span><span style="color:#E06C75;"> lang</span><span style="color:#C678DD;"> }</span><span style="color:#98C379;">&lt;/span&gt;</span></span>
+<span class="line"><span style="color:#98C379;">	&lt;div v-pre&gt;</span><span style="color:#C678DD;">${</span><span style="color:#E06C75;"> code</span><span style="color:#C678DD;"> }</span><span style="color:#98C379;">&lt;/div&gt;</span></span>
+<span class="line"><span style="color:#98C379;">&lt;/div&gt;`</span></span>
+<span class="line"><span style="color:#ABB2BF;">}</span></span></code></pre>
+      </div>
+      <h1 id="模版代码" tabindex="-1">
+        模版代码 <a class="header-anchor" href="#模版代码" aria-label='Permalink to "模版代码"'>​</a>
+      </h1>
+      <div class="language-vue">
+        <button title="Copy Code" class="copy"></button><span class="lang">vue</span>
+        <pre class="shiki one-dark-pro vp-code"><code><span class="line"></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;</span><span style="color:#E06C75;">template</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"md-view"</span><span style="color:#ABB2BF;"> :</span><span style="color:#D19A66;">style</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#E06C75;">cssVars</span><span style="color:#ABB2BF;">"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"aside-zanwei"</span><span style="color:#ABB2BF;">&gt;&lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"zai-aside"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"content"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">        &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"outline-marker"</span><span style="color:#ABB2BF;"> :</span><span style="color:#D19A66;">style</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#ABB2BF;">{</span><span style="color:#E06C75;">top</span><span style="color:#ABB2BF;">:</span><span style="color:#E06C75;">outlineMarkerTop</span><span style="color:#56B6C2;"> +</span><span style="color:#98C379;"> 'px'</span><span style="color:#ABB2BF;">}</span><span style="color:#ABB2BF;">"</span><span style="color:#ABB2BF;">&gt;&lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">        &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"outline-title"</span><span style="color:#D19A66;"> role</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"heading"</span><span style="color:#D19A66;"> aria-level</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"2"</span><span style="color:#D19A66;"> data-v-1588c7a1</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">""</span><span style="color:#ABB2BF;">&gt;本页目录&lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">        &lt;</span><span style="color:#E06C75;">nav</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">          &lt;</span><span style="color:#E06C75;">ul</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">            &lt;</span><span style="color:#E06C75;">li</span></span>
+<span class="line"><span style="color:#C678DD;">                v-for</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">item</span><span style="color:#ABB2BF;">,</span><span style="color:#E06C75;">index</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">in</span><span style="color:#E06C75;"> asides</span><span style="color:#ABB2BF;">"</span></span>
+<span class="line"><span style="color:#ABB2BF;">                :</span><span style="color:#D19A66;">key</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#E5C07B;">item</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">top</span><span style="color:#ABB2BF;">"</span></span>
+<span class="line"><span style="color:#ABB2BF;">                :</span><span style="color:#D19A66;">style</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#ABB2BF;">{</span><span style="color:#E06C75;">paddingLeft</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">item</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">type</span><span style="color:#56B6C2;"> &gt;</span><span style="color:#D19A66;"> 1</span><span style="color:#C678DD;"> ?</span><span style="color:#D19A66;"> 1</span><span style="color:#56B6C2;"> *</span><span style="color:#D19A66;"> 15</span><span style="color:#56B6C2;"> +</span><span style="color:#98C379;"> 'px'</span><span style="color:#C678DD;"> :</span><span style="color:#98C379;"> '0'</span><span style="color:#ABB2BF;"> }</span><span style="color:#ABB2BF;">"</span></span>
+<span class="line"><span style="color:#ABB2BF;">            &gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">              &lt;</span><span style="color:#E06C75;">a</span></span>
+<span class="line"><span style="color:#D19A66;">                  class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"outline-link"</span></span>
+<span class="line"><span style="color:#ABB2BF;">                  :</span><span style="color:#D19A66;">class</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#E06C75;">active</span><span style="color:#56B6C2;"> ===</span><span style="color:#E06C75;"> index</span><span style="color:#C678DD;"> ?</span><span style="color:#98C379;"> 'active'</span><span style="color:#C678DD;"> :</span><span style="color:#98C379;"> ''</span><span style="color:#ABB2BF;">"</span></span>
+<span class="line"><span style="color:#ABB2BF;">                  @</span><span style="color:#D19A66;">click</span><span style="color:#ABB2BF;">=</span><span style="color:#ABB2BF;">"</span><span style="color:#61AFEF;">outlineClick</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">item</span><span style="color:#ABB2BF;">,</span><span style="color:#E06C75;">index</span><span style="color:#ABB2BF;">,</span><span style="color:#E06C75;">$event</span><span style="color:#ABB2BF;">)</span><span style="color:#ABB2BF;">"</span></span>
+<span class="line"><span style="color:#ABB2BF;">              &gt; {{ </span><span style="color:#E5C07B;">item</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">txt</span><span style="color:#ABB2BF;"> }} &lt;/</span><span style="color:#E06C75;">a</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">            &lt;/</span><span style="color:#E06C75;">li</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">          &lt;/</span><span style="color:#E06C75;">ul</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">        &lt;/</span><span style="color:#E06C75;">nav</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      &lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    &lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF;">    &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"docs-content"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      &lt;</span><span style="color:#E06C75;">div</span><span style="color:#D19A66;"> class</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"docs-view markdown-body"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">        &lt;!--CODE--&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      &lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    &lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  &lt;/</span><span style="color:#E06C75;">div</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;/</span><span style="color:#E06C75;">template</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;</span><span style="color:#E06C75;">script</span><span style="color:#D19A66;"> setup</span><span style="color:#D19A66;"> lang</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"ts"</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#C678DD;">  import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">useCommonStore</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> '@/store/index'</span></span>
+<span class="line"><span style="color:#C678DD;">  import</span><span style="color:#ABB2BF;"> { </span><span style="color:#E06C75;">useThemeVars</span><span style="color:#ABB2BF;"> } </span><span style="color:#C678DD;">from</span><span style="color:#98C379;"> 'naive-ui'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#E5C07B;"> outlineMarkerTop</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> ref</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> active</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> ref</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#E5C07B;"> asides</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> ref</span><span style="color:#ABB2BF;">([])</span></span>
+<span class="line"><span style="color:#C678DD;">	let</span><span style="color:#E06C75;"> parentScroll</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">null</span><span style="color:#ABB2BF;"> | </span><span style="color:#E5C07B;">HTMLHtmlElement</span><span style="color:#56B6C2;"> =</span><span style="color:#D19A66;"> null</span></span>
+<span class="line"><span style="color:#C678DD;">	const</span><span style="color:#61AFEF;"> outlineClick</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;font-style:italic;">item</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">index</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;font-style:italic;">e</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E5C07B;">      e</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">preventDefault</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#C678DD;">      if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;">parentScroll</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#E5C07B;">        parentScroll</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">scrollTo</span><span style="color:#ABB2BF;">({ </span><span style="color:#E06C75;">top</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">item</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">top</span><span style="color:#56B6C2;"> -</span><span style="color:#D19A66;"> 10</span><span style="color:#ABB2BF;"> })</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#E5C07B;">      active</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> index</span></span>
+<span class="line"><span style="color:#E5C07B;">      outlineMarkerTop</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> e</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">target</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">offsetTop</span><span style="color:#56B6C2;"> +</span><span style="color:#D19A66;"> 5</span></span>
+<span class="line"><span style="color:#ABB2BF;">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">  function</span><span style="color:#61AFEF;"> getScrollableParent</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">element</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#C678DD;">    let</span><span style="color:#E06C75;"> parent</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> element</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">parentNode</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#C678DD;">    while</span><span style="color:#ABB2BF;"> (</span><span style="color:#E06C75;">parent</span><span style="color:#56B6C2;"> !=</span><span style="color:#D19A66;"> null</span><span style="color:#56B6C2;"> &amp;&amp;</span><span style="color:#E06C75;"> parent</span><span style="color:#56B6C2;"> !==</span><span style="color:#E5C07B;"> document</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">body</span><span style="color:#56B6C2;"> &amp;&amp;</span><span style="color:#E06C75;"> parent</span><span style="color:#56B6C2;"> !==</span><span style="color:#E5C07B;"> document</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">documentElement</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">      // 检查元素是否可垂直滚动</span></span>
+<span class="line"><span style="color:#C678DD;">      if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">parent</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">scrollHeight</span><span style="color:#56B6C2;"> &gt;</span><span style="color:#E5C07B;"> parent</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">clientHeight</span><span style="color:#56B6C2;"> ||</span><span style="color:#7F848E;font-style:italic;"> // 自然高度大于客户区高度</span></span>
+<span class="line"><span style="color:#ABB2BF;">          (</span><span style="color:#E5C07B;">parent</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">style</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">overflowY</span><span style="color:#56B6C2;"> ===</span><span style="color:#98C379;"> 'scroll'</span><span style="color:#56B6C2;"> ||</span><span style="color:#E5C07B;"> parent</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">style</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">overflowY</span><span style="color:#56B6C2;"> ===</span><span style="color:#98C379;"> 'auto'</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#C678DD;">        return</span><span style="color:#E06C75;"> parent</span><span style="color:#ABB2BF;">; </span><span style="color:#7F848E;font-style:italic;">// 如果可以，则返回该元素</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#E06C75;">      parent</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> parent</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">parentNode</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">		// 若没有找到可以滚动的父元素，则返回null</span></span>
+<span class="line"><span style="color:#C678DD;">    return</span><span style="color:#D19A66;"> null</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF;">  onMounted</span><span style="color:#ABB2BF;">(() </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E06C75;">    parentScroll</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> getScrollableParent</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">document</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">querySelector</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'.md-view'</span><span style="color:#ABB2BF;">))</span></span>
+<span class="line"><span style="color:#C678DD;">    const</span><span style="color:#E5C07B;"> hels</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> [</span><span style="color:#98C379;">'h1'</span><span style="color:#ABB2BF;">, </span><span style="color:#98C379;">'h2'</span><span style="color:#ABB2BF;">, </span><span style="color:#98C379;">'h3'</span><span style="color:#ABB2BF;">, </span><span style="color:#98C379;">'h4'</span><span style="color:#ABB2BF;">, </span><span style="color:#98C379;">'h5'</span><span style="color:#ABB2BF;">]</span></span>
+<span class="line"><span style="color:#C678DD;">    const</span><span style="color:#E5C07B;"> docs</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> document</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">querySelectorAll</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'.docs-view'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">    for</span><span style="color:#ABB2BF;"> (</span><span style="color:#C678DD;">const</span><span style="color:#E5C07B;"> docEl</span><span style="color:#C678DD;"> of</span><span style="color:#E06C75;"> docs</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#C678DD;">      for</span><span style="color:#ABB2BF;"> (</span><span style="color:#C678DD;">const</span><span style="color:#E5C07B;"> docElElement</span><span style="color:#C678DD;"> of</span><span style="color:#E5C07B;"> docEl</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">children</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#C678DD;">        if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">hels</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">includes</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">docElElement</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">localName</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#E5C07B;">          asides</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">value</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">push</span><span style="color:#ABB2BF;">({</span></span>
+<span class="line"><span style="color:#E06C75;">            txt</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">docElElement</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">innerText</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">            top</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">docElElement</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">offsetTop</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#E06C75;">            type</span><span style="color:#ABB2BF;">: </span><span style="color:#61AFEF;">Number</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">docElElement</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">localName</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">slice</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">))</span></span>
+<span class="line"><span style="color:#ABB2BF;">          })</span></span>
+<span class="line"><span style="color:#ABB2BF;">        }</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#61AFEF;">    nextTick</span><span style="color:#ABB2BF;">(() </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">      const</span><span style="color:#E5C07B;"> outlineLink</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> document</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">querySelector</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'.outline-link'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#E5C07B;">      outlineMarkerTop</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> outlineLink</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">offsetTop</span><span style="color:#56B6C2;"> +</span><span style="color:#D19A66;"> 4</span></span>
+<span class="line"><span style="color:#ABB2BF;">    })</span></span>
+<span class="line"><span style="color:#ABB2BF;">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#E5C07B;"> common</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> useCommonStore</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#E5C07B;"> naiveVars</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> useThemeVars</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#E5C07B;"> cssVars</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> computed</span><span style="color:#ABB2BF;">(() </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">    let</span><span style="color:#E06C75;"> vars</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#98C379;">      '--vp-code-block-bg-light'</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'#161618'</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#98C379;">      '--vp-c-divider'</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'#5c5c5d'</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#98C379;">      '--zai-success'</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">naiveVars</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">value</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">successColor</span><span style="color:#ABB2BF;">,</span></span>
+<span class="line"><span style="color:#98C379;">      '--vp-c-asides-divider'</span><span style="color:#ABB2BF;">: </span><span style="color:#98C379;">'#e2e2e3'</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#C678DD;">    if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">common</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">inverted</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#E06C75;">      vars</span><span style="color:#ABB2BF;">[</span><span style="color:#98C379;">'--vp-code-block-bg-light'</span><span style="color:#ABB2BF;">] </span><span style="color:#56B6C2;">=</span><span style="color:#98C379;"> '#1e1e20'</span></span>
+<span class="line"><span style="color:#E06C75;">      vars</span><span style="color:#ABB2BF;">[</span><span style="color:#98C379;">'--vp-c-divider'</span><span style="color:#ABB2BF;">] </span><span style="color:#56B6C2;">=</span><span style="color:#98C379;"> '#5c5c5d'</span></span>
+<span class="line"><span style="color:#E06C75;">      vars</span><span style="color:#ABB2BF;">[</span><span style="color:#98C379;">'--zai-success'</span><span style="color:#ABB2BF;">] </span><span style="color:#56B6C2;">=</span><span style="color:#E5C07B;"> naiveVars</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">value</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">successColor</span></span>
+<span class="line"><span style="color:#E06C75;">      vars</span><span style="color:#ABB2BF;">[</span><span style="color:#98C379;">'--vp-c-asides-divider'</span><span style="color:#ABB2BF;">] </span><span style="color:#56B6C2;">=</span><span style="color:#98C379;"> '#2e2e32'</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#C678DD;">    return</span><span style="color:#E06C75;"> vars</span></span>
+<span class="line"><span style="color:#ABB2BF;">  })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">  function</span><span style="color:#61AFEF;"> copyStr</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;font-style:italic;">value</span><span style="color:#ABB2BF;">: </span><span style="color:#E5C07B;">string</span><span style="color:#ABB2BF;">): </span><span style="color:#E5C07B;">void</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">    if</span><span style="color:#ABB2BF;"> (</span><span style="color:#56B6C2;">!</span><span style="color:#E06C75;">value</span><span style="color:#ABB2BF;">) </span><span style="color:#C678DD;">return</span></span>
+<span class="line"><span style="color:#C678DD;">    const</span><span style="color:#61AFEF;"> execCommand</span><span style="color:#56B6C2;"> =</span><span style="color:#ABB2BF;"> (): </span><span style="color:#E5C07B;">void</span><span style="color:#C678DD;"> =&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#C678DD;">      const</span><span style="color:#E5C07B;"> el</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> document</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">createElement</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'input'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#E5C07B;">      el</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;"> value</span></span>
+<span class="line"><span style="color:#E5C07B;">      document</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">body</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">appendChild</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">el</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">      if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">navigator</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">userAgent</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">match</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">/(iPhone</span><span style="color:#ABB2BF;">|</span><span style="color:#E06C75;">iPod</span><span style="color:#ABB2BF;">|</span><span style="color:#E06C75;">iPad);</span><span style="color:#D19A66;">?</span><span style="color:#E06C75;">/</span><span style="color:#C678DD;">i</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#E5C07B;">        el</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">setSelectionRange</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">, </span><span style="color:#E5C07B;">value</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">length</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#E5C07B;">        el</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">focus</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#ABB2BF;">      } </span><span style="color:#C678DD;">else</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E5C07B;">        el</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">select</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#C678DD;">      if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">document</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">execCommand</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'copy'</span><span style="color:#ABB2BF;">)) {</span></span>
+<span class="line"><span style="color:#E5C07B;">        console</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">log</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'复制成功'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">      } </span><span style="color:#C678DD;">else</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E5C07B;">        console</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">log</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'复制失败'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#E5C07B;">      el</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">blur</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#E5C07B;">      el</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">remove</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">    if</span><span style="color:#ABB2BF;"> (</span><span style="color:#E5C07B;">navigator</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">clipboard</span><span style="color:#ABB2BF;">) {</span></span>
+<span class="line"><span style="color:#E5C07B;">      navigator</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">clipboard</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">writeText</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">value</span><span style="color:#ABB2BF;">).</span><span style="color:#61AFEF;">then</span><span style="color:#ABB2BF;">(</span></span>
+<span class="line"><span style="color:#C678DD;">          function</span><span style="color:#ABB2BF;"> () {</span></span>
+<span class="line"><span style="color:#E5C07B;">            console</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">log</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'复制成功'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">          },</span></span>
+<span class="line"><span style="color:#C678DD;">          function</span><span style="color:#ABB2BF;"> () {</span></span>
+<span class="line"><span style="color:#61AFEF;">            execCommand</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#ABB2BF;">          }</span></span>
+<span class="line"><span style="color:#ABB2BF;">      )</span></span>
+<span class="line"><span style="color:#ABB2BF;">    } </span><span style="color:#C678DD;">else</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#61AFEF;">      execCommand</span><span style="color:#ABB2BF;">()</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#E5C07B;"> codyMeg</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> ref</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'var(--vp-icon-copy)'</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#C678DD;">  let</span><span style="color:#E06C75;"> timeout</span></span>
+<span class="line"><span style="color:#C678DD;">  const</span><span style="color:#61AFEF;"> butCody</span><span style="color:#56B6C2;"> =</span><span style="color:#E06C75;font-style:italic;"> e</span><span style="color:#C678DD;"> =&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic;">    // 获取父节点</span></span>
+<span class="line"><span style="color:#C678DD;">    const</span><span style="color:#E5C07B;"> parent</span><span style="color:#56B6C2;"> =</span><span style="color:#E5C07B;"> e</span><span style="color:#ABB2BF;">.</span><span style="color:#E5C07B;">target</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">parentNode</span></span>
+<span class="line"><span style="color:#61AFEF;">    copyStr</span><span style="color:#ABB2BF;">(</span><span style="color:#E5C07B;">parent</span><span style="color:#ABB2BF;">.</span><span style="color:#61AFEF;">querySelector</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">'pre code'</span><span style="color:#ABB2BF;">).</span><span style="color:#E06C75;">innerText</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#E5C07B;">    codyMeg</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#98C379;"> `var(--vp-icon-copied)`</span></span>
+<span class="line"><span style="color:#E06C75;">    timeout</span><span style="color:#56B6C2;"> &amp;&amp;</span><span style="color:#61AFEF;"> clearTimeout</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">timeout</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#E06C75;">    timeout</span><span style="color:#56B6C2;"> =</span><span style="color:#61AFEF;"> setTimeout</span><span style="color:#ABB2BF;">(() </span><span style="color:#C678DD;">=&gt;</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E5C07B;">      codyMeg</span><span style="color:#ABB2BF;">.</span><span style="color:#E06C75;">value</span><span style="color:#56B6C2;"> =</span><span style="color:#98C379;"> `var(--vp-icon-copy)`</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }, </span><span style="color:#D19A66;">2000</span><span style="color:#ABB2BF;">)</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;/</span><span style="color:#E06C75;">script</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;</span><span style="color:#E06C75;">style</span><span style="color:#D19A66;"> lang</span><span style="color:#ABB2BF;">=</span><span style="color:#98C379;">"scss"</span><span style="color:#D19A66;"> scoped</span><span style="color:#ABB2BF;">&gt;</span></span>
+<span class="line"><span style="color:#E06C75;">  ol</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">ul</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    list-style: </span><span style="color:#D19A66;">none</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    margin: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    padding: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E06C75;">  h1</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">h2</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">h3</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">h4</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">h5</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">h6</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">li</span><span style="color:#ABB2BF;">, </span><span style="color:#E06C75;">p</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    overflow-wrap: </span><span style="color:#D19A66;">break-word</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">  .md-view</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    width: </span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">vw</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    display: </span><span style="color:#D19A66;">flex</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    justify-content: </span><span style="color:#D19A66;">center</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">  .docs-content</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    order: </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    margin: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    width: </span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">%</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    border: </span><span style="color:#D19A66;">1</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> solid</span><span style="color:#56B6C2;"> var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-asides-divider</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    margin: </span><span style="color:#D19A66;">10</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    padding: </span><span style="color:#D19A66;">20</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> 10</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> 10</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> 10</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    border-radius: </span><span style="color:#D19A66;">7</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">  .docs-view</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    padding: </span><span style="color:#D19A66;">0</span><span style="color:#D19A66;"> 10</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">    .zai-code</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      position: </span><span style="color:#D19A66;">relative</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">      &amp;</span><span style="color:#56B6C2;">:hover</span><span style="color:#D19A66;"> .zai-but-copy</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">        opacity: </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E06C75;">      &amp;</span><span style="color:#56B6C2;">:hover</span><span style="color:#D19A66;"> .lang</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">        opacity: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E06C75;">      --vp-icon-copy</span><span style="color:#ABB2BF;">: </span><span style="color:#56B6C2;">url</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' height='20' width='20' stroke='rgba(128,128,128,1)' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2'/%3E%3C/svg%3E"</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#E06C75;">      --vp-icon-copied</span><span style="color:#ABB2BF;">: </span><span style="color:#56B6C2;">url</span><span style="color:#ABB2BF;">(</span><span style="color:#98C379;">"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' height='20' width='20' stroke='rgba(128,128,128,1)' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9 2 2 4-4'/%3E%3C/svg%3E"</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#E06C75;">      --vp-c-text-dark-3</span><span style="color:#ABB2BF;">: </span><span style="color:#56B6C2;">rgba</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">235</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">235</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">245</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">0.38</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">    .zai-but-copy</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      direction: </span><span style="color:#D19A66;">ltr</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      position: </span><span style="color:#D19A66;">absolute</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      top: </span><span style="color:#D19A66;">10</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      right: </span><span style="color:#D19A66;">12</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      z-index: </span><span style="color:#D19A66;">3</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border: </span><span style="color:#D19A66;">1</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> solid</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-color: </span><span style="color:#D19A66;">transparent</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-radius: </span><span style="color:#D19A66;">4</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      width: </span><span style="color:#D19A66;">40</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      height: </span><span style="color:#D19A66;">40</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      background-color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-code-block-bg-light</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      opacity: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">      cursor</span><span style="color:#ABB2BF;">: </span><span style="color:#D19A66;">pointer</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      background-position: </span><span style="color:#D19A66;">50</span><span style="color:#E06C75;">%</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      background-size: </span><span style="color:#D19A66;">20</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      background-repeat: </span><span style="color:#D19A66;">no-repeat</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      transition: border-color </span><span style="color:#D19A66;">0.25</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">, background-color </span><span style="color:#D19A66;">0.25</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">, opacity </span><span style="color:#D19A66;">0.25</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">      &amp;</span><span style="color:#56B6C2;">:hover</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">        border-color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-divider</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">        background-color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-code-block-bg-light</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">    .zai-code</span><span style="color:#E06C75;"> pre</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      padding: </span><span style="color:#D19A66;">20</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> 24</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-radius: </span><span style="color:#D19A66;">8</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">    .lang</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      position: </span><span style="color:#D19A66;">absolute</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      top: </span><span style="color:#D19A66;">8</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      right: </span><span style="color:#D19A66;">24</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      z-index: </span><span style="color:#D19A66;">2</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-size: </span><span style="color:#D19A66;">12</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-weight: </span><span style="color:#D19A66;">500</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-text-dark-3</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      transition: </span><span style="color:#D19A66;">color</span><span style="color:#D19A66;"> 0.4</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">, opacity </span><span style="color:#D19A66;">0.4</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">  .aside-zanwei</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">    width: </span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">%</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    max-width: </span><span style="color:#D19A66;">256</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    order: </span><span style="color:#D19A66;">2</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    flex-grow: </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">  .zai-aside</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#E06C75;">    --vp-c-indigo-1</span><span style="color:#ABB2BF;">: </span><span style="color:#D19A66;">#3451b2</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">    --vp-c-brand-1</span><span style="color:#ABB2BF;">: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-indigo-1</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    position: </span><span style="color:#D19A66;">fixed</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    left: </span><span style="color:#56B6C2;">calc</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">vw</span><span style="color:#56B6C2;"> -</span><span style="color:#D19A66;"> 256</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    max-width: </span><span style="color:#D19A66;">256</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    width: </span><span style="color:#56B6C2;">calc</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">%</span><span style="color:#56B6C2;"> -</span><span style="color:#D19A66;"> 83</span><span style="color:#E06C75;">%</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    z-index: </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    height: </span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">vh</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    overflow-y: </span><span style="color:#D19A66;">scroll</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    scrollbar-width: </span><span style="color:#D19A66;">none</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#D19A66;">    .content</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      position: </span><span style="color:#D19A66;">relative</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-top: </span><span style="color:#D19A66;">1</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> solid</span><span style="color:#56B6C2;"> var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-asides-divider</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-left: </span><span style="color:#D19A66;">1</span><span style="color:#E06C75;">px</span><span style="color:#D19A66;"> solid</span><span style="color:#56B6C2;"> var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--vp-c-asides-divider</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      padding-left: </span><span style="color:#D19A66;">16</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-size: </span><span style="color:#D19A66;">13</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-weight: </span><span style="color:#D19A66;">500</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      height: </span><span style="color:#56B6C2;">calc</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">100</span><span style="color:#E06C75;">%</span><span style="color:#56B6C2;"> -</span><span style="color:#D19A66;"> 4</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      padding-top: </span><span style="color:#D19A66;">4</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#D19A66;">    .outline-marker</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      position: </span><span style="color:#D19A66;">absolute</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      top: </span><span style="color:#D19A66;">32</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      left: </span><span style="color:#D19A66;">-1</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      z-index: </span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      opacity: </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      width: </span><span style="color:#D19A66;">2</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      border-radius: </span><span style="color:#D19A66;">2</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      height: </span><span style="color:#D19A66;">18</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      background-color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--zai-success</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      transition: </span><span style="color:#D19A66;">top</span><span style="color:#D19A66;"> .25</span><span style="color:#E06C75;">s</span><span style="color:#56B6C2;"> cubic-bezier</span><span style="color:#ABB2BF;">(</span><span style="color:#D19A66;">0</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">.5</span><span style="color:#ABB2BF;">, </span><span style="color:#D19A66;">1</span><span style="color:#ABB2BF;">), background-color </span><span style="color:#D19A66;">.5</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">, opacity </span><span style="color:#D19A66;">.25</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#D19A66;">    .outline-title</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      letter-spacing: </span><span style="color:#D19A66;">.4</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      line-height: </span><span style="color:#D19A66;">28</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-size: </span><span style="color:#D19A66;">13</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-weight: </span><span style="color:#D19A66;">600</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#D19A66;">    .outline-link</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      display: </span><span style="color:#D19A66;">inline-block</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      line-height: </span><span style="color:#D19A66;">28</span><span style="color:#E06C75;">px</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--n-text-color</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      white-space: </span><span style="color:#D19A66;">nowrap</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      overflow: </span><span style="color:#D19A66;">hidden</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      text-overflow: </span><span style="color:#D19A66;">ellipsis</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      transition: </span><span style="color:#D19A66;">color</span><span style="color:#D19A66;"> .5</span><span style="color:#E06C75;">s</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      font-weight: </span><span style="color:#D19A66;">400</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">      cursor</span><span style="color:#ABB2BF;">: </span><span style="color:#D19A66;">pointer</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#ABB2BF;">      overflow-wrap: </span><span style="color:#D19A66;">break-word</span><span style="color:#ABB2BF;">;</span></span>
+<span class="line"><span style="color:#E06C75;">      &amp;</span><span style="color:#56B6C2;">:hover</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">        color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--zai-success</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">      }</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66;">    .outline-link.active</span><span style="color:#ABB2BF;"> {</span></span>
+<span class="line"><span style="color:#ABB2BF;">      color: </span><span style="color:#56B6C2;">var</span><span style="color:#ABB2BF;">(</span><span style="color:#E06C75;">--zai-success</span><span style="color:#ABB2BF;">);</span></span>
+<span class="line"><span style="color:#ABB2BF;">    }</span></span>
+<span class="line"><span style="color:#ABB2BF;">  }</span></span>
+<span class="line"><span style="color:#ABB2BF;">&lt;/</span><span style="color:#E06C75;">style</span><span style="color:#ABB2BF;">&gt;</span></span></code></pre>
+      </div>
+    </div>
+  </div>
+</template>
