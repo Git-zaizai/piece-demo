@@ -2,8 +2,11 @@
 import AsideOutline from './AsideOutline.vue'
 import type { MenuItem, Outline } from './outline'
 
+import { useDebounceFn } from '@vueuse/core'
+
 const headers = shallowRef<MenuItem[]>([])
 const resolvedHeaders: { element: HTMLHeadElement; link: string; title: string }[] = []
+let OutlineItems: HTMLLinkElement[] = []
 
 onMounted(() => {
   nextTick(() => {
@@ -27,6 +30,9 @@ onMounted(() => {
         return mp
       })
     headers.value = createAsideTree(headersElements)
+
+
+
   })
 })
 
@@ -37,7 +43,7 @@ function createAsideTree(list: MenuItem[]): MenuItem[] {
     if (e.level === 1) {
       res.push(e)
     } else {
-      for (let j = i; j > 0; j--) {
+      for (let j = i; j >= 0; j--) {
         if (list[j].level === 1) {
           list[j].children.push(e)
           break
@@ -67,40 +73,79 @@ function serializeHeader(h: Element): string {
   return ret.trim()
 }
 
+const asideTop = ref(0)
 const vpviewRef = ref()
+
+
+/** 利用事件冒泡阻止 router 刷新 */
 function bindLinkClk(event) {
   if (event.target.tagName === 'A') {
     event.preventDefault()
-    const find = resolvedHeaders.find(fv => fv.title === event.target.textContent)
-    function scrollToTarget() {
-      vpviewRef.value.scrollTo({ top: find.element.offsetTop, behavior: 'smooth' })
-    }
-    requestAnimationFrame(scrollToTarget)
+    const id = event.target.href.split('#')[1]
+    const heading = document.getElementById(decodeURIComponent(id))
+    vpviewRef.value.scrollTo({ top: heading.offsetTop + 30, behavior: 'smooth' })
   }
 }
 
-// @ts-ignore
-onBeforeRouteUpdate(to => {
-  const find = headers.value.find(fv => fv.link === to.hash)
-  if (find) {
-    return {
-      el: to.hash,
-      behavior: 'smooth'
-    }
+
+function vpViewOnScroll() {
+
+  let scrolltop = 0
+  if (vpviewRef.value.scrollTop > vpviewRef.value.offsetHeight) {
+    scrolltop = vpviewRef.value.scrollTop + 30
+  } else {
+    scrolltop = vpviewRef.value.scrollTop + 30
   }
-  return null
-})
+  console.log('heas ', resolvedHeaders.map(el => el.element.offsetTop));
+
+  console.log('scrolltop', scrolltop);
+
+
+
+  function updateDemo() {
+
+    if (OutlineItems.length === 0) {
+      OutlineItems = [...document.querySelectorAll('.VPDocOutlineItem li a')] as HTMLLinkElement[]
+    }
+
+    OutlineItems.forEach(link => {
+      if (link.classList.contains('active')) {
+        link.classList.remove('active')
+      }
+    })
+
+    let offsetTopindex = 0
+    if (scrolltop >= resolvedHeaders.at(-1).element.offsetTop) {
+      offsetTopindex = resolvedHeaders.length - 1
+    } else {
+      for (let i = 0; i < resolvedHeaders.length; i++) {
+        const { element } = resolvedHeaders[i];
+        if (scrolltop < element.offsetTop) {
+          offsetTopindex = i - 1
+          break
+        }
+      }
+    }
+
+    OutlineItems[offsetTopindex].classList.add('active')
+    asideTop.value = OutlineItems[offsetTopindex].offsetTop + 39
+  }
+  requestAnimationFrame(updateDemo)
+
+}
+
+const onScroll = useDebounceFn(vpViewOnScroll, 100)
 </script>
 
 <template>
-  <div class="vp-view" @click="bindLinkClk" ref="vpviewRef">
+  <div class="vp-view" ref="vpviewRef" @click="bindLinkClk" @scroll="onScroll">
     <div class="content">
       <slot></slot>
     </div>
     <div class="aside">
       <div class="aside-container">
         <div class="aside-content">
-          <AsideOutline :headers="headers" />
+          <AsideOutline :headers="headers" :top="asideTop" />
         </div>
       </div>
     </div>

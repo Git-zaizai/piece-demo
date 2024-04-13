@@ -16,9 +16,8 @@ body {
 }
 
 a {
-  color: #000000;
-  background: transparent;
-  text-decoration: none;
+  color: inherit;
+  text-decoration: inherit;
   outline: none;
   transition: color 0.2s ease;
 }

@@ -10,10 +10,20 @@ defineProps<{
   root?: boolean
 }>()
 
+let vpviewDom = null
+
 function onClick({ target: el }: Event) {
+  if (!vpviewDom) {
+    vpviewDom = document.querySelector('.vp-view')
+  }
   const id = (el as HTMLAnchorElement).href!.split('#')[1]
   const heading = document.getElementById(decodeURIComponent(id))
   heading?.focus({ preventScroll: true })
+  function scrollToTarget() {
+    const top = heading.offsetTop + 30
+    vpviewDom.scrollTo({ top, behavior: 'smooth' })
+  }
+  // requestAnimationFrame(scrollToTarget)
 }
 </script>
 
@@ -53,7 +63,7 @@ function onClick({ target: el }: Event) {
 
 .outline-link:hover,
 .outline-link.active {
-  color: var(--vp-c-text-1);
+  color: var(--n-success-color);
   transition: color 0.25s;
 }
 
