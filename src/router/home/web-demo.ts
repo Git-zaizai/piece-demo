@@ -95,6 +95,17 @@ const WebDemo: AppRouteRecordRaw = {
           contentText: '在vite中解析md文件转换vue组件'
         }
       }
+    },
+    {
+      path: 'tables',
+      name: 'tables',
+      component: () => import('@/view/demo/web/tables/index.vue'),
+      meta: {
+        title: '好看的tables',
+        navigation: {
+          contentText: '好看的tables'
+        }
+      }
     }
   ]
 }

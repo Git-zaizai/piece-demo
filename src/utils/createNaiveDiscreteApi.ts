@@ -14,8 +14,10 @@ export function createNaiveDiscreteApi() {
       configProviderProps: configProviderPropsRef
     }
   )
-  window.$message = message
-  window.$notification = notification
-  window.$dialog = dialog
-  window.$loadingBar = loadingBar
+  if (typeof window !== 'undefined') {
+    window.$message = message
+    window.$notification = notification
+    window.$dialog = dialog
+    window.$loadingBar = loadingBar
+  }
 }
