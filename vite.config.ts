@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
 
-import VueSetupExtend from 'vite-plugin-vue-setup-extend'
+// import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 // @ts-ignore
 import AutoImport from 'unplugin-auto-import/vite'
 // @ts-ignore
@@ -33,7 +33,6 @@ export default defineConfig(async configEnv => {
         include: [/\.vue$/, /\.md$/]
       }),
       vueJsxPlugin(),
-      VueSetupExtend(),
       AutoImport({
         dts: 'types/auto-imports.d.ts',
         imports: [
@@ -54,7 +53,7 @@ export default defineConfig(async configEnv => {
       }),
       Components({
         dts: 'types/components.d.ts',
-        resolvers: [NaiveUiResolver()]
+        resolvers: [NaiveUiResolver()],
       })
     ],
     base: viteEnv.VITE_BASE_URL,
@@ -88,16 +87,16 @@ export default defineConfig(async configEnv => {
         }
       }
       /* rollupOptions: {
-				output: {
-					manualChunks: {
-						jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
-						cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
-						htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
-						tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
-						editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
-					},
-				},
-			}, */
+        output: {
+          manualChunks: {
+            jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
+            cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
+            htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
+            tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
+            editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
+          },
+        },
+      }, */
     }
   }
 })
