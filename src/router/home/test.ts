@@ -13,7 +13,7 @@ const testViewComponents = import.meta.glob('@/view/Test/**/*.vue', { eager: tru
 
 Object.keys(testViewComponents).map(key => {
   const phs = key.split('/')
-  if (phs.length === 6 && phs.at(-1) === 'index.vue') {
+  if (phs.at(-1) === 'index.vue') {
     router.children.push({
       name: phs.at(-2),
       path: phs.at(-2),
@@ -24,5 +24,7 @@ Object.keys(testViewComponents).map(key => {
     })
   }
 })
+console.log("🚀 ~ testViewComponents:", testViewComponents)
+
 
 export default router

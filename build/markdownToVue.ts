@@ -1,0 +1,71 @@
+import { createMarkdownRenderer } from './markdown/markdown'
+import { readFile, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { defaultCodeVue } from './getCodeComponnent'
+import {
+  type MarkdownEnv,
+} from './markdown/shared/shared'
+
+
+/***
+ * 
+ * E:\gitclone\xxxxxxxxxxxx\piece-demo\node_modules\@mdit-vue\plugin-component\dist\index.mjs
+ * 
+ * 输出内容
+ * @mdit-vue/plugin-component
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)     
+</script>
+ * 
+ */
+export default async function contentLoader() {
+  const md = await createMarkdownRenderer('/', {
+    theme: 'one-dark-pro'
+  })
+
+  const demoTemplate = await defaultCodeVue()
+
+  return {
+    name: 'vite-shiki-md-vue',
+    enforce: 'pre',
+    async transform(fileStr: string, id: string) {
+      if (id.endsWith('.md')) {
+        const end: MarkdownEnv = {
+          path: id,
+          relativePath: '',
+          cleanUrls: false,
+          includes: [],
+          realPath: ''
+        }
+        let code = md.render(fileStr, end)
+        code = demoTemplate(code)
+        code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        await writeFile(path.join(path.resolve(), './build/components/code.vue'), code)
+        return {
+          code,
+          map: { mappings: '' }
+        }
+      }
+    },
+    async handleHotUpdate(ctx) {
+      const { file } = ctx
+      if (file.endsWith('.md')) {
+        let fileConent = await readFile(file)
+        const end: MarkdownEnv = {
+          path: file,
+          relativePath: '',
+          cleanUrls: false,
+          includes: [],
+          realPath: ''
+        }
+        let code = md.render(fileConent, end)
+        code = demoTemplate(code)
+        code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        /* 在vite4.3.0 直接这样就可以了 */
+        ctx.read = () => code
+      }
+    }
+  }
+}

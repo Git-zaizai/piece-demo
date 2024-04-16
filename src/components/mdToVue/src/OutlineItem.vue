@@ -19,11 +19,6 @@ function onClick({ target: el }: Event) {
   const id = (el as HTMLAnchorElement).href!.split('#')[1]
   const heading = document.getElementById(decodeURIComponent(id))
   heading?.focus({ preventScroll: true })
-  function scrollToTarget() {
-    const top = heading.offsetTop + 30
-    vpviewDom.scrollTo({ top, behavior: 'smooth' })
-  }
-  // requestAnimationFrame(scrollToTarget)
 }
 </script>
 

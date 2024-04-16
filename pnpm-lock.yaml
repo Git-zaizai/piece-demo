@@ -70,6 +70,9 @@ dependencies:
     version: 4.1.6(vue@3.3.13)
 
 devDependencies:
+  '@antfu/utils':
+    specifier: ^0.7.7
+    version: 0.7.7
   '@mdit-vue/plugin-component':
     specifier: ^2.1.0
     version: 2.1.0
@@ -168,8 +171,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.18
     dev: true
 
-  /@antfu/utils@0.7.2:
-    resolution: {integrity: sha512-vy9fM3pIxZmX07dL+VX1aZe7ynZ+YyB0jY+jE6r3hOK6GNY2t6W8rzpFC4tgpbXUYABkFQwgJq2XYXlxbXAI0g==}
+  /@antfu/utils@0.7.7:
+    resolution: {integrity: sha512-gFPqTG7otEJ8uP6wrhDv6mqwGWYZKNvAcCq6u9hOj0c+IKCEsY4L1oC9trPq2SaWIzAfHvqfBDxF591JkMf+kg==}
     dev: true
 
   /@babel/code-frame@7.21.4:
@@ -2663,7 +2666,7 @@ packages:
       '@vueuse/core':
         optional: true
     dependencies:
-      '@antfu/utils': 0.7.2
+      '@antfu/utils': 0.7.7
       '@rollup/pluginutils': 5.0.2
       '@vueuse/core': 10.1.0(vue@3.3.13)
       local-pkg: 0.4.3
@@ -2688,7 +2691,7 @@ packages:
       '@nuxt/kit':
         optional: true
     dependencies:
-      '@antfu/utils': 0.7.2
+      '@antfu/utils': 0.7.7
       '@rollup/pluginutils': 5.0.2
       chokidar: 3.5.3
       debug: 4.3.4

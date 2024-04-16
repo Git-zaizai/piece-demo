@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv, UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsxPlugin from '@vitejs/plugin-vue-jsx'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
 
 // import VueSetupExtend from 'vite-plugin-vue-setup-extend'
@@ -12,7 +12,7 @@ import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 import shikiMdVue from './build/vite-shiki-md-vue'
-import vitepressMdplugin from './build/contentLoader'
+import vitepressMdplugin from './build/markdownToVue'
 
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
 export default defineConfig(async configEnv => {
@@ -32,7 +32,7 @@ export default defineConfig(async configEnv => {
       vue({
         include: [/\.vue$/, /\.md$/]
       }),
-      vueJsxPlugin(),
+      vueJsx(),
       AutoImport({
         dts: 'types/auto-imports.d.ts',
         imports: [

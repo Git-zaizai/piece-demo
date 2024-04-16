@@ -2,7 +2,9 @@
 import AsideOutline from './AsideOutline.vue'
 import type { MenuItem, Outline } from './outline'
 
-import { useDebounceFn } from '@vueuse/core'
+defineOptions({
+  name: 'MdToVue'
+})
 
 const headers = shallowRef<MenuItem[]>([])
 const resolvedHeaders: { element: HTMLHeadElement; link: string; title: string }[] = []
@@ -96,14 +98,8 @@ function vpViewOnScroll() {
   } else {
     scrolltop = vpviewRef.value.scrollTop + 30
   }
-  console.log('heas ', resolvedHeaders.map(el => el.element.offsetTop));
-
-  console.log('scrolltop', scrolltop);
-
-
 
   function updateDemo() {
-
     if (OutlineItems.length === 0) {
       OutlineItems = [...document.querySelectorAll('.VPDocOutlineItem li a')] as HTMLLinkElement[]
     }
@@ -131,14 +127,12 @@ function vpViewOnScroll() {
     asideTop.value = OutlineItems[offsetTopindex].offsetTop + 39
   }
   requestAnimationFrame(updateDemo)
-
 }
 
-const onScroll = useDebounceFn(vpViewOnScroll, 100)
 </script>
 
 <template>
-  <div class="vp-view" ref="vpviewRef" @click="bindLinkClk" @scroll="onScroll">
+  <div class="vp-view" ref="vpviewRef" @click="bindLinkClk" @scroll="vpViewOnScroll">
     <div class="content">
       <slot></slot>
     </div>
@@ -159,8 +153,8 @@ const onScroll = useDebounceFn(vpViewOnScroll, 100)
   justify-content: center;
   margin: 0 auto;
   width: 100%;
-  overflow-y: scroll;
-  height: calc(100vh - 75px);
+  overflow-y: auto;
+  max-height: calc(100vh - 65px);
 }
 
 @media (min-width: 960px) {

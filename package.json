@@ -33,6 +33,7 @@
     "vue-router": "4"
   },
   "devDependencies": {
+    "@antfu/utils": "^0.7.7",
     "@mdit-vue/plugin-component": "^2.1.0",
     "@mdit-vue/plugin-frontmatter": "^2.1.0",
     "@mdit-vue/plugin-headers": "^2.1.0",
