@@ -106,6 +106,17 @@ const WebDemo: AppRouteRecordRaw = {
           contentText: '好看的tables'
         }
       }
+    },
+    {
+      path: 'grid',
+      name: 'grid',
+      component: () => import('@/view/demo/web/grid/index.vue'),
+      meta: {
+        title: 'grid 布局',
+        navigation: {
+          contentText: 'grid 布局 demo'
+        }
+      }
     }
   ]
 }

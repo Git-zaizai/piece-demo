@@ -18,6 +18,11 @@ export function preWrapperPlugin(md: MarkdownIt, options: Options) {
 
     const lang = extractLang(token.info)
     const rawCode = fence(...args)
+
+    /* console.log('preWrapperPlugin 插件');
+    console.log(rawCode); */
+    
+
     return `<div class="language-${lang}${getAdaptiveThemeMarker(
       options
     )}${active}"><button title="Copy Code" class="copy"></button><span class="lang">${lang}</span>${rawCode}</div>`

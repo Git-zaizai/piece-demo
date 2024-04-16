@@ -97,6 +97,10 @@ export async function highlight(
   const mustacheRE = /\{\{.*?\}\}/g
 
   return (str: string, lang: string, attrs: string) => {
+    /* console.log('highlight 插件 str');
+    console.log(str); */
+    
+
     const vPre = vueRE.test(lang) ? '' : 'v-pre'
     lang =
       lang
@@ -110,8 +114,7 @@ export async function highlight(
       if (!langLoaded && !isSpecialLang(lang)) {
         logger.warn(
           c.yellow(
-            `\nThe language '${lang}' is not loaded, falling back to '${
-              defaultLang || 'txt'
+            `\nThe language '${lang}' is not loaded, falling back to '${defaultLang || 'txt'
             }' for syntax highlighting.`
           )
         )

@@ -22,15 +22,15 @@ import { preWrapperPlugin } from './plugins/preWrapper'
 import { snippetPlugin } from './plugins/snippet'
 import { gitHubAlertsPlugin } from './plugins/githubAlerts'
 
-export type { Header } from '../shared'
+// export type { Header } from '../shared'
 
 export type ThemeOptions =
   | ThemeRegistrationAny
   | BuiltinTheme
   | {
-      light: ThemeRegistrationAny | BuiltinTheme
-      dark: ThemeRegistrationAny | BuiltinTheme
-    }
+    light: ThemeRegistrationAny | BuiltinTheme
+    dark: ThemeRegistrationAny | BuiltinTheme
+  }
 
 export interface MarkdownOptions extends MarkdownIt.Options {
   /* ==================== General Options ==================== */
@@ -184,6 +184,7 @@ export const createMarkdownRenderer = async (
   const md = MarkdownIt({
     html: true,
     linkify: true,
+    // @ts-ignore
     highlight: options.highlight || (await highlight(theme, options, logger)),
     ...options
   })
