@@ -32,7 +32,6 @@ export default async function contentLoader() {
     enforce: 'pre',
     async transform(fileStr: string, id: string) {
       if (id.endsWith('.md')) {
-
         const end: MarkdownEnv = {
           path: id,
           relativePath: '',
@@ -42,16 +41,13 @@ export default async function contentLoader() {
         }
         let code = md.render(fileStr, end)
         code = demoTemplate(code)
-        if (end.sfcBlocks && end.sfcBlocks.scriptSetup && end.sfcBlocks.scriptSetup.content) {
-          code = code + '\n' + end.sfcBlocks.scriptSetup.content
-        }
-
+        code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        await writeFile(path.join(path.resolve(), './build/components/code.vue'), code)
         return {
           code,
           map: { mappings: '' }
         }
       }
-
     },
     async handleHotUpdate(ctx) {
       const { file } = ctx
@@ -66,10 +62,7 @@ export default async function contentLoader() {
         }
         let code = md.render(fileConent, end)
         code = demoTemplate(code)
-        if (end.sfcBlocks && end.sfcBlocks.scriptSetup && end.sfcBlocks.scriptSetup.content) {
-          code = code + '\n' + end.sfcBlocks.scriptSetup.content
-        }
-
+        code = code + '\n' + end.sfcBlocks.scriptSetup.content
         /* 在vite4.3.0 直接这样就可以了 */
         ctx.read = () => code
       }
