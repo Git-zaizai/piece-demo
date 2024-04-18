@@ -41,8 +41,10 @@ export default async function contentLoader() {
         }
         let code = md.render(fileStr, end)
         code = demoTemplate(code)
-        code = code + '\n' + end.sfcBlocks.scriptSetup.content
-        await writeFile(path.join(path.resolve(), './build/components/code.vue'), code)
+        if (end.sfcBlocks && end.sfcBlocks.scriptSetup && end.sfcBlocks.scriptSetup.content) {
+          code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        }
+
         return {
           code,
           map: { mappings: '' }
@@ -62,7 +64,10 @@ export default async function contentLoader() {
         }
         let code = md.render(fileConent, end)
         code = demoTemplate(code)
-        code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        if (end.sfcBlocks && end.sfcBlocks.scriptSetup && end.sfcBlocks.scriptSetup.content) {
+          code = code + '\n' + end.sfcBlocks.scriptSetup.content
+        }
+
         /* 在vite4.3.0 直接这样就可以了 */
         ctx.read = () => code
       }
