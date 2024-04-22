@@ -117,6 +117,17 @@ const WebDemo: AppRouteRecordRaw = {
           contentText: 'grid 布局 demo'
         }
       }
+    },
+    {
+      path: 'NumberAnimation',
+      name: 'NumberAnimation',
+      component: () => import('@/view/demo/web/digitalgrowth.vue'),
+      meta: {
+        title: '数字动画',
+        navigation: {
+          contentText: '数字动画实现'
+        }
+      }
     }
   ]
 }
