@@ -12,6 +12,7 @@ function getRandomColor() {
 
   return hexColor
 }
+
 const els = ref(
   new Array(9).fill(1).map((_, index) => {
     return {
@@ -23,8 +24,7 @@ const els = ref(
   })
 )
 
-let items = []
-
+let elements = []
 let isMousemove = true
 let start = null
 let startitem = null
@@ -32,17 +32,18 @@ let startitem = null
 onMounted(() => {
   document.querySelectorAll('.item').forEach((item, i) => {
     const itemClient = item.getBoundingClientRect()
-    items.push(itemClient)
+    elements.push(itemClient)
   })
-  console.log('🚀 ~ items:', items)
 })
 
 function mousedown(item, index: number, event: MouseEvent) {
   const { pageX, pageY } = event
   start = { pageX, pageY, index }
-  console.log('🚀 ~ mousedown ~ start:', start)
   isMousemove = false
-  startitem = item
+  startitem = {
+    x: item.x,
+    y: item.y
+  }
   document.addEventListener('mousemove', mousemove)
   document.addEventListener('mouseup', mouseup)
 }
@@ -50,26 +51,22 @@ let time
 function mousemove(event: MouseEvent) {
   event.preventDefault()
   if (isMousemove) return
-  const is = items[start.index]
-
   els.value[start.index].x = startitem.x + (event.pageX - start.pageX)
   els.value[start.index].y = startitem.y + (event.pageY - start.pageY)
 
-  if (time) {
-    clearTimeout(time)
+  for (let i = 0; i < els.value.length; i++) {
+    const item = els.value[i]
+    const element = elements[i]
   }
-  time = setTimeout(() => {
-    console.log('🚀 ~ mousemove ~ event:', event)
-    console.log('🚀 ~ mousemove ~  els.value[start.index]:', start, els.value[start.index])
-    console.log('🚀 ~ mousemove ~ event.pageX - start.pageX:', event.pageX - start.pageX)
-  }, 100)
 }
+
 function mouseup(event) {
-  console.log('🚀 ~ mouseup ~ mouseup:')
   setTimeout(() => {
     start = null
     startitem = null
     isMousemove = true
+    document.removeEventListener('mousemove', mousemove)
+    document.removeEventListener('mouseup', mouseup)
   }, 150)
 }
 
