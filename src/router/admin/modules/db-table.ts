@@ -20,7 +20,8 @@ const dbTable: AppRouteRecordRaw = {
       component: () => import('@/view/admin/table/link.vue'),
       meta: {
         title: 'link',
-        icon: renderIcon(BookStar20Regular)
+        icon: renderIcon(BookStar20Regular),
+        keepAlive: 'link',
       }
     },
     {
@@ -29,7 +30,8 @@ const dbTable: AppRouteRecordRaw = {
       component: () => import('@/view/admin/table/files.vue'),
       meta: {
         title: '文件监控',
-        icon: renderIcon(BookStar20Regular)
+        icon: renderIcon(BookStar20Regular),
+        keepAlive: 'files',
       }
     }
   ]

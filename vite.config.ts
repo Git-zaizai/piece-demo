@@ -60,7 +60,17 @@ export default defineConfig(async configEnv => {
     server: {
       host: '0.0.0.0',
       port: 1110,
-      open: Boolean(viteEnv.VITE_OPEN)
+      open: Boolean(viteEnv.VITE_OPEN),
+      /* proxy: {
+        '/verifyUser': {
+          target: 'http://127.0.0.1:4399',
+          changeOrigin: true,
+          rewrite: (path) => {
+            console.log("🚀 ~ path:", path)
+            return path.replace(/^\/verifyUser/, '/verifyUser')
+          }
+        }
+      } */
     },
     resolve: {
       alias: {

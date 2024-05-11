@@ -34,7 +34,6 @@ import { admin, adminRouters } from '@/router/admin'
 import { RouterLink } from 'vue-router'
 import MainView from './components/Mian.vue'
 
-const router = useRouter()
 const route = useRoute()
 
 const collapsed = ref(false)

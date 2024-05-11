@@ -53,16 +53,10 @@
         </template>
       </n-card>
     </div>
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
-    <img class="hecha suspension" src="../../assets/coffee.svg" />
   </div>
 </template>
 
-<script setup lang="ts" name="Admin-Hemo">
+<script setup lang="ts">
 import { DatabasePerson24Regular } from '@vicons/fluent'
 import { ZoomCheck } from '@vicons/tabler'
 import { getMongoDb, getMySql } from '@/api'

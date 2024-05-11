@@ -8,6 +8,10 @@ import ModalForm from '@/components/modal-form.vue'
 import { InputFile } from '@/components/inputFile'
 import dayjs from 'dayjs'
 
+defineOptions({
+  name: 'db-config'
+})
+
 const columns: ZaiColumns = [
   {
     title: '库名',
@@ -27,9 +31,9 @@ const columns: ZaiColumns = [
 ]
 
 const actionsColumns: DataTableBaseColumn = {
-  title: "操作",
-  key: "actions_0",
-  fixed: "right",
+  title: '操作',
+  key: 'actions_0',
+  fixed: 'right',
   width: 200,
   render(row) {
     return h(IndexActionsColumns, {
@@ -39,7 +43,7 @@ const actionsColumns: DataTableBaseColumn = {
   }
 }
 
-async function bindDbExport(row: { db: any; dbname: string; }) {
+async function bindDbExport(row: { db: any; dbname: string }) {
   try {
     const res = await getDbLists({
       db: row.db,
@@ -75,7 +79,6 @@ async function bindDbExport(row: { db: any; dbname: string; }) {
   }
 }
 
-
 interface State {
   data: Array<{
     dbname: string
@@ -107,7 +110,7 @@ const init = async () => {
   try {
     const response = await Promise.allSettled([getMySql(), getMongoDb()])
     const result = []
-    if (response[0].status === "fulfilled") {
+    if (response[0].status === 'fulfilled') {
       const arr = response[0].value.data.data
       arr.forEach((myv: { Tables_in_gadgets: string }) => {
         result.push({
@@ -117,11 +120,11 @@ const init = async () => {
         })
       })
     }
-    if (response[1].status === "fulfilled") {
+    if (response[1].status === 'fulfilled') {
       const arr = response[1].value.data.data
       arr.forEach((mgv: string) => {
         result.push({
-          dbname: mgv.split(".").pop(),
+          dbname: mgv.split('.').pop(),
           db: 'MongoDB',
           beizhu: ''
         })
@@ -204,13 +207,18 @@ const confirm = async () => {
     netPrompt('error', `${state.row.dbname} 导入失败`)
   }
 }
-
 </script>
 
 <template>
   <div>
-    <zai-table :data="state.data" :columns="columns" checkbox-key="dbname" :actions-columns="actionsColumns"
-      @flushed="init" :checkbox="false" />
+    <zai-table
+      :data="state.data"
+      :columns="columns"
+      checkbox-key="dbname"
+      :actions-columns="actionsColumns"
+      @flushed="init"
+      :checkbox="false"
+    />
     <modal-form v-model:show="state.formShow" title="导入" @confirm-form="confirm">
       <input-file title="JSON文件" @file-change="bindFileChange" />
       <n-card class="mt-10" v-show="state.files.length"> 文件: {{ state.fileName }}</n-card>
@@ -218,9 +226,11 @@ const confirm = async () => {
         <n-input v-model:value="state.delKey" clearable></n-input>
       </n-form-item>
       <h4>详细说明：</h4>
-      <h4>mysql有个神奇的语法：insert into ... on duplicate key update，该语法在insert的时候，
+      <h4>
+        mysql有个神奇的语法：insert into ... on duplicate key update，该语法在insert的时候，
         如果insert的数据会引起唯一索引（包括主键索引）的冲突，即这个唯一值重复了，则不会执行insert操作，
-        而执行后面的update操作</h4>
+        而执行后面的update操作
+      </h4>
       <h4>所有默认 key:id，你不输入将不会进行update操作会直接往后添加</h4>
     </modal-form>
     <modal-form v-model:show="mongoState.formShow" title="导入" @confirm-form="confirm">

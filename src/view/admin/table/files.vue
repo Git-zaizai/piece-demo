@@ -2,6 +2,10 @@
 import { ZaiTable } from '@/components/table'
 import { http } from '@/api'
 
+defineOptions({
+  name: 'files'
+})
+
 const { VITE_GLOB_IMG_URL, VITE_GLOB_API_URL_PREFIX } = import.meta.env
 const columns: ZaiColumns = [
   {

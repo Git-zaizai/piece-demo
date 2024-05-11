@@ -113,7 +113,6 @@ export const useViewStore = defineStore('viewStore', {
     },
     /** 是否自定义info的颜色 */
     setIsCustomizeInfoColor(value: boolean) {
-      console.log(value)
       this.isCustomizeInfoColor = value
     }
   },

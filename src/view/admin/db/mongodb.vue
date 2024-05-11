@@ -1,4 +1,4 @@
-<script setup lang="ts" name="db">
+<script setup lang="ts">
 import { ZaiTable } from '@/components/table'
 import { getMongoDb, createTable, delTable } from '@/api'
 import type { DataTableBaseColumn } from 'naive-ui'
@@ -6,6 +6,10 @@ import { NButton } from 'naive-ui'
 import ModalForm from '@/components/modal-form.vue'
 import { useToggle } from '@vueuse/core'
 import dayjs from 'dayjs'
+
+defineOptions({
+  name: 'db-mongodb'
+})
 
 const columns: ZaiColumns = [
   {
@@ -26,9 +30,9 @@ const columns: ZaiColumns = [
 ]
 
 const actionsColumns: DataTableBaseColumn = {
-  title: "操作",
-  key: "actions_0",
-  fixed: "right",
+  title: '操作',
+  key: 'actions_0',
+  fixed: 'right',
   width: 100,
   render(row) {
     return h(
@@ -70,7 +74,6 @@ const netPrompt = (type: string, cont: string) => {
   return net
 }
 
-
 interface State {
   data: Array<{
     dbname: string
@@ -80,9 +83,8 @@ interface State {
 }
 
 const state: State = reactive({
-  data: [],
+  data: []
 })
-
 
 const init = async () => {
   try {
@@ -91,7 +93,7 @@ const init = async () => {
     const arr = response.data.data
     arr.forEach((mgv: string) => {
       result.push({
-        dbname: mgv.split(".").pop(),
+        dbname: mgv.split('.').pop(),
         db: 'MongoDB',
         beizhu: ''
       })
@@ -103,11 +105,10 @@ const init = async () => {
 }
 init()
 
-
 const [addFormShow, toggle] = useToggle()
 
 interface Mongo {
-  status: "error" | "success" | "warning"
+  status: 'error' | 'success' | 'warning'
   value: string
   feedback: string
 }
@@ -118,7 +119,6 @@ const mongo: Mongo = reactive({
   feedback: ''
 })
 const createTableConfirm = async () => {
-
   if (!mongo.value) {
     mongo.status = 'error'
     mongo.feedback = '不能为空'
@@ -173,8 +173,15 @@ async function delTableConfirm() {
 
 <template>
   <div>
-    <zai-table :data="state.data" :columns="columns" checkbox-key="dbname" :actions-columns="actionsColumns"
-      @flushed="init" :checkbox="false" @add="toggle" />
+    <zai-table
+      :data="state.data"
+      :columns="columns"
+      checkbox-key="dbname"
+      :actions-columns="actionsColumns"
+      @flushed="init"
+      :checkbox="false"
+      @add="toggle"
+    />
     <modal-form v-model:show="addFormShow" title="新建表" @confirm-form="createTableConfirm">
       <n-card>
         <n-tabs default-value="oasis" justify-content="space-between" type="line" animated>

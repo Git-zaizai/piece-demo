@@ -20,6 +20,7 @@ const db: AppRouteRecordRaw = {
       meta: {
         title: '数据库表导出导入',
         icon: renderIcon(DatabaseExport),
+        keepAlive: 'db-config',
       },
     },
     {

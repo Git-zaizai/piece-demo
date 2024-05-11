@@ -20,7 +20,7 @@ export interface Row {
   addDate: string
   update: string
   finishtime: string
-  rate: any[]
+  rate: string
   id: number
 }
 
@@ -55,6 +55,10 @@ import dayjs from 'dayjs'
 import { useToggle } from '@vueuse/core'
 import { CloseCircleTwotone } from '@vicons/antd'
 import { Add } from '@vicons/ionicons5'
+
+defineOptions({
+  name: 'link'
+})
 
 const actionsColumns: DataTableColumn = {
   title: '操作',
@@ -296,7 +300,7 @@ const formData = ref<Row>({
   addDate: null,
   update: null,
   finishtime: null,
-  rate: [],
+  rate: '',
   id: 0
 })
 const state = ref<Row[]>([])
@@ -360,9 +364,9 @@ const formSubmit = () => {
           body.addDate = dayjs().format()
           body.update = dayjs().format()
           body.finishtime = dayjs().format()
-          if (!Array.isArray(body.rate)) {
-            body.rate = body.rate.split('') as any[]
-          }
+          // if (!Array.isArray(body.rate)) {
+          //   body.rate = (body.rate as string).split('')
+          // }
         }
         const response = await http.post(`/mong/novel/${isAction}`, body)
         if (isAction === 'add') {
