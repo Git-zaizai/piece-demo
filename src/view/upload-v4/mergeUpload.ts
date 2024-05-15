@@ -30,7 +30,7 @@ function computeShardHash(merges: Blob[]): Promise<Shards[]> {
         // const result = new Array(merges.length).fill(null)
         const result = []
         let mi = 0
-        const cpus = getCPUS()
+        const cpus = Math.min(getCPUS(), merges.length)
         for (let i = 0; i < cpus; i++) {
             const worker = new Worker(new URL('./worker-md5.js', import.meta.url).href)
             worker.postMessage({
@@ -49,11 +49,7 @@ function computeShardHash(merges: Blob[]): Promise<Shards[]> {
                     ++mi
                 } else {
                     worker.terminate()
-                    /*  if (result.every(v => v !== null)) {
-                         resolve(result)
-                     } */
                     if (result.length === merges.length) {
-
                         resolve(result.sort((a, b) => a.index - b.index))
                     }
                 }
@@ -83,7 +79,7 @@ export function shardsUpload(nameHash: string, file: File, callback: (percentage
                 formdata.append('file', mergeHashs[at].shard)
                 formdata.append('hash', mergeHashs[at].hash)
                 formdata.append('index', mergeHashs[at].index.toString())
-                
+
                 await http.post('/shards-upload', formdata)
                 success.push(mergeHashs[at])
 

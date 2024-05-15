@@ -97,6 +97,17 @@ const WebDemo: AppRouteRecordRaw = {
       }
     },
     {
+      path: 'vitepress-code',
+      name: 'vitepress-code',
+      component: () => import('@/view/demo/web/vitepress-code.md'),
+      meta: {
+        title: 'vitepress-code',
+        navigation: {
+          contentText: '使用vitepress的转换器'
+        }
+      }
+    },
+    {
       path: 'tables',
       name: 'tables',
       component: () => import('@/view/demo/web/tables/index.vue'),

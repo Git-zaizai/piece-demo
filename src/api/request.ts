@@ -1,15 +1,15 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import config from './config';
 import router from '../router';
-import type { CreateAxiosOptions } from './types'
 import Storage from "@/utils/Storage";
 
+export interface CreateAxiosOptions extends AxiosRequestConfig {
+	headers: {
+		token: string
+	}
+}
+
 const request = axios.create(config);
-
-const request2 = axios.create({
-	baseURL: 'https://www.xxxx.com'
-});
-
 
 request.interceptors.request.use(
 	(config: CreateAxiosOptions) => {

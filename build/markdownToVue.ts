@@ -8,6 +8,27 @@ import {
 
 
 /***
+
+ 需要的依赖
+ @mdit-vue/plugin-component
+ @mdit-vue/plugin-frontmatter
+ @mdit-vue/plugin-headers
+ @mdit-vue/plugin-sfc
+ @mdit-vue/plugin-title
+ @mdit-vue/plugin-toc
+ @mdit-vue/shared
+ markdown-it
+ markdown-it-anchor
+ markdown-it-attrs
+ markdown-it-emoji
+ shiki
+ markdown-it-container
+ nanoid
+ picocolors
+
+ **/
+
+/***
  * 
  * E:\gitclone\xxxxxxxxxxxx\piece-demo\node_modules\@mdit-vue\plugin-component\dist\index.mjs
  * 
