@@ -5,7 +5,7 @@ import { CallbackConfig, LocalUploadListItem, GetLocalUploadList } from './types
 
 export const isImage = (name: string): boolean => {
     const fileType = name.split('.').pop()
-    return [ 'png', 'jpg', 'jpeg', 'svg', 'gif', 'JPG', 'PNG', 'JPEG', 'SVG' ].includes(fileType)
+    return ['png', 'jpg', 'jpeg', 'svg', 'gif', 'JPG', 'PNG', 'JPEG', 'SVG'].includes(fileType)
 }
 
 /**

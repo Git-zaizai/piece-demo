@@ -69,7 +69,8 @@ import { mergeUpload, getFormData, processingPath } from './utils'
 import { http } from '@/api'
 import apiConfig from '@/api/config'
 
-/**  */
+/**  v3  */
+
 const [showPopover, showPopoverToggle] = useToggle(false)
 const popoverXY = ref({
   x: 0,
@@ -113,6 +114,7 @@ function fileChange(files: DropResult) {
 const [upDisabled, upDisabledToggle] = useToggle()
 
 async function uploadClick() {
+  return window.$message.warning('请使用最新版')
   upDisabledToggle()
   let citiesPath = cities.value.includes(1)
   const files = state.files.filter(item => item.percentage === 0 && !item.link)

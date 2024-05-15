@@ -73,3 +73,17 @@ export function rand(m: number, n: number) {
 export function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
+
+export function addScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = src
+    script.onload = () => {
+      resolve()
+    }
+    script.onerror = () => {
+      reject()
+    }
+    document.body.appendChild(script)
+  })
+}

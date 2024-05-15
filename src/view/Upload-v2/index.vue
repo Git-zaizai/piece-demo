@@ -16,8 +16,12 @@
         <upload-historic-record />
       </div>
       <div class="ui-footer-right">
-        <upload-list :is-img-clk="isImgClick" :file-list="state.uploadList" @del-file="delFilecall"
-          @again-upload="againUploadAll" />
+        <upload-list
+          :is-img-clk="isImgClick"
+          :file-list="state.uploadList"
+          @del-file="delFilecall"
+          @again-upload="againUploadAll"
+        />
       </div>
     </n-el>
     <upload-config @update-upload-config="updateUploadConfig" />
@@ -25,28 +29,28 @@
 </template>
 
 <script name="upload-index" lang="ts" setup>
-import {
-  deleteFIleTreeItem,
-  DropResult,
-  fileTree,
-  InputFile
-} from '@/components/inputFile'
+import { deleteFIleTreeItem, DropResult, fileTree, InputFile } from '@/components/inputFile'
 import UploadConfig from './UploadConfig.vue'
 import UploadList from './UploadList.vue'
 import UploadHistoricRecord from './UploadHistoricRecord.vue'
 import { AirplaneTakeOff16Regular } from '@vicons/fluent'
 import { useFileIndexStore } from '@/store/modules/useFileIndexStore'
-import type {
-  FilesItem,
-  fileTreeItem,
-  localUploadConfigItem,
-  LocalUploadListItem,
-  uploadFileListItem
-} from './types'
+import type { FilesItem, fileTreeItem, localUploadConfigItem, LocalUploadListItem, uploadFileListItem } from './types'
 import { initUploadConfig } from './init'
 import { insertLocal, isImage, readyUpload } from './utils'
 import { createDirectory } from '@/api'
 import apiConfig from '@/api/config'
+
+/*****
+ *
+ * 废弃
+ *
+ *
+ */
+
+onMounted(() => {
+  window.$message.warning('请使用最新版')
+})
 
 const fileIndexStore = useFileIndexStore()
 
@@ -77,10 +81,7 @@ let fileTree: fileTreeItem = {}
  * @function fileChange 监听用户加载了文件
  * */
 function fileChange(data: DropResult) {
-  const size = data.filesArray.reduce(
-    (total, currentValue) => total + currentValue.file.size,
-    0
-  )
+  const size = data.filesArray.reduce((total, currentValue) => total + currentValue.file.size, 0)
   if (size > fileIndexStore.fileMaxSize) {
     window.$dialog.warning({
       title: '警告',
@@ -90,7 +91,7 @@ function fileChange(data: DropResult) {
     return
   }
 
-  state.uploadList = data.filesArray.map<uploadFileListItem>((item) => {
+  state.uploadList = data.filesArray.map<uploadFileListItem>(item => {
     let imgUrl = null
     if (!isImgClick.value && isImage(item.file.name)) {
       imgUrl = URL.createObjectURL(item.file)
@@ -106,7 +107,7 @@ function fileChange(data: DropResult) {
       percentage: 0
     }
   })
-  files = data.filesArray.map((mvitem) => {
+  files = data.filesArray.map(mvitem => {
     const valueSplit = mvitem.path.split('/')
     valueSplit.shift()
     mvitem.path = valueSplit.join('/')
@@ -123,11 +124,9 @@ function fileChange(data: DropResult) {
  * @function delFilecall 删除文件
  * */
 function delFilecall(id: number) {
-  const index = state.uploadList.findIndex((fv) => fv.id === id)
+  const index = state.uploadList.findIndex(fv => fv.id === id)
   const name = state.uploadList[index].name
-  const filesIndex = files.findIndex(
-    (filesItem) => filesItem.file.name === name
-  )
+  const filesIndex = files.findIndex(filesItem => filesItem.file.name === name)
   state.uploadList.splice(index, 1)
   files.splice(filesIndex, 1)
   if (uploadConfig.value[1]?.modelv) {
@@ -149,14 +148,11 @@ const deepUpload = async (filelist: FilesItem[], rootDirectory: string) => {
   const request = []
   //循环添加请求函数
   for (let i = 0, len = uploadFileList.length; i < len; i++) {
-    const index = state.uploadList.findIndex(
-      (fiv) => fiv.name === uploadFileList[i].file.name
-    )
+    const index = state.uploadList.findIndex(fiv => fiv.name === uploadFileList[i].file.name)
     //回调函数配置
     const callbackConfig = {
-      onUploadProgress: (progressEvent) => {
-        state.uploadList[index].percentage =
-          ((progressEvent.loaded / progressEvent.total) * 100) | 0
+      onUploadProgress: progressEvent => {
+        state.uploadList[index].percentage = ((progressEvent.loaded / progressEvent.total) * 100) | 0
       },
       resolve(resData) {
         const { code, url, msg } = resData.data
@@ -183,12 +179,7 @@ const deepUpload = async (filelist: FilesItem[], rootDirectory: string) => {
 
     const formdata = new FormData()
     formdata.append('file', uploadFileList[i].file)
-    formdata.append(
-      'path',
-      uploadConfig.value[1]?.modelv
-        ? `${rootDirectory}/${uploadFileList[i].path}`
-        : '0'
-    )
+    formdata.append('path', uploadConfig.value[1]?.modelv ? `${rootDirectory}/${uploadFileList[i].path}` : '0')
     formdata.append('dbInsert', '1')
     request.push(readyUpload(formdata, callbackConfig))
   }
@@ -204,23 +195,25 @@ const deepUpload = async (filelist: FilesItem[], rootDirectory: string) => {
  * @function uploadClick 上传按钮回调
  * */
 async function uploadClick() {
+  
   uploadButtonDisabled.value = true
   if (state.uploadList.length === 0) {
     window.$message.warning('请先选择文件')
     uploadButtonDisabled.value = false
     return
   }
+  return window.$message.warning('请使用最新版')
 
   if (uploadConfig.value[1]?.modelv) {
     //文件路径 只要目录路径 文件本身不要  在筛选路径已经没有了的
     const pathList = files
-      .map((mv) => {
+      .map(mv => {
         let muPatharr = mv.path.split('/')
         muPatharr.pop()
         if (muPatharr.length === 0) return ''
         return muPatharr.join('/')
       })
-      .filter((ftv) => ftv !== '')
+      .filter(ftv => ftv !== '')
     try {
       const rest = await createDirectory({
         rootName: fileTree.name as string,
@@ -240,10 +233,8 @@ async function uploadClick() {
 }
 
 function againUploadAll(id: number) {
-  const item = state.uploadList.find((fv) => fv.id === id)
-  const findItem = files.find(
-    (filesItem) => filesItem.file.name === item.name
-  )
+  const item = state.uploadList.find(fv => fv.id === id)
+  const findItem = files.find(filesItem => filesItem.file.name === item.name)
   deepUpload([findItem], rootDirectoryName)
 }
 </script>

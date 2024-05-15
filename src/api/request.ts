@@ -6,6 +6,11 @@ import Storage from "@/utils/Storage";
 
 const request = axios.create(config);
 
+const request2 = axios.create({
+	baseURL: 'https://www.xxxx.com'
+});
+
+
 request.interceptors.request.use(
 	(config: CreateAxiosOptions) => {
 		const userinfo = Storage.get('info')

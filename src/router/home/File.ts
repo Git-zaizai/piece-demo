@@ -20,13 +20,24 @@ const file: AppRouteRecordRaw = {
             },
         },
         {
-            path: 'upload',
-            name: 'upload',
-            component: () => import('@/view/Upload/index.vue'),
+            path: 'upload-v3',
+            name: 'upload-v3',
+            component: () => import('@/view/upload-v3/index.vue'),
             meta: {
                 title: '文件 upload',
                 navigation: {
                     contentText: '小文件存储 3.0',
+                },
+            },
+        },
+        {
+            path: 'upload-v4',
+            name: 'upload-v4',
+            component: () => import('@/view/upload-v4/index.vue'),
+            meta: {
+                title: '文件 upload',
+                navigation: {
+                    contentText: '小文件存储 4.0',
                 },
             },
         },

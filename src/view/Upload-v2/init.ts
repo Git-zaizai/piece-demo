@@ -7,7 +7,7 @@ import { isImage } from './utils'
 export const initUploadConfig = (): Ref<localUploadConfigItem[]> => {
     const fileIndexStore = useFileIndexStore()
     const data = Storage.get(fileIndexStore.LoaclUploadConfigName)
-    if (data) return ref(data)
+    if (data && data.length > 0) return ref(data)
     return ref([ { id: 0, modelv: false } ])
 }
 
