@@ -21,7 +21,7 @@ export default defineComponent({
 						icon: () => (
 							<NIcon class='scale-X'>
 								{ {
-									default: () => <FileCode/>
+									default: () => <FileCode />
 								} }
 							</NIcon>
 						),
@@ -29,33 +29,32 @@ export default defineComponent({
 					} }
 				</NButton>
 				<NButton
-					type='success'
-					ghost
-					size='small'
-					onClick={ () => props.onExport() }
-				>
-					{ {
-						icon: () => (
-							<NIcon class='scale-X'>
-								{ {
-									default: () => <FileImport/>
-								} }
-							</NIcon>
-						),
-						default: () => '导出'
-					} }
-				</NButton>
-				<NButton
-					type='warning'
-					ghost
-					size='small'
-					onClick={ () => props.onImport() }
-				>
-					{ {
-						icon: () => <NIcon component={ FileImport }/>,
-						default: () => '导入'
-					} }
-				</NButton>
+				type='success'
+				ghost
+				size='small'
+				onClick={ () => props.onExport() }
+			>
+				{ {
+					icon: () => (
+						<NIcon class='scale-X'>
+							{ {
+								default: () => <FileImport />
+							} }
+						</NIcon>
+					),
+					default: () => '导出'
+				} }
+			</NButton> <NButton
+				type='warning'
+				ghost
+				size='small'
+				onClick={ () => props.onImport() }
+			>
+				{ {
+					icon: () => <NIcon component={ FileImport } />,
+					default: () => '导入'
+				} }
+			</NButton>
 			</div>
 		)
 	}

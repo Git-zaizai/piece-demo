@@ -31,6 +31,13 @@ const viewBack = computed(() => {
 /** 弹窗el */
 const editorViewRef = ref()
 
+watch(() => props.value, val => {
+	if (props.show && monacoEditor !== null) {
+		let value = Array.isArray(val) ? val.join('') : val
+		monacoEditor.editor.getModels().at(0).setValue(value)
+	}
+})
+
 const [spinShow, spinShowToggle] = useToggle(true)
 const modalShow = computed({
 	get: () => {

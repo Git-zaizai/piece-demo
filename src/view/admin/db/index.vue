@@ -1,12 +1,14 @@
 <script setup lang="ts" name="db">
 import { ZaiTable } from '@/components/table'
-import { getMongoDb, getMySql, getDbLists, setDbFile, upload, createTable } from '@/api'
+import { getMongoDb, getMySql, getDbLists, setDbFile, upload, createTable, http } from '@/api'
 import IndexActionsColumns from '../components/index-actionsColumns'
 import type { DataTableBaseColumn } from 'naive-ui'
 import { NButton } from 'naive-ui'
 import ModalForm from '@/components/modal-form.vue'
 import { InputFile } from '@/components/inputFile'
 import dayjs from 'dayjs'
+import monacoEditorModal from '@/components/monaco-editor-modal.vue'
+import { useToggle } from '@vueuse/core'
 
 defineOptions({
   name: 'db-config'
@@ -34,11 +36,12 @@ const actionsColumns: DataTableBaseColumn = {
   title: '操作',
   key: 'actions_0',
   fixed: 'right',
-  width: 200,
+  width: 280,
   render(row) {
     return h(IndexActionsColumns, {
       upFn: bindDbExport.bind(null, row),
-      delFn: bindDbImport.bind(null, row)
+      delFn: bindDbImport.bind(null, row),
+	    onEditor: bindChakanbiao.bind(null,row)
     })
   }
 }
@@ -207,6 +210,23 @@ const confirm = async () => {
     netPrompt('error', `${state.row.dbname} 导入失败`)
   }
 }
+
+const [editorShow, editorShowToggle] = useToggle()
+const editorValue = ref('')
+
+async function bindChakanbiao(row:any){
+	editorShowToggle()
+	try {
+		const res = await getDbLists({
+			db: row.db,
+			tableName: row.dbname
+		})
+		editorValue.value = JSON.stringify(res.data.data)
+	} catch (e) {
+		window.$message.error(`获取 ${row.dbname} 数据失败！`)
+	}
+}
+
 </script>
 
 <template>
@@ -242,6 +262,7 @@ const confirm = async () => {
       <h4>详细说明：</h4>
       <h4>使用的是mongdodb的bulkWrite方法，详细可以问chatGPT</h4>
     </modal-form>
+		<monaco-editor-modal v-model:show="editorShow" language="json" :value="editorValue" />
   </div>
 </template>
 

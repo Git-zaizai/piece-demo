@@ -143,7 +143,6 @@ async function uploadClick() {
         path: citiesPath ? rootPath : '0',
         callback: percentage => {
           iterator.percentage = percentage
-          console.log('🚀 ~ uploadClick ~ iterator.percentage:', iterator.percentage)
         }
       })
       // 判断文件小于 < 1mb 延时隐藏进度条 给人看起来像上传过了
