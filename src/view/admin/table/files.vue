@@ -28,10 +28,10 @@ const columns: ZaiColumns = [
 	{
 		title: '文件类型',
 		key: 'type',
-		width: 70
+		width: 110
 	},
 	{
-		title: '上传ip',
+		title: '上传IP',
 		key: 'xrealip',
 		width: 110
 	},

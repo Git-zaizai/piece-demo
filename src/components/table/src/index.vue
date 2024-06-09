@@ -208,6 +208,9 @@ const refreshTable = () => {
           </n-icon>
         </template>
       </n-button>
+
+      <slot name="headerContent"></slot>
+
       <div class="zt-header_right flex-alc">
         <n-tooltip trigger="hover">
           <template #trigger>

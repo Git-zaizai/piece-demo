@@ -27,20 +27,43 @@ export interface Row {
 import { Edit32Regular } from '@vicons/fluent'
 import { NIcon } from 'naive-ui'
 
-const linkAction = (onClick: (row: any, index: number) => void) => {
+const linkAction = (onClick: (row: any, index: number) => void, onDelete: (row: any, index: number) => void) => {
   return (row: any, index: number) => (
-    <n-button type='success' ghost size='small' onClick={() => onClick(row, index)}>
-      {{
-        icon: () => (
-          <NIcon class='scale-X'>
-            {{
-              default: () => <Edit32Regular />
-            }}
-          </NIcon>
-        ),
-        default: () => '编辑'
-      }}
-    </n-button>
+    <>
+      <div class='flex-juspb-alc'>
+        <n-button type='success' ghost size='small' onClick={() => onClick(row, index)}>
+          {{
+            icon: () => (
+              <NIcon class='scale-X'>
+                {{
+                  default: () => <Edit32Regular />
+                }}
+              </NIcon>
+            ),
+            default: () => '编辑'
+          }}
+        </n-button>
+        <n-popconfirm onPositiveClick={() => onDelete(row, index)}>
+          {{
+            trigger: () => (
+              <n-button type='error' ghost size='small'>
+                {{
+                  icon: () => (
+                    <NIcon class='scale-X'>
+                      {{
+                        default: () => <Edit32Regular />
+                      }}
+                    </NIcon>
+                  ),
+                  default: () => '彻底删除'
+                }}
+              </n-button>
+            ),
+            default: () => '确定要删除吗？'
+          }}
+        </n-popconfirm>
+      </div>
+    </>
   )
 }
 </script>
@@ -48,13 +71,13 @@ const linkAction = (onClick: (row: any, index: number) => void) => {
 <script setup lang="tsx">
 import { ZaiTable } from '@/components/table'
 import { http } from '@/api'
-import { NTag, NButton, NSpace, DataTableColumn } from 'naive-ui'
+import { NTag, NButton, NSpace, type DataTableColumn, NPopconfirm } from 'naive-ui'
 import ModalForm from '@/components/modal-form.vue'
 import { copyStr, rand } from '@/utils/index'
 import dayjs from 'dayjs'
 import { useToggle } from '@vueuse/core'
 import { CloseCircleTwotone } from '@vicons/antd'
-import { Add } from '@vicons/ionicons5'
+import { Add, SearchCircleOutline } from '@vicons/ionicons5'
 
 defineOptions({
   name: 'link'
@@ -64,8 +87,8 @@ const actionsColumns: DataTableColumn = {
   title: '操作',
   key: 'link_actions',
   fixed: 'right',
-  width: 110,
-  render: linkAction(updateItem)
+  width: 210,
+  render: linkAction(updateItem, deleteItem)
 }
 
 function randTagType(): any {
@@ -81,10 +104,24 @@ const createColumns = (tabOptions): ZaiColumns => [
     fixed: 'left'
   },
   {
-    title: '读到那章',
-    key: 'start-finish',
-    render: row => `${row.start} - ${row.finish}`,
+    title: '首页链接',
+    key: 'link',
+    render(row) {
+      return (
+        <n-button strong tertiary size={'small'} onClick={() => copyStr(row.link as string)}>
+          {row.link ? '复制' : '无'}
+        </n-button>
+      )
+    },
     width: 90
+  },
+  {
+    title: '备注',
+    key: 'beizhu',
+    ellipsis: {
+      tooltip: true
+    },
+    width: 120
   },
   {
     title: '读完',
@@ -107,6 +144,7 @@ const createColumns = (tabOptions): ZaiColumns => [
     width: 90,
     sorter: 'default'
   },
+
   {
     title: '标签',
     key: 'tabs',
@@ -134,6 +172,7 @@ const createColumns = (tabOptions): ZaiColumns => [
       return tabs.includes(value)
     }
   },
+
   {
     title: '完结/连载',
     key: 'wanjie',
@@ -171,15 +210,9 @@ const createColumns = (tabOptions): ZaiColumns => [
     sorter: 'default'
   },
   {
-    title: '首页链接',
-    key: 'link',
-    render(row) {
-      return (
-        <n-button strong tertiary size={'small'} onClick={() => copyStr(row.link as string)}>
-          {row.link ? '复制' : '无'}
-        </n-button>
-      )
-    },
+    title: '读到那章',
+    key: 'start-finish',
+    render: row => `${row.start} - ${row.finish}`,
     width: 90
   },
   {
@@ -194,14 +227,7 @@ const createColumns = (tabOptions): ZaiColumns => [
     },
     width: 90
   },
-  {
-    title: '备注',
-    key: 'beizhu',
-    ellipsis: {
-      tooltip: true
-    },
-    width: 90
-  },
+
   {
     title: '其他链接',
     key: 'links',
@@ -409,6 +435,46 @@ function addLinks() {
 function bindRemoveLink(index) {
   formData.value.links.splice(index, 1)
 }
+
+/** 真删除 */
+async function deleteItem(row: any, index: number) {
+  try {
+    await http.post('/curd-mongo/del/novel', {
+      ops: { many: true },
+      where: {
+        _id: row['_id']
+      }
+    })
+    state.value.splice(index, 1)
+  } catch (error) {
+    console.log('删除错误', error)
+  }
+}
+
+const searchVal = ref('')
+async function SearchCircle() {
+  const or = {
+    ops: { many: true },
+    where: {
+      $or: [
+        {
+          title: {
+            $regex: searchVal.value
+          }
+        },
+        {
+          beizhu: {
+            $regex: searchVal.value
+          }
+        }
+      ]
+    }
+  }
+  const respons = await http.post('/curd-mongo/find/novel', or)
+  state.value = respons.data.data
+  console.log('🚀 ~ SearchCircle ~ respons.data.data:', respons.data.data)
+  console.log('🚀 ~ SearchCircle ~ state.value:', state.value)
+}
 </script>
 
 <template>
@@ -422,7 +488,21 @@ function bindRemoveLink(index) {
       @update-item="updateItem"
       scroll-x
       :actions-columns="actionsColumns"
-    />
+    >
+      <template #headerContent>
+        <div class="w-100 ml-10 flex-alc">
+          <n-button strong secondary type="success" @click="SearchCircle">
+            <template #icon>
+              <n-icon>
+                <SearchCircleOutline />
+              </n-icon>
+            </template>
+          </n-button>
+
+          <n-input v-model:value="searchVal" style="width: 80%; margin-left: 20px" clearable />
+        </div>
+      </template>
+    </zai-table>
     <modal-form v-model:show="showForm" displaydirective @confirm-form="formSubmit" style="width: 60vw">
       <n-form
         ref="formRef"
