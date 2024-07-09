@@ -164,6 +164,12 @@ async function uploadClick() {
   upDisabledToggle()
 }
 
+/**
+ * 重新上传文件的处理函数
+ *
+ * @param index 文件索引
+ * @returns 无返回值，该函数为异步函数
+ */
 async function displayReFile(index: number) {
   const fileItem = state.files[index]
   fileItem.percentage = 0

@@ -55,6 +55,7 @@
     "markdown-it-mathjax3": "^4.3.2",
     "nanoid": "^5.0.7",
     "picocolors": "^1.0.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.49.9",
     "shiki": "^1.1.2",
     "terser": "^5.17.1",

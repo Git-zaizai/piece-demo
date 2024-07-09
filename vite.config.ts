@@ -11,9 +11,17 @@ import Components from 'unplugin-vue-components/vite'
 // @ts-ignore
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
+import { visualizer } from 'rollup-plugin-visualizer';
+
 import shikiMdVue from './build/vite-shiki-md-vue'
 import vitepressMdplugin from './build/markdownToVue'
 
+
+/***
+ * 
+ * 
+ * /naive-ui@2.34.3_vue@3.3.13
+ */
 // https://vitejs.dev/config/  dts: 'types/auto-imports.d.ts',
 export default defineConfig(async configEnv => {
   const viteEnv = loadEnv(configEnv.mode, process.cwd()) as unknown as ImportMetaEnv
@@ -54,7 +62,8 @@ export default defineConfig(async configEnv => {
       Components({
         dts: 'types/components.d.ts',
         resolvers: [NaiveUiResolver()],
-      })
+      }),
+      visualizer({ open: true })
     ],
     base: viteEnv.VITE_BASE_URL,
     server: {
@@ -95,18 +104,33 @@ export default defineConfig(async configEnv => {
           drop_console: true,
           drop_debugger: true
         }
-      }
-      /* rollupOptions: {
+      },
+      rollupOptions: {
         output: {
           manualChunks: {
-            jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
-            cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
-            htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
-            tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
-            editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
+            ui: ['naive-ui', '@vicons/antd', '@vicons/carbon', '@vicons/fluent', '@vicons/ionicons4', '@vicons/ionicons5', '@vicons/tabler', '@vueuse/core'],
+            vue: ['vue', 'vue-router', 'pinia', 'pinia-plugin-persistedstate'],
+            shiki: ['shiki', '@shikijs/monaco']
           },
-        },
-      }, */
+          // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容的hash值
+          entryFileNames: 'js/[name].[hash].js',
+          // 用于命名代码拆分时创建的共享块的输出命名
+          chunkFileNames: 'js/[name].[hash].js',
+          // 用于输出静态资源（如：css，图片等）的命名，[ext]表示文件扩展名
+          assetFileNames: '[ext]/[name].[hash].[ext]',
+        }
+        /* rollupOptions: {
+          output: {
+            manualChunks: {
+              jsonWorker: [`monaco-editor/esm/vs/language/json/json.worker`],
+              cssWorker: [`monaco-editor/esm/vs/language/css/css.worker`],
+              htmlWorker: [`monaco-editor/esm/vs/language/html/html.worker`],
+              tsWorker: [`monaco-editor/esm/vs/language/typescript/ts.worker`],
+              editorWorker: [`monaco-editor/esm/vs/editor/editor.worker`],
+            },
+          },
+        }, */
+      }
     }
   }
 })

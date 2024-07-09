@@ -94,7 +94,9 @@ export function shardsUpload(nameHash: string, file: File, callback: (percentage
                     errMap.splice(findErrIndex, 1)
                 }
                 return upload()
-            } catch {
+            } catch(error) {
+                console.log(error);
+                
                 if (errMap.length >= 6) {
                     return reject(0)
                 }
