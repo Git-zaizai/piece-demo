@@ -139,6 +139,17 @@ const WebDemo: AppRouteRecordRaw = {
           contentText: '数字动画实现'
         }
       }
+    },
+    {
+      path: 'video-zhen',
+      name: 'video-zhen',
+      component: () => import('@/view/demo/web/video/video-zhen.vue'),
+      meta: {
+        title: '获取视频帧',
+        navigation: {
+          contentText: '获取视频帧'
+        }
+      }
     }
   ]
 }
