@@ -135,10 +135,10 @@ async function uploadClick() {
     })
     rootPath = respPath.data.data
   }
-
+  let response
   for (const iterator of files) {
     try {
-      let response = await upload({
+      response = await upload({
         file: iterator.file,
         path: citiesPath ? rootPath : '0',
         callback: percentage => {
@@ -159,6 +159,7 @@ async function uploadClick() {
       iterator.percentage = 99
       iterator.progressStuts = 'error'
       iterator.displayReUpload = true
+      await http.get('/delete-set-shards', { params: { fileNameMD5: response.fileNameMD5 } })
     }
   }
   upDisabledToggle()

@@ -10,9 +10,10 @@ function getCPUS() {
     return navigator?.hardwareConcurrency || 6
 }
 
+// 获取分片文件
 function getMergeFile(file: File): Blob[] {
     const blobArr = []
-    const blobSize = 1024 * 1024
+    const blobSize = 1024 * 512 // 512KB
     let i = 0
     while (i < file.size) {
         blobArr.push(file.slice(i, i + blobSize))
@@ -129,6 +130,7 @@ export async function upload(props: UploadProps): Promise<{ url: string, name: s
         name: file.name,
         shards: shardlist.map(v => ({ id: v.index, hash: v.hash }))
     })
+    resp.data.data.fileNameMD5 = fileNameMD5
 
     return resp.data.data
 }
