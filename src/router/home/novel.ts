@@ -8,8 +8,8 @@ const novel: AppRouteRecordRaw = {
   },
   children: [
     {
-      path: 'https://docs.xiaoheizi.one/',
-      name: 'https://docs.xiaoheizi.one/',
+      path: 'https://git-zaizai.github.io/zaizaiDocs/',
+      name: 'https://git-zaizai.github.io/zaizaiDocs/',
       meta: {
         title: '崽崽前端囧途',
         navigation: {
