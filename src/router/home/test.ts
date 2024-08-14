@@ -24,7 +24,5 @@ Object.keys(testViewComponents).map(key => {
     })
   }
 })
-console.log("🚀 ~ testViewComponents:", testViewComponents)
-
 
 export default router

@@ -1,6 +1,6 @@
 <script setup lang="ts" name="zai-table">
 import { useThemeVars, NButton } from 'naive-ui'
-import type { DataTableColumns, DataTableColumn } from 'naive-ui'
+import type { DataTableColumns, DataTableColumn, PaginationProps } from 'naive-ui'
 import type { Ref } from 'vue'
 
 import { Add, ReorderTwoOutline } from '@vicons/ionicons5'
@@ -12,7 +12,6 @@ import { useToggle } from '@vueuse/core'
 import Actions from './components/actions.vue'
 import { getScrollX } from './utils'
 import { ZaiTableProps } from './props'
-import { ref } from 'vue'
 
 const props = defineProps({
   ...ZaiTableProps

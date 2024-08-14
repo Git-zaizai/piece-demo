@@ -1,4 +1,6 @@
 import type { Component, DefineComponent } from 'vue'
+// @ts-ignore
+import { NIcon } from 'naive-ui'
 
 /**
  * @function debounce 函数防抖
@@ -16,7 +18,7 @@ export function debounce(fun, wait = 1500) {
   }
 }
 
-import { NIcon } from 'naive-ui'
+
 
 export function renderIcon(icon: Component | DefineComponent) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -66,6 +68,16 @@ export function copyStr(value: string): void {
 export function rand(m: number, n: number) {
   return Math.ceil(Math.random() * (n - m + 1) + m - 1)
 }
+
+export function waitTime<T>(data?: T): Promise<T> {
+  return new Promise(resolve => {
+    let time = rand(0, 3) * 1000
+    setTimeout(() => {
+      resolve(data)
+    }, time)
+  })
+}
+
 
 /**
  * @function isMobile 判断手机端
