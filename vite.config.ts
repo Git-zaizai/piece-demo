@@ -13,9 +13,9 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 import { visualizer } from 'rollup-plugin-visualizer';
 
-import shikiMdVue from './build/vite-shiki-md-vue'
-import vitepressMdplugin from './build/markdownToVue'
-
+// import shikiMdVue from './build/vite-shiki-md-vue'
+import vitepressMdplugin from './build/vite-vue-mdtuvue/markdownToVue'
+import manualChunksFun from './build/manualChunks'
 
 /***
  * 
@@ -105,11 +105,19 @@ export default defineConfig(async configEnv => {
           drop_debugger: true
         }
       },
+      cssCodeSplit: false,
       rollupOptions: {
         output: {
+          /*   manualChunks: manualChunksFun,
+            // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容的hash值
+            entryFileNames: 'js/[name].[hash].js',
+            // 用于命名代码拆分时创建的共享块的输出命名
+            chunkFileNames: 'js/[name].[hash].js',
+            // 用于输出静态资源（如：css，图片等）的命名，[ext]表示文件扩展名
+            assetFileNames: 'assets/[name].[hash].[ext]' */
           manualChunks: {
-            ui: ['naive-ui', '@vicons/antd', '@vicons/carbon', '@vicons/fluent', '@vicons/ionicons4', '@vicons/ionicons5', '@vicons/tabler', '@vueuse/core'],
-            vue: ['vue', 'vue-router', 'pinia', 'pinia-plugin-persistedstate'],
+            ui: ['naive-ui', '@vicons/antd', '@vicons/carbon', '@vicons/fluent', '@vicons/ionicons4', '@vicons/ionicons5', '@vicons/tabler'],
+            vue: ['vue', 'vue-router', 'pinia', 'pinia-plugin-persistedstate', '@vueuse/core'],
             shiki: ['shiki', '@shikijs/monaco']
           },
           // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容的hash值
@@ -117,7 +125,7 @@ export default defineConfig(async configEnv => {
           // 用于命名代码拆分时创建的共享块的输出命名
           chunkFileNames: 'js/[name].[hash].js',
           // 用于输出静态资源（如：css，图片等）的命名，[ext]表示文件扩展名
-          assetFileNames: '[ext]/[name].[hash].[ext]',
+          assetFileNames: 'assets/[name].[hash].[ext]',
         }
         /* rollupOptions: {
           output: {

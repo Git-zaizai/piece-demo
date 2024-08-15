@@ -1,6 +1,6 @@
 import { AppRouteRecordRaw } from './types'
 import { admin, adminRouters } from './admin'
-import LayoutHome from '@/layout/layout-hemo.vue'
+// import LayoutHome from '@/layout/layout-hemo.vue'
 import RootView from '@/view/home/index.vue'
 
 /**

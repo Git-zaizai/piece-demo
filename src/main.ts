@@ -6,24 +6,25 @@ import { Pinia } from './store'
 
 // import WindowPropoerty from './layout/window/index.vue'
 import { createNaiveDiscreteApi } from '@/utils/createNaiveDiscreteApi'
-import { useCopyCode } from '@/hooks/copyCode'
 
+import { useCopyCode } from '@/hooks/copyCode'
 import { MdToVueLayout } from '@/components/mdToVue'
 
 function setup() {
-  // createApp(WindowPropoerty).use(Pinia).mount('#windowProperty')
-  const app = createApp(App)
+	// createApp(WindowPropoerty).use(Pinia).mount('#windowProperty')
+	const app = createApp(App)
 
-  app.use(Pinia)
+	app.use(Pinia)
 
-  app.use(router)
+	app.use(router)
 
-  createNaiveDiscreteApi()
+	createNaiveDiscreteApi()
 
-  useCopyCode()
+	useCopyCode()
 
-  app.component('MdToVueLayout', MdToVueLayout)
+	app.component('MdToVueLayout', MdToVueLayout)
 
-  app.mount('#app')
+	app.mount('#app')
 }
+
 setup()

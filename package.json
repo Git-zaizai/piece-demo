@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node ./build/ssh-upload.js",
+    "build-visualizer": "vite build",
     "preview": "vite preview",
     "build-tsc": "vue-tsc --noEmit && vite build",
     "ssh": "node ./build/ssh-upload.js"

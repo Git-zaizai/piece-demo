@@ -142,6 +142,7 @@ const createColumns = (tabOptions): ZaiColumns => [
       )
     },
     width: 90,
+    // @ts-ignore
     sorter: 'default'
   },
 
@@ -188,6 +189,7 @@ const createColumns = (tabOptions): ZaiColumns => [
       )
     },
     width: 110,
+    // @ts-ignore
     sorter: 'default'
   },
   {
@@ -207,6 +209,7 @@ const createColumns = (tabOptions): ZaiColumns => [
       )
     },
     width: 110,
+    // @ts-ignore
     sorter: 'default'
   },
   {
@@ -329,6 +332,29 @@ const formData = ref<Row>({
   rate: '',
   id: 0
 })
+
+function defaultformData() {
+  formData.value = {
+    _id: '',
+    title: '',
+    start: 0,
+    finish: 0,
+    duwan: 1,
+    tabs: [],
+    wanjie: 1,
+    isdel: 1,
+    link: '',
+    linkback: '',
+    beizhu: '',
+    links: [],
+    addDate: null,
+    update: null,
+    finishtime: null,
+    rate: '',
+    id: 0
+  }
+}
+
 const state = ref<Row[]>([])
 
 const rule = {

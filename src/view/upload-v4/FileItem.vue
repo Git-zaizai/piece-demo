@@ -8,14 +8,8 @@
 
       <p class="file-item-title text-dwoe ml-5 mr-10">{{ file?.name ?? '' }}</p>
 
-      <n-button
-        text
-        class="ml-10"
-        ref="linkSquare"
-        @mouseenter="mouseenter(linkSquare, '链接')"
-        @mouseleave="mouseleave"
-        v-if="link"
-      >
+      <n-button text class="ml-10" ref="linkSquare" @mouseenter="mouseenter(linkSquare, '链接')" @mouseleave="mouseleave"
+        v-if="link">
         <template #icon>
           <n-icon size="23" color="var(--text-color)" @click="codeDownloadUrl(link)">
             <LinkSquare16Regular />
@@ -23,14 +17,8 @@
         </template>
       </n-button>
 
-      <n-button
-        text
-        class="ml-10"
-        ref="eyeOutline"
-        @mouseenter="mouseenter(eyeOutline, '查看图片')"
-        @mouseleave="mouseleave"
-        v-if="image"
-      >
+      <n-button text class="ml-10" ref="eyeOutline" @mouseenter="mouseenter(eyeOutline, '查看图片')"
+        @mouseleave="mouseleave" v-if="image">
         <template #icon>
           <n-icon size="24" color="var(--text-color)" @click="imageRef.click()">
             <EyeOutline />
@@ -38,14 +26,8 @@
         </template>
       </n-button>
 
-      <n-button
-        text
-        class="ml-10"
-        ref="arrowClockwise"
-        @mouseenter="mouseenter(arrowClockwise, '重新上传')"
-        @mouseleave="mouseleave"
-        v-if="displayReUpload"
-      >
+      <n-button text class="ml-10" ref="arrowClockwise" @mouseenter="mouseenter(arrowClockwise, '重新上传')"
+        @mouseleave="mouseleave" v-if="displayReUpload">
         <template #icon>
           <n-icon size="21" color="var(--text-color)" @click="emit('displayReFile', index)">
             <ArrowClockwise20Filled />
@@ -53,14 +35,8 @@
         </template>
       </n-button>
 
-      <n-button
-        text
-        class="ml-10"
-        ref="deleteDismiss"
-        @mouseenter="mouseenter(deleteDismiss, '移除')"
-        @mouseleave="mouseleave"
-        v-if="uploadCompleted"
-      >
+      <n-button text class="ml-10" ref="deleteDismiss" @mouseenter="mouseenter(deleteDismiss, '移除')"
+        @mouseleave="mouseleave" v-if="uploadCompleted">
         <template #icon>
           <n-icon size="22" color="var(--text-color)" @click="emit('removeFile', index)">
             <DeleteDismiss24Regular />
@@ -71,15 +47,8 @@
 
     <n-image ref="imageRef" :src="image" show-toolbar-tooltip width="100" style="display: none"></n-image>
 
-    <n-progress
-      v-if="percentage > 0 && !link"
-      class="file-item-progress"
-      type="line"
-      :status="progressStuts"
-      :percentage="percentage"
-      :height="1"
-      :show-indicator="false"
-    />
+    <n-progress v-if="percentage > 0 && !link" class="file-item-progress" type="line" :status="progressStuts"
+      :percentage="percentage" :height="1" :show-indicator="false" />
   </div>
 </template>
 
